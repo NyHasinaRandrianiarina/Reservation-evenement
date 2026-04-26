@@ -271,10 +271,10 @@ export const MobileNavMenu = ({
             {/* Footer du menu mobile - Signature Lux */}
             <div className="mt-auto pt-10 pb-6 border-t border-border/40">
               <p className="text-[10px] font-black tracking-[0.3em] uppercase text-muted-foreground/50 mb-4">
-                TrackIt
+                EventNest
               </p>
               <p className="text-xs font-serif italic text-foreground/60">
-                Suivi de commandes et livraisons.
+                L'excellence pour vos moments inoubliables.
               </p>
             </div>
           </div>
@@ -300,17 +300,27 @@ export const MobileNavToggle = ({
 
 export const NavbarLogo = ({ visible, isHomePage }: { visible?: boolean, isHomePage?: boolean }) => {
   return (
-    <Link to="/" className="flex items-center gap-2 group/logo py-2 shrink-0">
-      <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center transition-transform group-hover/logo:rotate-12">
-        <Package size={18} className="text-primary" />
+    <Link to="/" className="flex items-center gap-2.5 group/logo py-2 shrink-0">
+      <div className="relative">
+        <div className="w-9 h-9 rounded-xl bg-primary/20 flex items-center justify-center transition-all duration-500 group-hover/logo:rotate-12 group-hover/logo:scale-110">
+          <Package size={20} className="text-primary" />
+        </div>
+        <div className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full border-2 border-background animate-pulse" />
       </div>
-      <span className={cn(
-        "font-serif italic text-lg tracking-tighter transition-colors",
-        // Si scrollé OU pas sur la Home -> Texte sombre. Sinon -> Texte blanc.
-        (visible || !isHomePage) ? "text-foreground" : "text-white"
-      )}>
-        TrackIt
-      </span>
+      <div className="flex flex-col -gap-1">
+        <span className={cn(
+          "font-serif italic text-xl font-semibold tracking-tighter transition-colors leading-none",
+          (visible || !isHomePage) ? "text-foreground" : "text-white"
+        )}>
+          EventNest
+        </span>
+        <span className={cn(
+          "text-[8px] font-black tracking-[0.3em] uppercase opacity-50 transition-colors",
+          (visible || !isHomePage) ? "text-foreground" : "text-white"
+        )}>
+          Premium Events
+        </span>
+      </div>
     </Link>
   );
 };

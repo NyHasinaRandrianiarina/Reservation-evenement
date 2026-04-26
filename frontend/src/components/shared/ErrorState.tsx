@@ -1,5 +1,6 @@
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { motion } from 'motion/react';
 
 interface ErrorStateProps {
   error?: Error | unknown;
@@ -13,19 +14,33 @@ export default function ErrorState({ error, onRetry }: ErrorStateProps) {
       : 'Une erreur inattendue est survenue.';
 
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mb-5">
-        <AlertCircle className="w-7 h-7 text-destructive" />
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="flex flex-col items-center justify-center py-24 px-6 text-center"
+    >
+      <div className="w-20 h-20 rounded-[2rem] bg-destructive/5 flex items-center justify-center mb-8 relative">
+        <AlertCircle className="w-10 h-10 text-destructive opacity-60" />
+        <div className="absolute inset-0 border border-destructive/20 rounded-[2rem] scale-125 opacity-30 animate-pulse" />
       </div>
-      <h3 className="text-lg font-semibold text-foreground mb-1.5">
-        Oups, quelque chose a mal tourné
+      
+      <h3 className="text-2xl font-serif italic font-medium text-foreground mb-3">
+        Une ombre au tableau
       </h3>
-      <p className="text-sm text-muted-foreground max-w-md mb-6">{message}</p>
+      <p className="text-muted-foreground max-w-sm mb-10 font-light italic">
+        "{message}"
+      </p>
+      
       {onRetry && (
-        <Button variant="outline" onClick={onRetry}>
-          Réessayer
+        <Button 
+          variant="outline" 
+          onClick={onRetry}
+          className="rounded-full px-8 h-12 gap-2 border-destructive/20 text-destructive hover:bg-destructive hover:text-white transition-all font-bold"
+        >
+          <RefreshCw size={16} />
+          Retenter l'expérience
         </Button>
       )}
-    </div>
+    </motion.div>
   );
 }
