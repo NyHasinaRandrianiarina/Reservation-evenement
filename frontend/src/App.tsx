@@ -1,10 +1,12 @@
 import { Routes, Route, Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-// import { GeistSans } from 'geist/font/sans';
-// import { GeistMono } from 'geist/font/mono';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import AuthBootstrap from "@/components/auth/AuthBootstrap";
 import { usePageTitle } from './hooks/usePageTitle';  
+
+// EventNest — Public
+import PublicLayout from './components/layouts/PublicLayout';
+import CatalogPage from './pages/CatalogPage';
 
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/auth/LoginPage';
@@ -40,7 +42,12 @@ function App() {
         <Toaster position="top-right" />
         <AuthBootstrap />
         <Routes>
-          {/* Public Routes */}
+          {/* EventNest — Public */}
+          <Route element={<PublicLayout />}>
+            <Route path='/events' element={<CatalogPage />} />
+          </Route>
+
+          {/* Legacy Public Routes */}
           <Route path='/' element={<LandingPage/>}/>
           <Route path='/login' element={<LoginPage/>}/>
           <Route path='/register' element={<RegisterPage/>}/>
