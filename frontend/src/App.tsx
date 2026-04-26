@@ -14,6 +14,9 @@ import Step2InfoPage from './pages/registration/Step2InfoPage';
 import Step3PaymentPage from './pages/registration/Step3PaymentPage';
 import ConfirmationPage from './pages/registration/ConfirmationPage';
 
+import AccountLayout from './components/layouts/AccountLayout';
+import MyRegistrationsPage from './pages/account/MyRegistrationsPage';
+
 import AppLayout from './components/layouts/AppLayout';
 import SenderDashboardPage from './pages/sender/SenderDashboardPage';
 import SenderDeliveriesPage from './pages/sender/SenderDeliveriesPage';
@@ -63,6 +66,11 @@ function App() {
           <Route path='/track' element={<TrackPage/>}/>
           <Route path='/track/:trackingNumber' element={<TrackResultPage/>}/> */}
           
+          {/* Protected Participant Routes */}
+          <Route path='/account' element={<AccountLayout />}>
+            <Route path='registrations' element={<MyRegistrationsPage />} />
+          </Route>
+
           {/* Protected Sender Routes */}
           <Route path='/sender' element={<AppLayout><Outlet /></AppLayout>}>
             <Route path='dashboard' element={<SenderDashboardPage />} />
