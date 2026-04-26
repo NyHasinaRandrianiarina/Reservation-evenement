@@ -149,7 +149,7 @@ export default function Navbar() {
             {/* Target Audience Logic: Organizer CTA */}
             <div className="hidden xl:flex items-center gap-3">
               <button
-                onClick={() => navigate(isAuthenticated && user?.is_seller ? "/creer-evenement" : "/devenir-vendeur")}
+                onClick={() => navigate(isAuthenticated && user?.is_seller ? "/organizer/events/new" : "/devenir-vendeur")}
                 className={cn(
                   "flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-transparent transition-all duration-700 group cursor-pointer shadow-none border",
                   scrolled 
@@ -271,7 +271,7 @@ export default function Navbar() {
 
                       <div className="p-4 flex flex-col gap-1">
                         {user?.is_seller && (
-                          <button onClick={() => { setIsUserMenuOpen(false); navigate("/espace-vendeur"); }} className="flex items-center gap-4 px-5 py-4 text-xs hover:bg-foreground/5 rounded-2xl transition-all w-full text-left font-light group cursor-pointer text-foreground">
+                          <button onClick={() => { setIsUserMenuOpen(false); navigate("/organizer/dashboard"); }} className="flex items-center gap-4 px-5 py-4 text-xs hover:bg-foreground/5 rounded-2xl transition-all w-full text-left font-light group cursor-pointer text-foreground">
                             <Store size={16} strokeWidth={1.5} className="text-foreground/60 group-hover:text-foreground transition-colors" />
                             <span className="tracking-wide">Dashboard Organisateur</span>
                           </button>
@@ -350,7 +350,7 @@ export default function Navbar() {
                 className="w-full h-16 rounded-[2rem] bg-foreground text-background font-bold text-sm uppercase tracking-widest"
                 onClick={() => {
                   setIsMobileMenuOpen(false);
-                  navigate(isAuthenticated && user?.is_seller ? "/creer-evenement" : "/devenir-vendeur");
+                  navigate(isAuthenticated && user?.is_seller ? "/organizer/events/new" : "/devenir-vendeur");
                 }}
               >
                 {isAuthenticated && user?.is_seller ? "Créer un événement" : "Publier un événement"}

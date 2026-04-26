@@ -17,6 +17,9 @@ import ConfirmationPage from './pages/registration/ConfirmationPage';
 import AccountLayout from './components/layouts/AccountLayout';
 import MyRegistrationsPage from './pages/account/MyRegistrationsPage';
 
+import OrganizerLayout from './components/layouts/OrganizerLayout';
+import OrgDashboardPage from './pages/organizer/OrgDashboardPage';
+
 import AppLayout from './components/layouts/AppLayout';
 import SenderDashboardPage from './pages/sender/SenderDashboardPage';
 import SenderDeliveriesPage from './pages/sender/SenderDeliveriesPage';
@@ -69,6 +72,11 @@ function App() {
           {/* Protected Participant Routes */}
           <Route path='/account' element={<AccountLayout />}>
             <Route path='registrations' element={<MyRegistrationsPage />} />
+          </Route>
+
+          {/* Protected Organizer Routes */}
+          <Route path='/organizer' element={<OrganizerLayout />}>
+            <Route path='dashboard' element={<OrgDashboardPage />} />
           </Route>
 
           {/* Protected Sender Routes */}
