@@ -1,7 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { IconMenu2, IconX } from "@tabler/icons-react";
-import { Package } from "lucide-react";
 import {
   motion,
   AnimatePresence,
@@ -65,7 +64,7 @@ export const Navbar = ({ children, className, isHomePage }: NavbarProps) => {
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
-    
+
     // Visibilité pour le mode "Floating Pill"
     if (latest > 100) {
       setVisible(true);
@@ -95,9 +94,9 @@ export const Navbar = ({ children, className, isHomePage }: NavbarProps) => {
       {React.Children.map(children, (child) =>
         React.isValidElement(child) && typeof child.type !== "string"
           ? React.cloneElement(
-              child as React.ReactElement<{ visible?: boolean; isHomePage?: boolean }>,
-              { visible, isHomePage },
-            )
+            child as React.ReactElement<{ visible?: boolean; isHomePage?: boolean }>,
+            { visible, isHomePage },
+          )
           : child,
       )}
     </motion.div>
@@ -141,9 +140,9 @@ export const NavBody = ({ children, className, visible, isHomePage }: NavBodyPro
       {React.Children.map(children, (child) =>
         React.isValidElement(child) && typeof child.type !== "string"
           ? React.cloneElement(
-              child as React.ReactElement<{ visible?: boolean; isHomePage?: boolean }>,
-              { visible, isHomePage },
-            )
+            child as React.ReactElement<{ visible?: boolean; isHomePage?: boolean }>,
+            { visible, isHomePage },
+          )
           : child,
       )}
     </motion.div>
@@ -168,7 +167,7 @@ export const NavItems = ({ items, activePath, visible, isHomePage }: NavItemsPro
             to={item.link}
             className={cn(
               "relative px-5 py-2 text-[10px] font-black tracking-[0.2em] uppercase transition-all duration-300",
-              isActive 
+              isActive
                 ? (useDarkText ? "text-primary" : "text-foreground")
                 : (useDarkText ? "text-muted-foreground hover:text-foreground" : "text-foreground/60 hover:text-foreground")
             )}
@@ -218,9 +217,9 @@ export const MobileNav = ({ children, className, visible, isHomePage }: MobileNa
       {React.Children.map(children, (child) =>
         React.isValidElement(child) && typeof child.type !== "string"
           ? React.cloneElement(
-              child as React.ReactElement<{ visible?: boolean; isHomePage?: boolean }>,
-              { visible, isHomePage },
-            )
+            child as React.ReactElement<{ visible?: boolean; isHomePage?: boolean }>,
+            { visible, isHomePage },
+          )
           : child,
       )}
     </motion.div>
@@ -243,9 +242,9 @@ export const MobileNavHeader = ({
       {React.Children.map(children, (child) =>
         React.isValidElement(child) && typeof child.type !== "string"
           ? React.cloneElement(
-              child as React.ReactElement<{ visible?: boolean; isHomePage?: boolean }>,
-              { visible, isHomePage },
-            )
+            child as React.ReactElement<{ visible?: boolean; isHomePage?: boolean }>,
+            { visible, isHomePage },
+          )
           : child,
       )}
     </div>
@@ -270,7 +269,7 @@ export const MobileNavMenu = ({
           {/* Header interne pour garder le logo et le bouton fermer en haut */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-border/40">
             <NavbarLogo />
-            <button 
+            <button
               onClick={onClose}
               className="w-10 h-10 flex items-center justify-center rounded-full bg-foreground/10 text-foreground hover:bg-foreground/20 transition-all"
             >
@@ -280,7 +279,7 @@ export const MobileNavMenu = ({
 
           <div className="flex flex-col h-full overflow-y-auto px-8 py-12">
             {children}
-            
+
             {/* Footer du menu mobile - Signature Lux */}
             <div className="mt-auto pt-10 pb-6 border-t border-border/40 text-center">
               <p className="text-[10px] font-bold tracking-[0.4em] uppercase text-foreground/50 mb-4">
@@ -348,10 +347,10 @@ export const NavbarButton = ({
   className?: string;
   variant?: "primary" | "secondary" | "dark" | "gradient";
 } & (
-  | React.ComponentPropsWithoutRef<typeof Link>
-  | React.ComponentPropsWithoutRef<"a">
-  | React.ComponentPropsWithoutRef<"button">
-)) => {
+    | React.ComponentPropsWithoutRef<typeof Link>
+    | React.ComponentPropsWithoutRef<"a">
+    | React.ComponentPropsWithoutRef<"button">
+  )) => {
   const baseStyles =
     "px-4 py-2 rounded-md text-sm font-semibold relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-block text-center flex items-center justify-center gap-2";
 

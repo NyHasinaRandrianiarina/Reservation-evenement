@@ -1,18 +1,10 @@
-import { useState, useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   CalendarHeart,
-  Menu,
-  X,
-  ArrowRight,
-  ChevronRight,
   Zap,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
-import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import Navbar from './Navbar';
 
 

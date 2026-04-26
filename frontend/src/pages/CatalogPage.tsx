@@ -6,9 +6,7 @@ import {
   CalendarX,
   SlidersHorizontal,
   X,
-  Sparkles,
 } from 'lucide-react';
-import { BackgroundRippleEffect } from '@/components/ui/background-ripple-effect';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -23,7 +21,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import {
   Sheet,
   SheetContent,
-  SheetTrigger,
   SheetTitle,
   SheetFooter,
 } from '@/components/ui/sheet';
@@ -76,9 +73,9 @@ function HeroBanner() {
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           className="w-full h-full"
         >
-          <img 
-            src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop" 
-            alt="Event Background" 
+          <img
+            src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop"
+            alt="Event Background"
             className="w-full h-full object-cover opacity-50"
           />
         </motion.div>
@@ -97,21 +94,21 @@ function HeroBanner() {
             </span>
             <div className="w-8 h-[1px] bg-white/40" />
           </div>
-          
+
           <h1 className="text-5xl sm:text-7xl lg:text-8xl font-serif font-light text-white tracking-tight leading-[1.1] mb-8 drop-shadow-2xl">
             L'art de vivre des <br />
             <span className="italic opacity-90">moments d'exception.</span>
           </h1>
-          
+
           <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed font-light">
-            Découvrez une sélection rigoureuse d'événements exclusifs. 
+            Découvrez une sélection rigoureuse d'événements exclusifs.
             Des masterclasses, des soirées privées, et des expériences inoubliables.
           </p>
         </motion.div>
       </div>
 
       {/* Subtle scroll indicator */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5, duration: 1 }}
@@ -161,36 +158,17 @@ function FilterBar({
     setIsSticky(latest > 450);
   });
 
-  const CategoryPills = () => (
-    <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-      {CATEGORY_OPTIONS.map((opt) => (
-        <button
-          key={opt.value}
-          onClick={() => onCategoryChange(opt.value)}
-          className={cn(
-            "whitespace-nowrap px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest transition-all duration-300 border cursor-pointer",
-            category === opt.value
-              ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20"
-              : "bg-background text-muted-foreground border-border/40 hover:border-primary/50"
-          )}
-        >
-          {opt.label}
-        </button>
-      ))}
-    </div>
-  );
-
   return (
     <div className={cn(
       "z-40 transition-all duration-700 w-full",
       isSticky ? "fixed top-6 left-0 px-4" : "relative px-6 -mt-10"
     )}>
-      <motion.div 
+      <motion.div
         layout
         className={cn(
           "max-w-4xl mx-auto transition-all duration-700 glass rounded-[2rem]",
-          isSticky 
-            ? "bg-background/60 shadow-2xl p-2 pl-6 border-border" 
+          isSticky
+            ? "bg-background/60 shadow-2xl p-2 pl-6 border-border"
             : "bg-background/40 p-2 pl-6 shadow-xl border-border"
         )}
       >
@@ -207,55 +185,55 @@ function FilterBar({
           </div>
 
           <div className="flex items-center gap-2 pr-2">
-             <div className="hidden md:flex items-center gap-2">
-                {/* Selects seulement si pas sticky ou sur grand écran */}
-                {!isSticky && (
-                  <>
-                    <Select value={dateRange} onValueChange={onDateRangeChange}>
-                      <SelectTrigger className="w-36 h-12 rounded-full border-transparent bg-foreground/5 hover:bg-foreground/10 text-foreground font-medium text-sm transition-colors focus:ring-0 shadow-none">
-                        <SelectValue placeholder="Date" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-background/90 backdrop-blur-xl border-border text-foreground">
-                        {DATE_FILTER_OPTIONS.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value} className="focus:bg-foreground/10">{opt.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+            <div className="hidden md:flex items-center gap-2">
+              {/* Selects seulement si pas sticky ou sur grand écran */}
+              {!isSticky && (
+                <>
+                  <Select value={dateRange} onValueChange={onDateRangeChange}>
+                    <SelectTrigger className="w-36 h-12 rounded-full border-transparent bg-foreground/5 hover:bg-foreground/10 text-foreground font-medium text-sm transition-colors focus:ring-0 shadow-none">
+                      <SelectValue placeholder="Date" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background/90 backdrop-blur-xl border-border text-foreground">
+                      {DATE_FILTER_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value} className="focus:bg-foreground/10">{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-                    <Select value={priceType} onValueChange={onPriceTypeChange}>
-                      <SelectTrigger className="w-32 h-12 rounded-full border-transparent bg-foreground/5 hover:bg-foreground/10 text-foreground font-medium text-sm transition-colors focus:ring-0 shadow-none">
-                        <SelectValue placeholder="Prix" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-background/90 backdrop-blur-xl border-border text-foreground">
-                        {PRICE_FILTER_OPTIONS.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value} className="focus:bg-foreground/10">{opt.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </>
-                )}
-             </div>
-
-             {/* Bouton Filtre Global */}
-             <Button 
-                variant="outline"
-                className="rounded-full gap-2 transition-all h-12 px-6 border-transparent bg-foreground text-background hover:bg-foreground/90 hover:text-background font-semibold shadow-lg"
-                onClick={() => setMobileFiltersOpen(true)}
-              >
-                <SlidersHorizontal size={18} />
-                <span className="hidden sm:inline text-xs font-bold uppercase tracking-widest">Filtres</span>
-                {activeCount > 0 && (
-                  <Badge className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-[10px] bg-background text-foreground border-0">
-                    {activeCount}
-                  </Badge>
-                )}
-              </Button>
-
-              {activeCount > 0 && !isSticky && (
-                <Button variant="ghost" size="icon" onClick={onReset} className="rounded-full h-12 w-12 text-foreground/60 hover:text-foreground hover:bg-foreground/10">
-                  <X size={20} />
-                </Button>
+                  <Select value={priceType} onValueChange={onPriceTypeChange}>
+                    <SelectTrigger className="w-32 h-12 rounded-full border-transparent bg-foreground/5 hover:bg-foreground/10 text-foreground font-medium text-sm transition-colors focus:ring-0 shadow-none">
+                      <SelectValue placeholder="Prix" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background/90 backdrop-blur-xl border-border text-foreground">
+                      {PRICE_FILTER_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value} className="focus:bg-foreground/10">{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </>
               )}
+            </div>
+
+            {/* Bouton Filtre Global */}
+            <Button
+              variant="outline"
+              className="rounded-full gap-2 transition-all h-12 px-6 border-transparent bg-foreground text-background hover:bg-foreground/90 hover:text-background font-semibold shadow-lg"
+              onClick={() => setMobileFiltersOpen(true)}
+            >
+              <SlidersHorizontal size={18} />
+              <span className="hidden sm:inline text-xs font-bold uppercase tracking-widest">Filtres</span>
+              {activeCount > 0 && (
+                <Badge className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-[10px] bg-background text-foreground border-0">
+                  {activeCount}
+                </Badge>
+              )}
+            </Button>
+
+            {activeCount > 0 && !isSticky && (
+              <Button variant="ghost" size="icon" onClick={onReset} className="rounded-full h-12 w-12 text-foreground/60 hover:text-foreground hover:bg-foreground/10">
+                <X size={20} />
+              </Button>
+            )}
           </div>
         </div>
       </motion.div>
@@ -264,7 +242,7 @@ function FilterBar({
       <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
         <SheetContent side="bottom" className="rounded-t-[3rem] p-8 max-h-[90vh] overflow-y-auto">
           <SheetTitle className="text-3xl font-serif italic mb-8">Personnalisez votre recherche</SheetTitle>
-          
+
           <div className="flex flex-col gap-10 pb-8">
             <div className="space-y-4">
               <label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Catégories</label>
@@ -275,8 +253,8 @@ function FilterBar({
                     onClick={() => onCategoryChange(opt.value)}
                     className={cn(
                       "py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border",
-                      category === opt.value 
-                        ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20" 
+                      category === opt.value
+                        ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20"
                         : "bg-muted/30 border-transparent text-muted-foreground hover:border-primary/30"
                     )}
                   >
@@ -296,8 +274,8 @@ function FilterBar({
                       onClick={() => onDateRangeChange(opt.value)}
                       className={cn(
                         "py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border",
-                        dateRange === opt.value 
-                          ? "bg-primary text-primary-foreground border-primary" 
+                        dateRange === opt.value
+                          ? "bg-primary text-primary-foreground border-primary"
                           : "bg-muted/30 border-transparent text-muted-foreground"
                       )}
                     >
@@ -316,8 +294,8 @@ function FilterBar({
                       onClick={() => onPriceTypeChange(opt.value)}
                       className={cn(
                         "py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border",
-                        priceType === opt.value 
-                          ? "bg-primary text-primary-foreground border-primary" 
+                        priceType === opt.value
+                          ? "bg-primary text-primary-foreground border-primary"
                           : "bg-muted/30 border-transparent text-muted-foreground"
                       )}
                     >
@@ -363,8 +341,8 @@ function SkeletonGrid() {
             <Skeleton className="h-4 w-1/4" />
             <Skeleton className="h-8 w-3/4" />
             <div className="pt-6 border-t border-border/40 flex justify-between">
-               <Skeleton className="h-4 w-1/3" />
-               <Skeleton className="h-4 w-1/4" />
+              <Skeleton className="h-4 w-1/3" />
+              <Skeleton className="h-4 w-1/4" />
             </div>
           </div>
         </div>
@@ -431,7 +409,7 @@ export default function CatalogPage() {
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-primary">
       <title>EventNest — Collection Privée</title>
-      
+
       <HeroBanner />
 
       <FilterBar
@@ -449,16 +427,16 @@ export default function CatalogPage() {
 
       <section className="max-w-7xl mx-auto px-6 py-24">
         <div className="flex flex-col mb-16 items-center text-center">
-           <h2 className="text-4xl sm:text-5xl font-serif font-light tracking-tight text-foreground/90">
-             {category === 'all' ? 'Toutes les expériences' : CATEGORY_LABELS[category as EventCategory]}
-           </h2>
-           {!isLoading && data && (
-             <div className="mt-6 text-[11px] font-bold text-foreground/40 tracking-[0.4em] uppercase flex items-center gap-4">
-                <div className="w-12 h-[1px] bg-border" />
-                {data.totalEvents} Événements
-                <div className="w-12 h-[1px] bg-border" />
-             </div>
-           )}
+          <h2 className="text-4xl sm:text-5xl font-serif font-light tracking-tight text-foreground/90">
+            {category === 'all' ? 'Toutes les expériences' : CATEGORY_LABELS[category as EventCategory]}
+          </h2>
+          {!isLoading && data && (
+            <div className="mt-6 text-[11px] font-bold text-foreground/40 tracking-[0.4em] uppercase flex items-center gap-4">
+              <div className="w-12 h-[1px] bg-border" />
+              {data.total} Événements
+              <div className="w-12 h-[1px] bg-border" />
+            </div>
+          )}
         </div>
 
         {isLoading && <SkeletonGrid />}
@@ -525,8 +503,8 @@ export default function CatalogPage() {
                           isActive={page === i + 1}
                           className={cn(
                             "h-14 w-14 rounded-full border-border/40 font-black text-[10px] transition-all",
-                            page === i + 1 
-                              ? "bg-primary text-primary-foreground border-primary shadow-2xl shadow-primary/40 scale-110" 
+                            page === i + 1
+                              ? "bg-primary text-primary-foreground border-primary shadow-2xl shadow-primary/40 scale-110"
                               : "hover:bg-muted cursor-pointer"
                           )}
                         >

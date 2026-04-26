@@ -6,17 +6,17 @@ import { useLocation } from 'react-router-dom';
  */
 const routeTitles: Record<string, string> = {
   '/': 'Accueil',
-  '/catalogue': 'Catalogue',
-  '/vendeurs': 'Annuaire des Vendeurs',
-  '/categories': 'Catégories',
-  '/checkout': 'Paiement',
-  '/commande-validee': 'Commande Confirmée',
-  '/profil': 'Mon Profil',
-  '/devenir-vendeur': 'Devenir Vendeur',
-  '/inscription': 'Inscription',
-  '/connexion': 'Connexion',
-  '/connexion/2fa': 'Vérification 2FA',
-  '/espace-vendeur': 'Espace Vendeur',
+  '/events': 'Évenements',
+  // '/vendeurs': 'Annuaire des Vendeurs',
+  // '/categories': 'Catégories',
+  // '/checkout': 'Paiement',
+  // '/commande-validee': 'Commande Confirmée',
+  // '/profil': 'Mon Profil',
+  // '/devenir-vendeur': 'Devenir Vendeur',
+  // '/inscription': 'Inscription',
+  // '/connexion': 'Connexion',
+  // '/connexion/2fa': 'Vérification 2FA',
+  // '/espace-vendeur': 'Espace Vendeur',
 };
 
 /**
@@ -25,7 +25,7 @@ const routeTitles: Record<string, string> = {
  */
 export const usePageTitle = (manualTitle?: string) => {
   const location = useLocation();
-  const siteName = 'TrackIt';
+  const siteName = 'EventNest';
 
   useEffect(() => {
     let title = '';
@@ -50,7 +50,7 @@ export const usePageTitle = (manualTitle?: string) => {
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');
         } else {
-          title = 'TrackIt';
+          title = 'EventNest';
         }
       }
     }

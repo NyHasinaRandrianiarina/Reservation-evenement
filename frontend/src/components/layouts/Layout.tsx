@@ -1,4 +1,4 @@
-import {Navbar} from './Navbar';
+import Navbar from './Navbar';
 import Footer from './Footer';
 import { Outlet } from 'react-router-dom';
 import { CartDrawer } from '@/components/cart/CartDrawer';
@@ -13,6 +13,7 @@ const Layout = () => {
             <Footer />
             <CartDrawer />
         </>
-    )};
+    )
+};
 
 export default Layout;

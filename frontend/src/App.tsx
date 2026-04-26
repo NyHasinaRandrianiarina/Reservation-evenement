@@ -8,13 +8,6 @@ import { usePageTitle } from './hooks/usePageTitle';
 import PublicLayout from './components/layouts/PublicLayout';
 import CatalogPage from './pages/CatalogPage';
 import EventDetailPage from './pages/EventDetailPage';
-
-import LandingPage from './pages/LandingPage';
-import LoginPage from './pages/auth/LoginPage';
-import RegisterPage from './pages/auth/RegisterPage';
-import RegisterDeliveryPage from './pages/auth/RegisterDeliveryPage';
-import TrackPage from './pages/TrackPage';
-import TrackResultPage from './pages/TrackResultPage';
 import AppLayout from './components/layouts/AppLayout';
 import SenderDashboardPage from './pages/sender/SenderDashboardPage';
 import SenderDeliveriesPage from './pages/sender/SenderDeliveriesPage';
@@ -45,17 +38,17 @@ function App() {
         <Routes>
           {/* EventNest — Public */}
           <Route element={<PublicLayout />}>
-            <Route path='/events' element={<CatalogPage />} />
+            <Route path='/' element={<CatalogPage />} />
             <Route path='/events/:slug' element={<EventDetailPage />} />
           </Route>
 
           {/* Legacy Public Routes */}
-          <Route path='/' element={<LandingPage/>}/>
+          {/* <Route path='/' element={<LandingPage/>}/>
           <Route path='/login' element={<LoginPage/>}/>
           <Route path='/register' element={<RegisterPage/>}/>
           <Route path='/register/delivery' element={<RegisterDeliveryPage/>}/>
           <Route path='/track' element={<TrackPage/>}/>
-          <Route path='/track/:trackingNumber' element={<TrackResultPage/>}/>
+          <Route path='/track/:trackingNumber' element={<TrackResultPage/>}/> */}
           
           {/* Protected Sender Routes */}
           <Route path='/sender' element={<AppLayout><Outlet /></AppLayout>}>
