@@ -1,0 +1,454 @@
+# ══════════════════════════════════════════════
+# Auth endpoints — /auth/*
+# ══════════════════════════════════════════════
+
+/auth/register:
+  post:
+    tags: [Auth]
+    summary: Register a new user
+    description: >
+      Creates a new account and signs the user in immediately.
+      Sets `access_token` and `refresh_token` as HTTP-only cookies.
+    operationId: register
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RegisterInput"
+    responses:
+      "201":
+        description: Account created — user is signed in.
+        headers:
+          Set-Cookie:
+            description: "Sets `access_token` and `refresh_token` HTTP-only cookies."
+            schema:
+              type: string
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/SuccessResponse"
+                - type: object
+                  properties:
+                    data:
+                      $ref: "#/components/schemas/User"
+            example:
+              success: true
+              data:
+                id: "550e8400-e29b-41d4-a716-446655440000"
+                first_name: Jean
+                last_name: Dupont
+                email: jean.dupont@example.com
+                phone: "+261340000000"
+                address: "12 Rue du Commerce, Antsiranana"
+                avatar_url: null
+                is_seller: false
+                onboarding_completed: false
+                role: BUYER
+                two_fa_enabled: false
+                created_at: "2026-04-07T12:00:00.000Z"
+              message: "Compte créé avec succès"
+      "409":
+        description: Email already in use.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+            example:
+              success: false
+              message: "Cet email est déjà utilisé"
+      "422":
+        $ref: "#/components/responses/ValidationError"
+      "429":
+        $ref: "#/components/responses/RateLimited"
+      "500":
+        $ref: "#/components/responses/InternalError"
+
+/auth/login:
+  post:
+    tags: [Auth]
+    summary: Sign in
+    description: >
+      Authenticates with email and password.
+
+
+      - **2FA disabled**: Sets auth cookies and returns the user profile.
+
+      - **2FA enabled**: Returns a `temp_token` and sends an OTP code by email.
+        Use `/auth/login/verify-2fa` to complete authentication.
+    operationId: login
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/LoginInput"
+    responses:
+      "200":
+        description: >
+          Authentication successful. Two possible response shapes depending on 2FA status.
+        headers:
+          Set-Cookie:
+            description: "Sets auth cookies (only when 2FA is **not** enabled)."
+            schema:
+              type: string
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/SuccessResponse"
+            examples:
+              without_2fa:
+                summary: 2FA disabled — direct login
+                value:
+                  success: true
+                  data:
+                    id: "550e8400-e29b-41d4-a716-446655440000"
+                    first_name: Jean
+                    last_name: Dupont
+                    email: jean.dupont@example.com
+                    phone: "+261340000000"
+                    address: null
+                    avatar_url: null
+                    is_seller: false
+                    onboarding_completed: false
+                    role: BUYER
+                    two_fa_enabled: false
+                    created_at: "2026-04-07T12:00:00.000Z"
+                  message: "Connexion réussie"
+              with_2fa:
+                summary: 2FA enabled — OTP sent
+                value:
+                  success: true
+                  data:
+                    requires_2fa: true
+                    temp_token: "eyJhbGciOiJIUzI1NiIs..."
+                  message: "Code de vérification envoyé par email"
+      "401":
+        description: Invalid credentials.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+            example:
+              success: false
+              message: "Email ou mot de passe incorrect"
+      "422":
+        $ref: "#/components/responses/ValidationError"
+      "429":
+        $ref: "#/components/responses/RateLimited"
+      "500":
+        $ref: "#/components/responses/InternalError"
+
+/auth/login/verify-2fa:
+  post:
+    tags: [Auth]
+    summary: Verify 2FA code during login
+    description: >
+      Completes the login flow when 2FA is enabled.
+      Requires the `temp_token` from the login response and the 6-digit OTP code sent by email.
+      On success, sets auth cookies.
+    operationId: verifyLogin2fa
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Verify2faInput"
+    responses:
+      "200":
+        description: 2FA verified — user is signed in.
+        headers:
+          Set-Cookie:
+            description: "Sets `access_token` and `refresh_token` HTTP-only cookies."
+            schema:
+              type: string
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/SuccessResponse"
+                - type: object
+                  properties:
+                    data:
+                      $ref: "#/components/schemas/User"
+            example:
+              success: true
+              data:
+                id: "550e8400-e29b-41d4-a716-446655440000"
+                first_name: Jean
+                last_name: Dupont
+                email: jean.dupont@example.com
+                phone: null
+                address: null
+                avatar_url: null
+                is_seller: false
+                onboarding_completed: false
+                role: BUYER
+                two_fa_enabled: true
+                created_at: "2026-04-07T12:00:00.000Z"
+              message: "Connexion réussie"
+      "400":
+        description: Missing temp_token or code.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+            example:
+              success: false
+              message: "Token temporaire et code OTP requis"
+      "401":
+        description: Invalid or expired temp_token / OTP code.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+            example:
+              success: false
+              message: "Token temporaire invalide ou expiré. Veuillez vous reconnecter."
+      "422":
+        $ref: "#/components/responses/ValidationError"
+      "429":
+        $ref: "#/components/responses/RateLimited"
+      "500":
+        $ref: "#/components/responses/InternalError"
+
+/auth/refresh:
+  post:
+    tags: [Auth]
+    summary: Refresh the access token
+    description: >
+      Rotates the token pair: revokes the current refresh token and issues
+      new `access_token` + `refresh_token` cookies.
+      The refresh token is read from the `refresh_token` cookie.
+    operationId: refresh
+    security:
+      - cookieAuth: []
+    responses:
+      "200":
+        description: Tokens refreshed successfully.
+        headers:
+          Set-Cookie:
+            description: "Sets new `access_token` and `refresh_token` cookies."
+            schema:
+              type: string
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/SuccessResponse"
+            example:
+              success: true
+              data: null
+              message: "Token renouvelé avec succès"
+      "401":
+        description: Refresh token missing, invalid, or expired.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+            example:
+              success: false
+              message: "Refresh token invalide ou expiré"
+      "500":
+        $ref: "#/components/responses/InternalError"
+
+/auth/logout:
+  post:
+    tags: [Auth]
+    summary: Sign out
+    description: >
+      Revokes the current refresh token and clears all auth cookies.
+    operationId: logout
+    security:
+      - cookieAuth: []
+    responses:
+      "200":
+        description: Signed out successfully.
+        headers:
+          Set-Cookie:
+            description: "Clears `access_token` and `refresh_token` cookies."
+            schema:
+              type: string
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/SuccessResponse"
+            example:
+              success: true
+              data: null
+              message: "Déconnexion réussie"
+      "401":
+        $ref: "#/components/responses/Unauthorized"
+      "500":
+        $ref: "#/components/responses/InternalError"
+
+/auth/me:
+  get:
+    tags: [Auth]
+    summary: Get current user profile
+    description: >
+      Returns the authenticated user's profile.
+      Requires a valid `access_token` cookie.
+    operationId: me
+    security:
+      - cookieAuth: []
+    responses:
+      "200":
+        description: User profile retrieved.
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/SuccessResponse"
+                - type: object
+                  properties:
+                    data:
+                      $ref: "#/components/schemas/User"
+            example:
+              success: true
+              data:
+                id: "550e8400-e29b-41d4-a716-446655440000"
+                first_name: Jean
+                last_name: Dupont
+                email: jean.dupont@example.com
+                phone: "+261340000000"
+                address: "12 Rue du Commerce, Antsiranana"
+                avatar_url: null
+                is_seller: false
+                onboarding_completed: false
+                role: BUYER
+                two_fa_enabled: false
+                created_at: "2026-04-07T12:00:00.000Z"
+              message: "Profil récupéré avec succès"
+      "401":
+        $ref: "#/components/responses/Unauthorized"
+      "500":
+        $ref: "#/components/responses/InternalError"
+
+/auth/2fa/enable:
+  post:
+    tags: [Auth – 2FA]
+    summary: Request 2FA activation
+    description: >
+      Sends a 6-digit OTP code to the authenticated user's email.
+      Use `/auth/2fa/confirm` with the received code to complete activation.
+    operationId: enable2fa
+    security:
+      - cookieAuth: []
+    responses:
+      "200":
+        description: OTP code sent by email.
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/SuccessResponse"
+            example:
+              success: true
+              data: null
+              message: "Code de vérification envoyé par email. Confirmez avec /auth/2fa/confirm"
+      "400":
+        description: 2FA already enabled.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+            example:
+              success: false
+              message: "Le 2FA est déjà activé sur votre compte"
+      "401":
+        $ref: "#/components/responses/Unauthorized"
+      "500":
+        $ref: "#/components/responses/InternalError"
+
+/auth/2fa/confirm:
+  post:
+    tags: [Auth – 2FA]
+    summary: Confirm 2FA activation
+    description: >
+      Verifies the OTP code and enables 2FA on the account.
+      The code must have been requested via `/auth/2fa/enable`.
+    operationId: confirm2fa
+    security:
+      - cookieAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Confirm2faInput"
+    responses:
+      "200":
+        description: 2FA successfully activated.
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/SuccessResponse"
+            example:
+              success: true
+              data: null
+              message: "Authentification à deux facteurs activée"
+      "400":
+        description: 2FA already enabled or invalid code.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+            example:
+              success: false
+              message: "Le 2FA est déjà activé sur votre compte"
+      "401":
+        $ref: "#/components/responses/Unauthorized"
+      "422":
+        $ref: "#/components/responses/ValidationError"
+      "500":
+        $ref: "#/components/responses/InternalError"
+
+/auth/2fa/disable:
+  post:
+    tags: [Auth – 2FA]
+    summary: Disable 2FA
+    description: >
+      Deactivates two-factor authentication on the account.
+      All existing refresh tokens are revoked, forcing a fresh login.
+      **Admin accounts cannot disable 2FA.**
+    operationId: disable2fa
+    security:
+      - cookieAuth: []
+    responses:
+      "200":
+        description: 2FA successfully disabled — all sessions revoked.
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/SuccessResponse"
+            example:
+              success: true
+              data: null
+              message: "Authentification à deux facteurs désactivée"
+      "400":
+        description: 2FA not enabled, or admin account.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+            examples:
+              not_enabled:
+                summary: 2FA not enabled
+                value:
+                  success: false
+                  message: "Le 2FA n'est pas activé sur votre compte"
+              admin_blocked:
+                summary: Admin accounts cannot disable 2FA
+                value:
+                  success: false
+                  message: "Les administrateurs ne peuvent pas désactiver le 2FA"
+      "401":
+        $ref: "#/components/responses/Unauthorized"
+      "500":
+        $ref: "#/components/responses/InternalError"

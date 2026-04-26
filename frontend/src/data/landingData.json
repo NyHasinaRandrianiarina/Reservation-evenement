@@ -1,0 +1,114 @@
+{
+  "stats": [
+    { "value": "2 400", "suffix": "+", "label": "Livraisons traitées", "icon": "Package" },
+    { "value": "98", "suffix": "%", "label": "Taux de livraison", "icon": "CheckCircle2" },
+    { "value": "< 30", "suffix": " min", "label": "Prise en charge moyenne", "icon": "Clock" }
+  ],
+  "features": {
+    "expediteur": {
+      "role": "Expéditeur",
+      "icon": "Package",
+      "items": [
+        "Soumettre une demande de livraison en quelques clics",
+        "Obtenir un numéro de suivi unique automatiquement",
+        "Suivre votre colis en temps réel via une timeline visuelle",
+        "Recevoir des notifications à chaque étape",
+        "Partager le suivi avec votre destinataire"
+      ]
+    },
+    "livreur": {
+      "role": "Livreur",
+      "icon": "Truck",
+      "items": [
+        "Voir les missions assignées avec tous les détails",
+        "Consulter les adresses de collecte et de livraison",
+        "Mettre à jour le statut en un clic (prise en charge → livré)",
+        "Consulter l'historique de toutes vos livraisons"
+      ]
+    },
+    "admin": {
+      "role": "Admin",
+      "icon": "LayoutDashboard",
+      "items": [
+        "Dashboard opérationnel avec KPIs en temps réel",
+        "Confirmer les demandes et assigner les livreurs",
+        "Gérer les comptes utilisateurs (activation / désactivation)",
+        "Consulter l'audit trail complet de chaque livraison"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "number": 1,
+      "title": "Dépôt",
+      "description": "L'expéditeur soumet sa demande de livraison avec les infos du colis",
+      "actor": "Expéditeur",
+      "icon": "Package"
+    },
+    {
+      "number": 2,
+      "title": "Confirmation",
+      "description": "L'admin valide la demande et assigne un livreur disponible",
+      "actor": "Admin",
+      "icon": "CheckCircle2"
+    },
+    {
+      "number": 3,
+      "title": "Livraison",
+      "description": "Le livreur prend en charge le colis et l'achemine au destinataire",
+      "actor": "Livreur",
+      "icon": "Truck"
+    },
+    {
+      "number": 4,
+      "title": "Suivi",
+      "description": "Tout le monde suit l'avancement en temps réel via le numéro de suivi",
+      "actor": "Tout le monde",
+      "icon": "Eye"
+    }
+  ],
+  "timeline": [
+    {
+      "status": "PENDING",
+      "label": "Demande soumise",
+      "actor": "Expéditeur",
+      "icon": "Clock",
+      "colorClass": "bg-yellow-500/15 text-yellow-600 border-yellow-500/30"
+    },
+    {
+      "status": "CONFIRMED",
+      "label": "Validée par l'agence",
+      "actor": "Admin",
+      "icon": "CheckCircle2",
+      "colorClass": "bg-blue-500/15 text-blue-600 border-blue-500/30"
+    },
+    {
+      "status": "ASSIGNED",
+      "label": "Livreur assigné",
+      "actor": "Admin",
+      "icon": "UserCheck",
+      "colorClass": "bg-purple-500/15 text-purple-600 border-purple-500/30"
+    },
+    {
+      "status": "IN_TRANSIT",
+      "label": "Colis en route",
+      "actor": "Livreur",
+      "icon": "Truck",
+      "colorClass": "bg-orange-500/15 text-orange-600 border-orange-500/30"
+    },
+    {
+      "status": "DELIVERED",
+      "label": "Livré au destinataire",
+      "actor": "Livreur",
+      "icon": "PackageCheck",
+      "colorClass": "bg-green-500/15 text-green-600 border-green-500/30"
+    },
+    {
+      "status": "COMPLETED",
+      "label": "Livraison clôturée",
+      "actor": "Admin / Expéditeur",
+      "icon": "CircleCheckBig",
+      "colorClass": "bg-emerald-500/15 text-emerald-600 border-emerald-500/30"
+    }
+  ]
+}

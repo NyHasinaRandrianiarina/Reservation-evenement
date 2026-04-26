@@ -1,0 +1,5 @@
+enum OtpType {
+  TWO_FA
+  PASSWORD_RESET
+  EMAIL_VERIFICATION
+}

@@ -1,0 +1,195 @@
+# ─────────────────────────────────────────────
+# Enums
+# ─────────────────────────────────────────────
+
+Role:
+  type: string
+  enum: [BUYER, SELLER, ADMIN]
+  example: BUYER
+
+# ─────────────────────────────────────────────
+# User
+# ─────────────────────────────────────────────
+
+User:
+  type: object
+  description: Public user profile (sensitive fields excluded).
+  properties:
+    id:
+      type: string
+      format: uuid
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    first_name:
+      type: string
+      example: Jean
+    last_name:
+      type: string
+      example: Dupont
+    email:
+      type: string
+      format: email
+      example: jean.dupont@example.com
+    phone:
+      type: string
+      nullable: true
+      example: "+261340000000"
+    address:
+      type: string
+      nullable: true
+      example: "12 Rue du Commerce, Antsiranana"
+    avatar_url:
+      type: string
+      nullable: true
+      example: null
+    is_seller:
+      type: boolean
+      example: false
+    onboarding_completed:
+      type: boolean
+      example: false
+    role:
+      $ref: "#/components/schemas/Role"
+    two_fa_enabled:
+      type: boolean
+      example: false
+    created_at:
+      type: string
+      format: date-time
+      example: "2026-04-07T12:00:00.000Z"
+
+# ─────────────────────────────────────────────
+# Request bodies
+# ─────────────────────────────────────────────
+
+RegisterInput:
+  type: object
+  required: [first_name, last_name, email, password]
+  properties:
+    first_name:
+      type: string
+      minLength: 2
+      maxLength: 50
+      example: Jean
+    last_name:
+      type: string
+      minLength: 2
+      maxLength: 50
+      example: Dupont
+    email:
+      type: string
+      format: email
+      example: jean.dupont@example.com
+    password:
+      type: string
+      format: password
+      minLength: 6
+      example: "monMotDePasse123"
+    phone:
+      type: string
+      description: Optional phone number.
+      example: "+261340000000"
+    address:
+      type: string
+      maxLength: 255
+      description: Optional address.
+      example: "12 Rue du Commerce, Antsiranana"
+    is_seller:
+      type: boolean
+      description: Set to true to register as a seller.
+      default: false
+
+LoginInput:
+  type: object
+  required: [email, password]
+  properties:
+    email:
+      type: string
+      format: email
+      example: jean.dupont@example.com
+    password:
+      type: string
+      format: password
+      example: "monMotDePasse123"
+
+Verify2faInput:
+  type: object
+  required: [temp_token, code]
+  properties:
+    temp_token:
+      type: string
+      description: Temporary JWT token received from the login endpoint when 2FA is required.
+      example: "eyJhbGciOiJIUzI1NiIs..."
+    code:
+      type: string
+      pattern: "^[0-9]{6}$"
+      description: 6-digit OTP code sent by email.
+      example: "482910"
+
+Confirm2faInput:
+  type: object
+  required: [code]
+  properties:
+    code:
+      type: string
+      pattern: "^[0-9]{6}$"
+      description: 6-digit OTP code sent by email.
+      example: "482910"
+
+# ─────────────────────────────────────────────
+# API Response wrappers
+# ─────────────────────────────────────────────
+
+SuccessResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    data:
+      description: Response payload (varies by endpoint).
+    message:
+      type: string
+      example: "Opération réussie"
+    meta:
+      type: object
+      description: Optional metadata (pagination, etc.).
+
+ErrorResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: "An error occurred"
+    errors:
+      type: array
+      description: Field-level validation errors (when applicable).
+      items:
+        $ref: "#/components/schemas/FieldError"
+
+FieldError:
+  type: object
+  properties:
+    field:
+      type: string
+      example: email
+    message:
+      type: string
+      example: "Format d'email invalide"
+
+# ─────────────────────────────────────────────
+# Auth-specific response payloads
+# ─────────────────────────────────────────────
+
+LoginRequires2faPayload:
+  type: object
+  properties:
+    requires_2fa:
+      type: boolean
+      example: true
+    temp_token:
+      type: string
+      description: Temporary token to pass to the 2FA verification endpoint.
+      example: "eyJhbGciOiJIUzI1NiIs..."

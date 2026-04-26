@@ -1,0 +1,47 @@
+enum DeliveryStatus {
+  PENDING
+  CONFIRMED
+  ASSIGNED
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+}
+
+model Delivery {
+  id              String         @id @default(uuid())
+  tracking_number String         @unique
+  status          DeliveryStatus @default(PENDING)
+  description     String         @db.Text
+  weight          Float?
+  pickup_address  String
+  delivery_address String
+  recipient_name  String
+  recipient_phone String
+
+  sender_id       String
+  driver_id       String?
+
+  created_at      DateTime       @default(now())
+  updated_at      DateTime       @updatedAt
+
+  sender          User           @relation("SenderDeliveries", fields: [sender_id], references: [id])
+  driver          User?          @relation("DriverDeliveries", fields: [driver_id], references: [id])
+  events          DeliveryEvent[]
+
+  @@index([tracking_number])
+  @@index([sender_id])
+  @@index([driver_id])
+}
+
+model DeliveryEvent {
+  id          String         @id @default(uuid())
+  delivery_id String
+  status      DeliveryStatus
+  actor_id    String?
+  note        String?        @db.Text
+  created_at  DateTime       @default(now())
+
+  delivery    Delivery       @relation(fields: [delivery_id], references: [id], onDelete: Cascade)
+
+  @@index([delivery_id])
+}

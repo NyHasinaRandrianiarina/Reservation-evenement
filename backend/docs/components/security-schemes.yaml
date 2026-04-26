@@ -1,0 +1,7 @@
+cookieAuth:
+  type: apiKey
+  in: cookie
+  name: access_token
+  description: >
+    HTTP-only cookie containing the JWT access token.
+    Set automatically on login/register. Short-lived (15 min).

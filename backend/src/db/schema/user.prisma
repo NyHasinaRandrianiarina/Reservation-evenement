@@ -1,0 +1,23 @@
+model User {
+  id                   String   @id @default(uuid())
+  first_name           String
+  last_name            String
+  email                String   @unique
+  password             String
+  avatar_url           String?
+  phone                String?
+  address              String?
+  zone                 String?
+  onboarding_completed Boolean  @default(false)
+  role                 Role     @default(SENDER)
+  two_fa_enabled       Boolean  @default(false)
+  is_active            Boolean  @default(true)
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  // Relations
+  refresh_tokens RefreshToken[]
+  otp_codes      OtpCode[]
+  deliveries_as_sender Delivery[] @relation("SenderDeliveries")
+  deliveries_as_driver Delivery[] @relation("DriverDeliveries")
+}

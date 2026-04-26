@@ -1,0 +1,67 @@
+# Common HTTP error responses, reusable across all endpoints.
+# Usage in paths:  $ref: "#/components/responses/Unauthorized"
+
+Unauthorized:
+  description: Authentication required — missing or invalid access token cookie.
+  content:
+    application/json:
+      schema:
+        $ref: "#/components/schemas/ErrorResponse"
+      example:
+        success: false
+        message: "Authentification requise"
+
+Forbidden:
+  description: Authenticated but insufficient permissions.
+  content:
+    application/json:
+      schema:
+        $ref: "#/components/schemas/ErrorResponse"
+      example:
+        success: false
+        message: "Vous n'avez pas les permissions nécessaires pour cette action"
+
+NotFound:
+  description: Resource not found.
+  content:
+    application/json:
+      schema:
+        $ref: "#/components/schemas/ErrorResponse"
+      example:
+        success: false
+        message: "Ressource introuvable"
+
+ValidationError:
+  description: Request body validation failed (422).
+  content:
+    application/json:
+      schema:
+        $ref: "#/components/schemas/ErrorResponse"
+      example:
+        success: false
+        message: "Erreurs de validation"
+        errors:
+          - field: email
+            message: "Format d'email invalide"
+          - field: password
+            message: "Le mot de passe doit faire au moins 6 caractères"
+
+RateLimited:
+  description: Too many requests — rate limit exceeded.
+  content:
+    application/json:
+      schema:
+        $ref: "#/components/schemas/ErrorResponse"
+      example:
+        success: false
+        message: "Trop de tentatives, veuillez réessayer plus tard"
+
+InternalError:
+  description: Unexpected server error (500).
+  content:
+    application/json:
+      schema:
+        $ref: "#/components/schemas/ErrorResponse"
+      example:
+        success: false
+        message: "Une erreur interne est survenue"
