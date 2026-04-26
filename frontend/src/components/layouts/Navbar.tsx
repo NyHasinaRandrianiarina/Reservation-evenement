@@ -23,7 +23,7 @@ const getInitials = (firstName?: string, lastName?: string) => {
   return `${firstName?.charAt(0) || ""}${lastName?.charAt(0) || ""}`.toUpperCase();
 };
 
-export function Navbar() {
+export default function Navbar() {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
   const navigate = useNavigate();
@@ -67,13 +67,13 @@ export function Navbar() {
                   key={idx}
                   onClick={() => navigate(item.link)}
                   className={cn(
-                    "px-5 py-2 text-[10px] font-black tracking-[0.2em] uppercase transition-all duration-300 cursor-pointer relative group",
-                    location.pathname === item.link ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                    "px-5 py-2 text-[10px] font-bold tracking-[0.2em] uppercase transition-all duration-500 cursor-pointer relative group",
+                    location.pathname === item.link ? "text-white" : "text-white/50 hover:text-white"
                   )}
                 >
                   {item.name}
                   {location.pathname === item.link && (
-                    <motion.div layoutId="nav-underline" className="absolute bottom-0 left-5 right-5 h-0.5 bg-primary rounded-full" />
+                    <motion.div layoutId="nav-underline" className="absolute bottom-0 left-5 right-5 h-[1px] bg-white" />
                   )}
                 </button>
               ))}
@@ -82,25 +82,25 @@ export function Navbar() {
 
           <div className="flex items-center gap-6 z-50">
             {/* Utility Icons Section */}
-            <div className="flex items-center gap-1 border-r border-border/10 pr-6 mr-2">
+            <div className="flex items-center gap-1 border-r border-white/10 pr-6 mr-2">
               <ThemeToggle variant="homeNav" />
               
               <button
-                className="w-10 h-10 flex items-center justify-center rounded-full text-muted-foreground hover:text-primary transition-all duration-300 cursor-pointer hover:bg-primary/5"
+                className="w-10 h-10 flex items-center justify-center rounded-full text-white/60 hover:text-white transition-all duration-500 cursor-pointer hover:bg-white/5"
                 aria-label="Rechercher"
               >
-                <Search size={18} />
+                <Search size={18} strokeWidth={1.5} />
               </button>
 
               {isAuthenticated && (
                 <button
                   onClick={toggleCart}
-                  className="relative w-10 h-10 flex items-center justify-center rounded-full text-muted-foreground hover:text-primary transition-all duration-300 cursor-pointer hover:bg-primary/5"
+                  className="relative w-10 h-10 flex items-center justify-center rounded-full text-white/60 hover:text-white transition-all duration-500 cursor-pointer hover:bg-white/5"
                   aria-label="Panier"
                 >
-                  <ShoppingBag size={18} />
+                  <ShoppingBag size={18} strokeWidth={1.5} />
                   {totalItems > 0 && (
-                    <span className="absolute top-2 right-2 w-4 h-4 bg-primary text-primary-foreground text-[9px] font-black flex items-center justify-center rounded-full shadow-lg border border-background">
+                    <span className="absolute top-2 right-2 w-4 h-4 bg-white text-black text-[9px] font-bold flex items-center justify-center rounded-full shadow-lg">
                       {totalItems}
                     </span>
                   )}
@@ -112,10 +112,10 @@ export function Navbar() {
             <div className="hidden xl:flex items-center gap-3">
               <button
                 onClick={() => navigate(isAuthenticated && user?.is_seller ? "/creer-evenement" : "/devenir-vendeur")}
-                className="flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-foreground text-background hover:bg-primary hover:text-primary-foreground transition-all duration-500 group cursor-pointer shadow-sm"
+                className="flex items-center gap-2.5 px-6 py-2.5 border border-white/20 hover:border-white rounded-full bg-transparent text-white hover:bg-white hover:text-black transition-all duration-700 group cursor-pointer shadow-none"
               >
-                <PlusCircle size={16} className="group-hover:rotate-90 transition-transform duration-500" />
-                <span className="text-[10px] font-black tracking-widest uppercase">
+                <PlusCircle size={14} className="group-hover:rotate-90 transition-transform duration-700" strokeWidth={1.5} />
+                <span className="text-[9px] font-bold tracking-[0.2em] uppercase">
                   {isAuthenticated && user?.is_seller ? "Créer un événement" : "Publier"}
                 </span>
               </button>
@@ -123,7 +123,7 @@ export function Navbar() {
               {!isAuthenticated && (
                 <button
                   onClick={() => navigate("/devenir-vendeur")}
-                  className="px-4 py-2 text-[9px] font-black tracking-widest uppercase text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                  className="px-4 py-2 text-[9px] font-bold tracking-[0.2em] uppercase text-white/50 hover:text-white transition-colors cursor-pointer"
                 >
                   Espace Organisateur
                 </button>
@@ -135,13 +135,13 @@ export function Navbar() {
               <div className="flex items-center gap-2 ml-2">
                 <button 
                   onClick={() => navigate("/connexion")}
-                  className="px-5 py-2.5 text-[10px] font-black tracking-widest uppercase text-foreground hover:text-primary transition-colors cursor-pointer"
+                  className="px-5 py-2.5 text-[9px] font-bold tracking-[0.2em] uppercase text-white hover:text-white/70 transition-colors cursor-pointer"
                 >
                   Connexion
                 </button>
                 <Button
-                  variant="primary"
-                  className="rounded-full px-6 h-10 font-bold shadow-lg shadow-primary/10 hover:shadow-primary/30 transition-all text-[11px] uppercase tracking-widest"
+                  variant="outline"
+                  className="rounded-full px-6 h-10 bg-white text-black border-none hover:bg-white/90 font-bold shadow-lg transition-all text-[10px] uppercase tracking-[0.2em]"
                   onClick={() => navigate("/inscription")}
                 >
                   S'inscrire
@@ -151,75 +151,76 @@ export function Navbar() {
               <div className="relative ml-2" ref={userMenuRef}>
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center gap-3 pl-1 pr-3 py-1 rounded-full border border-border/40 hover:border-primary/50 transition-all bg-background/40 backdrop-blur-sm cursor-pointer group"
+                  className="flex items-center gap-3 pl-1 pr-3 py-1 rounded-full border border-white/20 hover:border-white/50 transition-all bg-black/40 backdrop-blur-md cursor-pointer group"
                 >
-                  <div className="w-8 h-8 rounded-full overflow-hidden border border-border/50 group-hover:border-primary transition-all shadow-sm">
+                  <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 group-hover:border-white/40 transition-all">
                     {user?.avatar_url ? (
                       <img src={user.avatar_url} alt="Profil" className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-linear-to-br from-primary to-primary/80 flex items-center justify-center">
-                        <span className="text-[10px] font-black text-primary-foreground">
+                      <div className="w-full h-full bg-white flex items-center justify-center">
+                        <span className="text-[10px] font-bold text-black">
                           {getInitials(user?.first_name, user?.last_name)}
                         </span>
                       </div>
                     )}
                   </div>
                   <div className="flex flex-col items-start leading-none">
-                    <span className="text-[10px] font-bold text-foreground">
+                    <span className="text-[10px] font-bold text-white">
                       {user?.first_name}
                     </span>
-                    <span className="text-[8px] font-black text-primary uppercase tracking-tighter">
+                    <span className="text-[8px] font-bold text-white/50 uppercase tracking-[0.2em]">
                       {user?.is_seller ? "Organisateur" : "Client"}
                     </span>
                   </div>
-                  <ChevronDown size={12} className={cn("text-muted-foreground transition-transform duration-300", isUserMenuOpen && "rotate-180")} />
+                  <ChevronDown size={12} className={cn("text-white/40 transition-transform duration-500", isUserMenuOpen && "rotate-180")} />
                 </button>
 
-                {/* Dropdown User Menu — Same as previous but with slightly more refined entries */}
+                {/* Dropdown User Menu — Refined for MasterClass feel */}
                 <AnimatePresence>
                   {isUserMenuOpen && (
                     <motion.div 
-                      initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                      initial={{ opacity: 0, y: 15, scale: 0.98 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                      className="absolute right-0 mt-4 w-72 bg-background/95 backdrop-blur-2xl rounded-[2.5rem] border border-border/40 shadow-2xl overflow-hidden origin-top-right z-[100]"
+                      exit={{ opacity: 0, y: 15, scale: 0.98 }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      className="absolute right-0 mt-4 w-72 bg-black/80 backdrop-blur-3xl rounded-[2rem] border border-white/10 shadow-2xl overflow-hidden origin-top-right z-[100]"
                     >
-                      <div className="px-8 py-8 border-b border-border/40 bg-primary/5">
+                      <div className="px-8 py-8 border-b border-white/10">
                         <div className="flex items-center gap-4 mb-4">
-                           <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-background shadow-lg">
-                              <img src={user?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${user?.first_name}`} alt="avatar" />
+                           <div className="w-14 h-14 rounded-full overflow-hidden border border-white/20">
+                              <img src={user?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${user?.first_name}`} alt="avatar" className="w-full h-full object-cover grayscale opacity-80" />
                            </div>
                            <div className="flex flex-col">
-                              <p className="text-base font-bold text-foreground leading-tight">{user?.first_name} {user?.last_name}</p>
+                              <p className="text-base font-serif font-light text-white leading-tight">{user?.first_name} {user?.last_name}</p>
                               <div className={cn(
-                                "inline-flex px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest mt-1",
-                                user?.is_seller ? "bg-primary text-primary-foreground" : "bg-foreground text-background"
+                                "inline-flex px-2 py-0.5 rounded-sm text-[8px] font-bold uppercase tracking-[0.2em] mt-2 border",
+                                user?.is_seller ? "bg-white text-black border-white" : "bg-transparent text-white/60 border-white/20"
                               )}>
                                 {user?.is_seller ? "Organisateur" : "Membre"}
                               </div>
                            </div>
                         </div>
-                        <p className="text-xs text-muted-foreground truncate opacity-60 font-medium">{user?.email}</p>
+                        <p className="text-[10px] text-white/40 truncate tracking-widest">{user?.email}</p>
                       </div>
 
                       <div className="p-4 flex flex-col gap-1">
                         {user?.is_seller && (
-                          <button onClick={() => { setIsUserMenuOpen(false); navigate("/espace-vendeur"); }} className="flex items-center gap-4 px-5 py-4 text-sm hover:bg-primary/5 rounded-[1.5rem] transition-all w-full text-left font-medium group cursor-pointer text-primary">
-                            <Store size={18} />
-                            <span>Dashboard Organisateur</span>
+                          <button onClick={() => { setIsUserMenuOpen(false); navigate("/espace-vendeur"); }} className="flex items-center gap-4 px-5 py-4 text-xs hover:bg-white/5 rounded-2xl transition-all w-full text-left font-light group cursor-pointer text-white">
+                            <Store size={16} strokeWidth={1.5} className="text-white/60 group-hover:text-white transition-colors" />
+                            <span className="tracking-wide">Dashboard Organisateur</span>
                           </button>
                         )}
-                        <button onClick={() => { setIsUserMenuOpen(false); navigate("/commandes"); }} className="flex items-center gap-4 px-5 py-4 text-sm hover:bg-muted rounded-[1.5rem] transition-all w-full text-left font-medium group cursor-pointer">
-                          <Package size={18} className="text-muted-foreground" />
-                          <span>Mes réservations</span>
+                        <button onClick={() => { setIsUserMenuOpen(false); navigate("/commandes"); }} className="flex items-center gap-4 px-5 py-4 text-xs hover:bg-white/5 rounded-2xl transition-all w-full text-left font-light group cursor-pointer text-white">
+                          <Package size={16} strokeWidth={1.5} className="text-white/60 group-hover:text-white transition-colors" />
+                          <span className="tracking-wide">Mes réservations</span>
                         </button>
-                        <button onClick={() => { setIsUserMenuOpen(false); navigate("/profil"); }} className="flex items-center gap-4 px-5 py-4 text-sm hover:bg-muted rounded-[1.5rem] transition-all w-full text-left font-medium group cursor-pointer">
-                          <User size={18} className="text-muted-foreground" />
-                          <span>Mon Profil</span>
+                        <button onClick={() => { setIsUserMenuOpen(false); navigate("/profil"); }} className="flex items-center gap-4 px-5 py-4 text-xs hover:bg-white/5 rounded-2xl transition-all w-full text-left font-light group cursor-pointer text-white">
+                          <User size={16} strokeWidth={1.5} className="text-white/60 group-hover:text-white transition-colors" />
+                          <span className="tracking-wide">Mon Profil</span>
                         </button>
                       </div>
 
-                      <div className="p-6 pt-2 bg-muted/20">
+                      <div className="p-6 pt-2">
                         <button
                           onClick={async () => {
                             setIsUserMenuOpen(false);
@@ -230,9 +231,9 @@ export function Navbar() {
                               // ignore error or handle
                              }
                           }}
-                          className="flex items-center justify-center gap-2 h-12 text-[10px] font-black text-destructive hover:bg-destructive/10 rounded-[1.5rem] transition-all w-full uppercase tracking-widest"
+                          className="flex items-center justify-center gap-2 h-12 text-[9px] font-bold text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-2xl transition-all w-full uppercase tracking-[0.2em]"
                         >
-                          <LogOut size={14} />
+                          <LogOut size={14} strokeWidth={1.5} />
                           Déconnexion
                         </button>
                       </div>

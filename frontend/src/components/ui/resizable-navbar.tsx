@@ -111,16 +111,16 @@ export const NavBody = ({ children, className, visible, isHomePage }: NavBodyPro
         width: visible ? "fit-content" : "100%",
         y: visible ? 20 : 0,
         backgroundColor: visible
-          ? "rgba(var(--background-rgb, 255 255 255) / 0.85)"
+          ? "rgba(0, 0, 0, 0.65)"
           : "transparent",
-        backdropFilter: visible ? "blur(20px)" : "blur(0px)",
+        backdropFilter: visible ? "blur(24px)" : "blur(0px)",
         borderRadius: visible ? "9999px" : "0px",
         paddingLeft: visible ? "20px" : "0px",
         paddingRight: visible ? "20px" : "0px",
         paddingTop: visible ? "8px" : "24px",
         paddingBottom: visible ? "8px" : "24px",
         boxShadow: visible
-          ? "0 20px 40px rgba(0, 0, 0, 0.05), 0 1px 1px rgba(0, 0, 0, 0.02)"
+          ? "0 20px 40px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(255, 255, 255, 0.1)"
           : "0 0px 0px rgba(0, 0, 0, 0)",
       }}
       transition={{
@@ -133,8 +133,8 @@ export const NavBody = ({ children, className, visible, isHomePage }: NavBodyPro
         "group/nav relative z-60 mx-auto hidden lg:flex flex-row items-center",
         isHomePage ? "is-home" : "not-home",
         visible
-          ? "border border-border/40 is-visible"
-          : "border-b border-border/5 not-visible",
+          ? "border border-white/10 is-visible"
+          : "border-b border-transparent not-visible",
         className,
       )}
     >
@@ -194,9 +194,9 @@ export const MobileNav = ({ children, className, visible, isHomePage }: MobileNa
   return (
     <motion.div
       animate={{
-        backdropFilter: visible ? "blur(10px)" : "none",
+        backdropFilter: visible ? "blur(16px)" : "none",
         boxShadow: visible
-          ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
+          ? "0 20px 40px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(255, 255, 255, 0.1)"
           : "none",
         width: visible ? "90%" : "100%",
         paddingRight: visible ? "12px" : "0px",
@@ -211,7 +211,7 @@ export const MobileNav = ({ children, className, visible, isHomePage }: MobileNa
       }}
       className={cn(
         "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between bg-transparent px-0 py-2 lg:hidden",
-        visible && "bg-background/80 backdrop-blur-md border border-border shadow-sm",
+        visible && "bg-black/80 backdrop-blur-md border border-white/10 shadow-xl",
         className,
       )}
     >
@@ -264,17 +264,17 @@ export const MobileNavMenu = ({
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed inset-0 z-50 flex flex-col bg-background/95 backdrop-blur-2xl"
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="fixed inset-0 z-50 flex flex-col bg-black/95 backdrop-blur-3xl text-white"
         >
           {/* Header interne pour garder le logo et le bouton fermer en haut */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border/40">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
             <NavbarLogo />
             <button 
               onClick={onClose}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-muted/50"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-all"
             >
-              <IconX size={20} className="text-foreground" />
+              <IconX size={20} stroke={1.5} />
             </button>
           </div>
 
@@ -282,12 +282,12 @@ export const MobileNavMenu = ({
             {children}
             
             {/* Footer du menu mobile - Signature Lux */}
-            <div className="mt-auto pt-10 pb-6 border-t border-border/40">
-              <p className="text-[10px] font-black tracking-[0.3em] uppercase text-muted-foreground/50 mb-4">
+            <div className="mt-auto pt-10 pb-6 border-t border-white/10 text-center">
+              <p className="text-[10px] font-bold tracking-[0.4em] uppercase text-white/50 mb-4">
                 EventNest
               </p>
-              <p className="text-xs font-serif italic text-foreground/60">
-                L'excellence pour vos moments inoubliables.
+              <p className="text-xs font-serif italic text-white/40">
+                L'art de vivre des moments d'exception.
               </p>
             </div>
           </div>
@@ -313,25 +313,19 @@ export const MobileNavToggle = ({
 
 export const NavbarLogo = ({ visible, isHomePage }: { visible?: boolean, isHomePage?: boolean }) => {
   return (
-    <Link to="/" className="flex items-center gap-2.5 group/logo py-2 shrink-0">
-      <div className="relative">
-        <div className="w-9 h-9 rounded-xl bg-primary/20 flex items-center justify-center transition-all duration-500 group-hover/logo:rotate-12 group-hover/logo:scale-110">
-          <Package size={20} className="text-primary" />
-        </div>
-        <div className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full border-2 border-background animate-pulse" />
-      </div>
+    <Link to="/" className="flex items-center gap-3 group/logo py-2 shrink-0">
       <div className="flex flex-col -gap-1">
         <span className={cn(
-          "font-serif italic text-xl font-semibold tracking-tighter transition-colors leading-none",
-          (visible || !isHomePage) ? "text-foreground" : "text-white"
+          "font-serif text-2xl font-light tracking-tight transition-colors leading-none",
+          (visible || !isHomePage) ? "text-white" : "text-white"
         )}>
           EventNest
         </span>
         <span className={cn(
-          "text-[8px] font-black tracking-[0.3em] uppercase opacity-50 transition-colors",
-          (visible || !isHomePage) ? "text-foreground" : "text-white"
+          "text-[7px] font-bold tracking-[0.4em] uppercase opacity-60 transition-colors pl-0.5",
+          (visible || !isHomePage) ? "text-white/60" : "text-white/60"
         )}>
-          Premium Events
+          Collection Privée
         </span>
       </div>
     </Link>

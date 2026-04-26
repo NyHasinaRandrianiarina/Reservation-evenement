@@ -67,32 +67,59 @@ function useDebounce<T>(value: T, delay: number): T {
 // ═══════════════════════════════════════════════
 function HeroBanner() {
   return (
-    <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-background py-20 px-6">
-      <BackgroundRippleEffect />
-      <div className="max-w-5xl mx-auto text-center relative z-10">
+    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-black py-20 px-6">
+      {/* Cinematic Background */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-linear-to-b from-black/40 via-black/60 to-black z-10" />
+        <motion.div
+          animate={{ scale: [1, 1.05, 1] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="w-full h-full"
+        >
+          <img 
+            src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop" 
+            alt="Event Background" 
+            className="w-full h-full object-cover opacity-50"
+          />
+        </motion.div>
+      </div>
+
+      <div className="max-w-5xl mx-auto text-center relative z-20 mt-12">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-8">
-            <Sparkles size={12} className="animate-pulse" />
-            L'excellence événementielle
+          <div className="inline-flex items-center gap-3 px-4 py-1.5 mb-8">
+            <div className="w-8 h-[1px] bg-white/40" />
+            <span className="text-white/80 text-[10px] font-black uppercase tracking-[0.3em]">
+              La Collection Privée
+            </span>
+            <div className="w-8 h-[1px] bg-white/40" />
           </div>
           
-          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-serif italic font-medium text-foreground tracking-tighter leading-[1.1] mb-8">
-            Vivez des moments <br />
-            <span className="text-primary font-sans not-italic font-black uppercase tracking-tighter">
-              D'exception
-            </span>
+          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-serif font-light text-white tracking-tight leading-[1.1] mb-8 drop-shadow-2xl">
+            L'art de vivre des <br />
+            <span className="italic opacity-90">moments d'exception.</span>
           </h1>
           
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-light">
-            Une sélection exclusive des événements les plus prestigieux. 
-            Accédez à l'inaccessible.
+          <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed font-light">
+            Découvrez une sélection rigoureuse d'événements exclusifs. 
+            Des masterclasses, des soirées privées, et des expériences inoubliables.
           </p>
         </motion.div>
       </div>
+
+      {/* Subtle scroll indicator */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5, duration: 1 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2"
+      >
+        <span className="text-[9px] uppercase tracking-[0.3em] text-white/40 font-bold">Découvrir</span>
+        <div className="w-[1px] h-12 bg-linear-to-b from-white/40 to-transparent" />
+      </motion.div>
     </section>
   );
 }
@@ -155,63 +182,53 @@ function FilterBar({
 
   return (
     <div className={cn(
-      "z-40 transition-all duration-500 w-full",
-      isSticky ? "fixed top-0 left-0 px-4 py-3" : "relative px-6 py-8"
+      "z-40 transition-all duration-700 w-full",
+      isSticky ? "fixed top-6 left-0 px-4" : "relative px-6 -mt-10"
     )}>
       <motion.div 
         layout
         className={cn(
-          "max-w-7xl mx-auto transition-all duration-500",
+          "max-w-4xl mx-auto transition-all duration-700 glass rounded-[2rem]",
           isSticky 
-            ? "bg-background/80 backdrop-blur-2xl border border-border/40 shadow-2xl rounded-full p-2 pl-6" 
-            : "bg-transparent p-0"
+            ? "bg-black/60 shadow-2xl p-2 pl-6 border-white/10" 
+            : "bg-black/40 p-2 pl-6 shadow-xl border-white/10"
         )}
       >
         <div className="flex items-center gap-4">
-          {/* Search — Toujours visible mais plus compacte en sticky */}
+          {/* Search — Minimalist & elegant */}
           <div className="relative flex-1 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-white transition-colors" />
             <Input
               value={search}
               onChange={(e) => onSearchChange(e.target.value)}
-              placeholder={isSticky ? "Rechercher..." : "Rechercher une expérience…"}
-              className={cn(
-                "pl-12 rounded-full border-border/40 bg-background/50 focus:bg-background transition-all h-10 lg:h-12",
-                isSticky && "h-10 border-transparent bg-transparent focus:bg-transparent"
-              )}
+              placeholder="Que recherchez-vous ?"
+              className="pl-14 rounded-full border-transparent bg-transparent focus:bg-white/5 text-white placeholder:text-white/40 transition-all h-12 lg:h-14 text-base font-light outline-none ring-0 focus-visible:ring-0 shadow-none"
             />
           </div>
-          
-          {/* Desktop Filters — On cache les Pills en mode Sticky pour gagner de la place, sauf si on a de la largeur */}
-          {!isSticky && (
-            <div className="hidden lg:block flex-1 overflow-hidden">
-               <CategoryPills />
-            </div>
-          )}
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 pr-2">
              <div className="hidden md:flex items-center gap-2">
                 {/* Selects seulement si pas sticky ou sur grand écran */}
                 {!isSticky && (
                   <>
                     <Select value={dateRange} onValueChange={onDateRangeChange}>
-                      <SelectTrigger className="w-36 h-12 rounded-full border-border/40 bg-background/50">
+                      <SelectTrigger className="w-36 h-12 rounded-full border-transparent bg-white/5 hover:bg-white/10 text-white font-medium text-sm transition-colors focus:ring-0 shadow-none">
                         <SelectValue placeholder="Date" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-black/90 backdrop-blur-xl border-white/10 text-white">
                         {DATE_FILTER_OPTIONS.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                          <SelectItem key={opt.value} value={opt.value} className="focus:bg-white/10">{opt.label}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
 
                     <Select value={priceType} onValueChange={onPriceTypeChange}>
-                      <SelectTrigger className="w-32 h-12 rounded-full border-border/40 bg-background/50">
+                      <SelectTrigger className="w-32 h-12 rounded-full border-transparent bg-white/5 hover:bg-white/10 text-white font-medium text-sm transition-colors focus:ring-0 shadow-none">
                         <SelectValue placeholder="Prix" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-black/90 backdrop-blur-xl border-white/10 text-white">
                         {PRICE_FILTER_OPTIONS.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                          <SelectItem key={opt.value} value={opt.value} className="focus:bg-white/10">{opt.label}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -219,27 +236,24 @@ function FilterBar({
                 )}
              </div>
 
-             {/* Bouton Filtre Global (toujours présent en sticky pour l'UX) */}
+             {/* Bouton Filtre Global */}
              <Button 
-                variant={isSticky ? "primary" : "outline"}
-                className={cn(
-                  "rounded-full gap-2 transition-all",
-                  isSticky ? "h-10 px-6 shadow-lg" : "h-12 px-6"
-                )}
+                variant="outline"
+                className="rounded-full gap-2 transition-all h-12 px-6 border-transparent bg-white text-black hover:bg-white/90 hover:text-black font-semibold shadow-lg"
                 onClick={() => setMobileFiltersOpen(true)}
               >
-                <SlidersHorizontal size={16} />
-                <span className="hidden sm:inline text-[10px] font-black uppercase tracking-widest">Filtres</span>
+                <SlidersHorizontal size={18} />
+                <span className="hidden sm:inline text-xs font-bold uppercase tracking-widest">Filtres</span>
                 {activeCount > 0 && (
-                  <Badge className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-[10px] bg-background text-foreground border-0">
+                  <Badge className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-[10px] bg-black text-white border-0">
                     {activeCount}
                   </Badge>
                 )}
               </Button>
 
               {activeCount > 0 && !isSticky && (
-                <Button variant="ghost" size="icon" onClick={onReset} className="rounded-full">
-                  <X size={18} />
+                <Button variant="ghost" size="icon" onClick={onReset} className="rounded-full h-12 w-12 text-white/60 hover:text-white hover:bg-white/10">
+                  <X size={20} />
                 </Button>
               )}
           </div>
@@ -415,8 +429,8 @@ export default function CatalogPage() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
-      <title>EventNest — L'excellence événementielle</title>
+    <div className="min-h-screen bg-black text-white dark selection:bg-white/20 selection:text-white">
+      <title>EventNest — Collection Privée</title>
       
       <HeroBanner />
 
@@ -433,14 +447,16 @@ export default function CatalogPage() {
         onReset={resetFilters}
       />
 
-      <section className="max-w-7xl mx-auto px-6 py-20">
-        <div className="flex flex-col mb-16">
-           <h2 className="text-4xl font-serif italic font-medium tracking-tight">
+      <section className="max-w-7xl mx-auto px-6 py-24">
+        <div className="flex flex-col mb-16 items-center text-center">
+           <h2 className="text-4xl sm:text-5xl font-serif font-light tracking-tight text-white/90">
              {category === 'all' ? 'Toutes les expériences' : CATEGORY_LABELS[category as EventCategory]}
            </h2>
            {!isLoading && data && (
-             <div className="mt-2 text-[10px] font-black text-muted-foreground/40 tracking-[0.3em] uppercase">
-                Collection Exclusive — {data.totalEvents} Résultats
+             <div className="mt-6 text-[11px] font-bold text-white/40 tracking-[0.4em] uppercase flex items-center gap-4">
+                <div className="w-12 h-[1px] bg-white/20" />
+                {data.totalEvents} Événements
+                <div className="w-12 h-[1px] bg-white/20" />
              </div>
            )}
         </div>
