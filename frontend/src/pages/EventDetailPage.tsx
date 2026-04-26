@@ -13,6 +13,7 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 import { useEvent } from '@/hooks/useEvents';
+import { useRegistrationStore } from '@/stores/useRegistrationStore';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import ErrorState from '@/components/shared/ErrorState';
@@ -62,12 +63,12 @@ export default function EventDetailPage() {
     }
   };
 
+  const { initRegistration } = useRegistrationStore();
+
   const handleRegister = () => {
-    if (totalQuantity === 0) return;
-    // Simulate navigating to registration flow
-    console.log("Proceeding to checkout with tickets:", selectedTickets);
-    // navigate(`/events/${slug}/register`);
-    alert("Redirection vers le tunnel d'inscription (à implémenter)");
+    if (totalQuantity === 0 || !event) return;
+    initRegistration(event.slug, selectedTickets);
+    navigate(`/events/${event.slug}/register/tickets`);
   };
 
   // ─────────────────────────────────────────────────────────────────

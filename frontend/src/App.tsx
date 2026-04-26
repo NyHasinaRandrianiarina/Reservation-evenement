@@ -8,6 +8,12 @@ import { usePageTitle } from './hooks/usePageTitle';
 import PublicLayout from './components/layouts/PublicLayout';
 import CatalogPage from './pages/CatalogPage';
 import EventDetailPage from './pages/EventDetailPage';
+import RegistrationLayout from './components/layouts/RegistrationLayout';
+import Step1TicketsPage from './pages/registration/Step1TicketsPage';
+import Step2InfoPage from './pages/registration/Step2InfoPage';
+import Step3PaymentPage from './pages/registration/Step3PaymentPage';
+import ConfirmationPage from './pages/registration/ConfirmationPage';
+
 import AppLayout from './components/layouts/AppLayout';
 import SenderDashboardPage from './pages/sender/SenderDashboardPage';
 import SenderDeliveriesPage from './pages/sender/SenderDeliveriesPage';
@@ -41,6 +47,13 @@ function App() {
             <Route path='/' element={<CatalogPage />} />
             <Route path='/events/:slug' element={<EventDetailPage />} />
           </Route>
+          
+          <Route path='/events/:slug/register' element={<RegistrationLayout />}>
+            <Route path='tickets' element={<Step1TicketsPage />} />
+            <Route path='info' element={<Step2InfoPage />} />
+            <Route path='payment' element={<Step3PaymentPage />} />
+          </Route>
+          <Route path='/events/:slug/confirmation' element={<ConfirmationPage />} />
 
           {/* Legacy Public Routes */}
           {/* <Route path='/' element={<LandingPage/>}/>
