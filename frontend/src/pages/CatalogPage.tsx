@@ -190,19 +190,19 @@ function FilterBar({
         className={cn(
           "max-w-4xl mx-auto transition-all duration-700 glass rounded-[2rem]",
           isSticky 
-            ? "bg-black/60 shadow-2xl p-2 pl-6 border-white/10" 
-            : "bg-black/40 p-2 pl-6 shadow-xl border-white/10"
+            ? "bg-background/60 shadow-2xl p-2 pl-6 border-border" 
+            : "bg-background/40 p-2 pl-6 shadow-xl border-border"
         )}
       >
         <div className="flex items-center gap-4">
           {/* Search — Minimalist & elegant */}
           <div className="relative flex-1 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-white transition-colors" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/40 group-focus-within:text-foreground transition-colors" />
             <Input
               value={search}
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Que recherchez-vous ?"
-              className="pl-14 rounded-full border-transparent bg-transparent focus:bg-white/5 text-white placeholder:text-white/40 transition-all h-12 lg:h-14 text-base font-light outline-none ring-0 focus-visible:ring-0 shadow-none"
+              className="pl-14 rounded-full border-transparent bg-transparent focus:bg-foreground/5 text-foreground placeholder:text-foreground/40 transition-all h-12 lg:h-14 text-base font-light outline-none ring-0 focus-visible:ring-0 shadow-none"
             />
           </div>
 
@@ -212,23 +212,23 @@ function FilterBar({
                 {!isSticky && (
                   <>
                     <Select value={dateRange} onValueChange={onDateRangeChange}>
-                      <SelectTrigger className="w-36 h-12 rounded-full border-transparent bg-white/5 hover:bg-white/10 text-white font-medium text-sm transition-colors focus:ring-0 shadow-none">
+                      <SelectTrigger className="w-36 h-12 rounded-full border-transparent bg-foreground/5 hover:bg-foreground/10 text-foreground font-medium text-sm transition-colors focus:ring-0 shadow-none">
                         <SelectValue placeholder="Date" />
                       </SelectTrigger>
-                      <SelectContent className="bg-black/90 backdrop-blur-xl border-white/10 text-white">
+                      <SelectContent className="bg-background/90 backdrop-blur-xl border-border text-foreground">
                         {DATE_FILTER_OPTIONS.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value} className="focus:bg-white/10">{opt.label}</SelectItem>
+                          <SelectItem key={opt.value} value={opt.value} className="focus:bg-foreground/10">{opt.label}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
 
                     <Select value={priceType} onValueChange={onPriceTypeChange}>
-                      <SelectTrigger className="w-32 h-12 rounded-full border-transparent bg-white/5 hover:bg-white/10 text-white font-medium text-sm transition-colors focus:ring-0 shadow-none">
+                      <SelectTrigger className="w-32 h-12 rounded-full border-transparent bg-foreground/5 hover:bg-foreground/10 text-foreground font-medium text-sm transition-colors focus:ring-0 shadow-none">
                         <SelectValue placeholder="Prix" />
                       </SelectTrigger>
-                      <SelectContent className="bg-black/90 backdrop-blur-xl border-white/10 text-white">
+                      <SelectContent className="bg-background/90 backdrop-blur-xl border-border text-foreground">
                         {PRICE_FILTER_OPTIONS.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value} className="focus:bg-white/10">{opt.label}</SelectItem>
+                          <SelectItem key={opt.value} value={opt.value} className="focus:bg-foreground/10">{opt.label}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -239,20 +239,20 @@ function FilterBar({
              {/* Bouton Filtre Global */}
              <Button 
                 variant="outline"
-                className="rounded-full gap-2 transition-all h-12 px-6 border-transparent bg-white text-black hover:bg-white/90 hover:text-black font-semibold shadow-lg"
+                className="rounded-full gap-2 transition-all h-12 px-6 border-transparent bg-foreground text-background hover:bg-foreground/90 hover:text-background font-semibold shadow-lg"
                 onClick={() => setMobileFiltersOpen(true)}
               >
                 <SlidersHorizontal size={18} />
                 <span className="hidden sm:inline text-xs font-bold uppercase tracking-widest">Filtres</span>
                 {activeCount > 0 && (
-                  <Badge className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-[10px] bg-black text-white border-0">
+                  <Badge className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-[10px] bg-background text-foreground border-0">
                     {activeCount}
                   </Badge>
                 )}
               </Button>
 
               {activeCount > 0 && !isSticky && (
-                <Button variant="ghost" size="icon" onClick={onReset} className="rounded-full h-12 w-12 text-white/60 hover:text-white hover:bg-white/10">
+                <Button variant="ghost" size="icon" onClick={onReset} className="rounded-full h-12 w-12 text-foreground/60 hover:text-foreground hover:bg-foreground/10">
                   <X size={20} />
                 </Button>
               )}
@@ -429,7 +429,7 @@ export default function CatalogPage() {
   );
 
   return (
-    <div className="min-h-screen bg-black text-white dark selection:bg-white/20 selection:text-white">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-primary">
       <title>EventNest — Collection Privée</title>
       
       <HeroBanner />
@@ -449,14 +449,14 @@ export default function CatalogPage() {
 
       <section className="max-w-7xl mx-auto px-6 py-24">
         <div className="flex flex-col mb-16 items-center text-center">
-           <h2 className="text-4xl sm:text-5xl font-serif font-light tracking-tight text-white/90">
+           <h2 className="text-4xl sm:text-5xl font-serif font-light tracking-tight text-foreground/90">
              {category === 'all' ? 'Toutes les expériences' : CATEGORY_LABELS[category as EventCategory]}
            </h2>
            {!isLoading && data && (
-             <div className="mt-6 text-[11px] font-bold text-white/40 tracking-[0.4em] uppercase flex items-center gap-4">
-                <div className="w-12 h-[1px] bg-white/20" />
+             <div className="mt-6 text-[11px] font-bold text-foreground/40 tracking-[0.4em] uppercase flex items-center gap-4">
+                <div className="w-12 h-[1px] bg-border" />
                 {data.totalEvents} Événements
-                <div className="w-12 h-[1px] bg-white/20" />
+                <div className="w-12 h-[1px] bg-border" />
              </div>
            )}
         </div>

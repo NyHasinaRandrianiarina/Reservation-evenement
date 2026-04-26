@@ -111,7 +111,7 @@ export const NavBody = ({ children, className, visible, isHomePage }: NavBodyPro
         width: visible ? "fit-content" : "100%",
         y: visible ? 20 : 0,
         backgroundColor: visible
-          ? "rgba(0, 0, 0, 0.65)"
+          ? "var(--color-background)"
           : "transparent",
         backdropFilter: visible ? "blur(24px)" : "blur(0px)",
         borderRadius: visible ? "9999px" : "0px",
@@ -120,7 +120,7 @@ export const NavBody = ({ children, className, visible, isHomePage }: NavBodyPro
         paddingTop: visible ? "8px" : "24px",
         paddingBottom: visible ? "8px" : "24px",
         boxShadow: visible
-          ? "0 20px 40px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(255, 255, 255, 0.1)"
+          ? "0 20px 40px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.05)"
           : "0 0px 0px rgba(0, 0, 0, 0)",
       }}
       transition={{
@@ -133,7 +133,7 @@ export const NavBody = ({ children, className, visible, isHomePage }: NavBodyPro
         "group/nav relative z-60 mx-auto hidden lg:flex flex-row items-center",
         isHomePage ? "is-home" : "not-home",
         visible
-          ? "border border-white/10 is-visible"
+          ? "border border-border/40 is-visible bg-background/80"
           : "border-b border-transparent not-visible",
         className,
       )}
@@ -169,8 +169,8 @@ export const NavItems = ({ items, activePath, visible, isHomePage }: NavItemsPro
             className={cn(
               "relative px-5 py-2 text-[10px] font-black tracking-[0.2em] uppercase transition-all duration-300",
               isActive 
-                ? (useDarkText ? "text-primary" : "text-white")
-                : (useDarkText ? "text-muted-foreground hover:text-foreground" : "text-white/60 hover:text-white")
+                ? (useDarkText ? "text-primary" : "text-foreground")
+                : (useDarkText ? "text-muted-foreground hover:text-foreground" : "text-foreground/60 hover:text-foreground")
             )}
           >
             {hovered === idx && (
@@ -178,7 +178,7 @@ export const NavItems = ({ items, activePath, visible, isHomePage }: NavItemsPro
                 layoutId="nav-hover"
                 className={cn(
                   "absolute inset-0 rounded-full -z-10",
-                  useDarkText ? "bg-accent/50" : "bg-white/10"
+                  useDarkText ? "bg-accent/50" : "bg-foreground/10"
                 )}
               />
             )}
@@ -196,7 +196,7 @@ export const MobileNav = ({ children, className, visible, isHomePage }: MobileNa
       animate={{
         backdropFilter: visible ? "blur(16px)" : "none",
         boxShadow: visible
-          ? "0 20px 40px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(255, 255, 255, 0.1)"
+          ? "0 20px 40px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.05)"
           : "none",
         width: visible ? "90%" : "100%",
         paddingRight: visible ? "12px" : "0px",
@@ -211,7 +211,7 @@ export const MobileNav = ({ children, className, visible, isHomePage }: MobileNa
       }}
       className={cn(
         "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between bg-transparent px-0 py-2 lg:hidden",
-        visible && "bg-black/80 backdrop-blur-md border border-white/10 shadow-xl",
+        visible && "bg-background/80 backdrop-blur-md border border-border/40 shadow-xl",
         className,
       )}
     >
@@ -265,14 +265,14 @@ export const MobileNavMenu = ({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed inset-0 z-50 flex flex-col bg-black/95 backdrop-blur-3xl text-white"
+          className="fixed inset-0 z-50 flex flex-col bg-background/95 backdrop-blur-3xl text-foreground"
         >
           {/* Header interne pour garder le logo et le bouton fermer en haut */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-border/40">
             <NavbarLogo />
             <button 
               onClick={onClose}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-all"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-foreground/10 text-foreground hover:bg-foreground/20 transition-all"
             >
               <IconX size={20} stroke={1.5} />
             </button>
@@ -282,11 +282,11 @@ export const MobileNavMenu = ({
             {children}
             
             {/* Footer du menu mobile - Signature Lux */}
-            <div className="mt-auto pt-10 pb-6 border-t border-white/10 text-center">
-              <p className="text-[10px] font-bold tracking-[0.4em] uppercase text-white/50 mb-4">
+            <div className="mt-auto pt-10 pb-6 border-t border-border/40 text-center">
+              <p className="text-[10px] font-bold tracking-[0.4em] uppercase text-foreground/50 mb-4">
                 EventNest
               </p>
-              <p className="text-xs font-serif italic text-white/40">
+              <p className="text-xs font-serif italic text-foreground/40">
                 L'art de vivre des moments d'exception.
               </p>
             </div>
@@ -317,13 +317,13 @@ export const NavbarLogo = ({ visible, isHomePage }: { visible?: boolean, isHomeP
       <div className="flex flex-col -gap-1">
         <span className={cn(
           "font-serif text-2xl font-light tracking-tight transition-colors leading-none",
-          (visible || !isHomePage) ? "text-white" : "text-white"
+          (visible || !isHomePage) ? "text-foreground" : "text-foreground"
         )}>
           EventNest
         </span>
         <span className={cn(
           "text-[7px] font-bold tracking-[0.4em] uppercase opacity-60 transition-colors pl-0.5",
-          (visible || !isHomePage) ? "text-white/60" : "text-white/60"
+          (visible || !isHomePage) ? "text-foreground/60" : "text-foreground/60"
         )}>
           Collection Privée
         </span>
