@@ -7,6 +7,7 @@ import { usePageTitle } from './hooks/usePageTitle';
 // EventNest — Public
 import PublicLayout from './components/layouts/PublicLayout';
 import CatalogPage from './pages/CatalogPage';
+import EventDetailPage from './pages/EventDetailPage';
 
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/auth/LoginPage';
@@ -45,6 +46,7 @@ function App() {
           {/* EventNest — Public */}
           <Route element={<PublicLayout />}>
             <Route path='/events' element={<CatalogPage />} />
+            <Route path='/events/:slug' element={<EventDetailPage />} />
           </Route>
 
           {/* Legacy Public Routes */}
