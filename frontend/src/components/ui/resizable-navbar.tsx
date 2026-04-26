@@ -59,25 +59,38 @@ interface MobileNavMenuProps {
 
 export const Navbar = ({ children, className, isHomePage }: NavbarProps) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollY } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
+  const { scrollY } = useScroll();
   const [visible, setVisible] = useState<boolean>(false);
+  const [isHidden, setIsHidden] = useState<boolean>(false);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() ?? 0;
+    
+    // Visibilité pour le mode "Floating Pill"
     if (latest > 100) {
       setVisible(true);
     } else {
       setVisible(false);
+    }
+
+    // Cache au scroll bas, montre au scroll haut
+    if (latest > 300 && latest > previous) {
+      setIsHidden(true);
+    } else {
+      setIsHidden(false);
     }
   });
 
   return (
     <motion.div
       ref={ref}
-      // sticky top-0 to allow full-width flush navbar at the top
-      className={cn("sticky inset-x-0 top-0 z-40 w-full relative", className)}
+      initial={false}
+      animate={{
+        y: isHidden ? -100 : 0,
+        opacity: isHidden ? 0 : 1,
+      }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+      className={cn("fixed inset-x-0 top-0 z-50 w-full", className)}
     >
       {React.Children.map(children, (child) =>
         React.isValidElement(child) && typeof child.type !== "string"
@@ -98,30 +111,30 @@ export const NavBody = ({ children, className, visible, isHomePage }: NavBodyPro
         width: visible ? "fit-content" : "100%",
         y: visible ? 20 : 0,
         backgroundColor: visible
-          ? "rgba(var(--background-rgb, 255 255 255) / 0.8)"
+          ? "rgba(var(--background-rgb, 255 255 255) / 0.85)"
           : "transparent",
-        backdropFilter: visible ? "blur(16px)" : "blur(0px)",
+        backdropFilter: visible ? "blur(20px)" : "blur(0px)",
         borderRadius: visible ? "9999px" : "0px",
-        paddingLeft: visible ? "16px" : "40px",
-        paddingRight: visible ? "16px" : "40px",
-        paddingTop: visible ? "4px" : "16px",
-        paddingBottom: visible ? "4px" : "16px",
+        paddingLeft: visible ? "20px" : "0px",
+        paddingRight: visible ? "20px" : "0px",
+        paddingTop: visible ? "8px" : "24px",
+        paddingBottom: visible ? "8px" : "24px",
         boxShadow: visible
-          ? "0 4px 30px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06)"
+          ? "0 20px 40px rgba(0, 0, 0, 0.05), 0 1px 1px rgba(0, 0, 0, 0.02)"
           : "0 0px 0px rgba(0, 0, 0, 0)",
       }}
       transition={{
         type: "spring",
-        stiffness: 200,
+        stiffness: 150,
         damping: 30,
-        mass: 0.8,
+        mass: 1,
       }}
       className={cn(
         "group/nav relative z-60 mx-auto hidden lg:flex flex-row items-center",
         isHomePage ? "is-home" : "not-home",
         visible
-          ? "border border-border/50 is-visible"
-          : "border border-transparent not-visible",
+          ? "border border-border/40 is-visible"
+          : "border-b border-border/5 not-visible",
         className,
       )}
     >
