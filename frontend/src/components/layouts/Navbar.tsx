@@ -9,10 +9,9 @@ import {
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
 import Button from "@/components/reusable/Button";
-import { Search, ShoppingBag, User, LogOut, Package, Store, ChevronDown, PlusCircle } from "lucide-react";
+import { Search, User, LogOut, Package, Store, ChevronDown, PlusCircle } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { useCartStore } from "@/store/useCartStore";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { useAuthStore } from "@/store/useAuthStore";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -39,8 +38,6 @@ export default function Navbar() {
 
   const { user, isAuthenticated, logout } = useAuthStore();
 
-  const totalItems = useCartStore((state) => state.getTotalItems());
-  const toggleCart = useCartStore((state) => state.toggleCart);
 
   // Close user dropdown when clicking outside
   useEffect(() => {
@@ -124,26 +121,6 @@ export default function Navbar() {
                 <Search size={18} strokeWidth={1.5} />
               </button>
 
-              {isAuthenticated && (
-                <button
-                  onClick={toggleCart}
-                  className={cn(
-                    "relative w-10 h-10 flex items-center justify-center rounded-full transition-all duration-500 cursor-pointer",
-                    scrolled ? "text-foreground/60 hover:text-foreground hover:bg-foreground/5" : "text-white/80 hover:text-white hover:bg-white/10"
-                  )}
-                  aria-label="Panier"
-                >
-                  <ShoppingBag size={18} strokeWidth={1.5} />
-                  {totalItems > 0 && (
-                    <span className={cn(
-                      "absolute top-2 right-2 w-4 h-4 text-[9px] font-bold flex items-center justify-center rounded-full shadow-lg",
-                      scrolled ? "bg-primary text-primary-foreground" : "bg-white text-black"
-                    )}>
-                      {totalItems}
-                    </span>
-                  )}
-                </button>
-              )}
             </div>
 
             {/* Target Audience Logic: Organizer CTA */}

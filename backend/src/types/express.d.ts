@@ -1,4 +1,4 @@
-import type { Role } from "@prisma/client";
+export type Role = "PARTICIPANT" | "ORGANIZER" | "ADMIN";
 
 /**
  * Payload décodé du JWT access token.

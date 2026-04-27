@@ -1,0 +1,37 @@
+import type { Request, Response } from "express";
+import { asyncHandler } from "../middlewares/async-handler.js";
+import { ApiResponse } from "../utils/api-response.js";
+import { createEvent, getEventsByOrganizer, getEventByIdAndOrganizer } from "../services/event.service.js";
+
+/**
+ * Crée un événement (protégé organisateur/admin)
+ */
+export const create = asyncHandler(async (req: Request, res: Response) => {
+  const organizer = req.user!;
+  const event = await createEvent(organizer.id, req.body);
+  ApiResponse.created(res, event, "Événement créé avec succès");
+});
+
+/**
+ * Liste les événements créés par l’organisateur connecté
+ */
+export const listByOrganizer = asyncHandler(async (req: Request, res: Response) => {
+  const organizer = req.user!;
+  const events = await getEventsByOrganizer(organizer.id);
+  ApiResponse.success(res, events, "Événements récupérés");
+});
+
+/**
+ * Détail d’un événement (vérifie appartenance)
+ */
+export const getById = asyncHandler(async (req: Request, res: Response) => {
+  const organizer = req.user!;
+  const eventId = String(req.params.id);
+  const event = await getEventByIdAndOrganizer(eventId, organizer.id);
+
+  if (!event) {
+    return ApiResponse.error(res, "Événement introuvable", 404);
+  }
+
+  ApiResponse.success(res, event, "Événement récupéré");
+});

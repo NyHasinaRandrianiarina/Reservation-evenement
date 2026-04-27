@@ -18,4 +18,5 @@ model User {
   // Relations
   refresh_tokens RefreshToken[]
   otp_codes      OtpCode[]
+  events         Event[]
 }

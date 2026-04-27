@@ -1,0 +1,83 @@
+import prisma from "../db/client.js";
+
+// Inline types to avoid cross-package imports
+interface TicketType {
+  id: string;
+  name: string;
+  type: "free" | "paid";
+  price: number;
+  quota: number | null;
+  description: string;
+  limitPerOrder: number;
+}
+
+interface CustomField {
+  id: string;
+  label: string;
+  type: "text" | "email" | "phone" | "select" | "checkbox";
+  required: boolean;
+  options?: string[];
+}
+
+interface EventDraft {
+  title: string;
+  category: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  location: {
+    type: "in_person" | "online" | "hybrid";
+    address?: string;
+    onlineUrl?: string;
+  };
+  capacity: number | null;
+  isPrivate: boolean;
+  coverImageUrl?: string;
+  tickets: TicketType[];
+  customFields: CustomField[];
+}
+
+/**
+ * Crée un événement pour un organisateur authentifié.
+ * Persiste les champs simples + les JSON (location, tickets, custom_fields).
+ */
+export async function createEvent(organizerId: string, data: EventDraft) {
+  const event = await (prisma as any).event.create({
+    data: {
+      title: data.title,
+      category: data.category,
+      description: data.description,
+      start_date: new Date(data.startDate),
+      end_date: new Date(data.endDate),
+      location: data.location,
+      capacity: data.capacity,
+      is_private: data.isPrivate,
+      cover_image_url: data.coverImageUrl,
+      status: "published", // pour EventNest V1 : on publie directement
+      organizer_id: organizerId,
+      tickets: data.tickets,
+      custom_fields: data.customFields,
+    },
+  });
+
+  return event;
+}
+
+/**
+ * Retourne les événements créés par un organisateur.
+ */
+export async function getEventsByOrganizer(organizerId: string) {
+  return (prisma as any).event.findMany({
+    where: { organizer_id: organizerId },
+    orderBy: { created_at: "desc" },
+  });
+}
+
+/**
+ * Retourne un événement par son ID, vérifie que l'utilisateur est bien l'organisateur.
+ */
+export async function getEventByIdAndOrganizer(eventId: string, organizerId: string) {
+  return (prisma as any).event.findFirst({
+    where: { id: eventId, organizer_id: organizerId },
+  });
+}
