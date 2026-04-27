@@ -10,7 +10,8 @@ export type EventResponse = {
 };
 
 // Re-export frontend Event type for compatibility
-export type { Event } from "@/types/event";
+import type { Event } from "@/types/event";
+export type { Event };
 
 export type OrganizerDashboardKpis = {
   registrationsToday: number;
@@ -97,6 +98,30 @@ export async function getOrganizerEvents(): Promise<OrganizerEventRow[]> {
   const res = await apiRequest<OrganizerEventRow[], null>({
     method: "GET",
     path: "/events",
+  });
+
+  return res.data;
+}
+/**
+ * Détail d'un événement pour l'organisateur connecté
+ */
+export async function getOrganizerEventById(id: string): Promise<Event> {
+  const res = await apiRequest<Event, null>({
+    method: "GET",
+    path: `/events/${id}`,
+  });
+
+  return res.data;
+}
+
+/**
+ * Mettre à jour le statut d'un événement
+ */
+export async function updateEventStatus(id: string, status: "draft" | "published" | "cancelled"): Promise<Event> {
+  const res = await apiRequest<Event, { status: string }>({
+    method: "PATCH",
+    path: `/events/${id}/status`,
+    body: { status },
   });
 
   return res.data;

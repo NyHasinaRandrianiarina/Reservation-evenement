@@ -23,6 +23,8 @@ import MyRegistrationsPage from './pages/account/MyRegistrationsPage';
 import OrganizerLayout from './components/layouts/OrganizerLayout';
 import OrgDashboardPage from './pages/organizer/OrgDashboardPage';
 import EventWizardPage from './pages/organizer/EventWizardPage';
+import OrgEventListPage from './pages/organizer/OrgEventListPage';
+import OrgEventDetailPage from './pages/organizer/OrgEventDetailPage';
 
 import AppLayout from './components/layouts/AppLayout';
 import SenderDashboardPage from './pages/sender/SenderDashboardPage';
@@ -77,7 +79,9 @@ function App() {
           {/* Protected Organizer Routes */}
           <Route path='/organizer' element={<OrganizerLayout />}>
             <Route path='dashboard' element={<OrgDashboardPage />} />
+            <Route path='events' element={<OrgEventListPage />} />
             <Route path='events/new' element={<EventWizardPage />} />
+            <Route path='events/:id' element={<OrgEventDetailPage />} />
             <Route path='events/:id/edit' element={<EventWizardPage />} />
           </Route>
 

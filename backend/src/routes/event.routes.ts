@@ -24,4 +24,7 @@ router.get("/", authorize("ORGANIZER", "ADMIN"), eventController.listByOrganizer
 // Détail d’un événement (vérifie appartenance via service)
 router.get("/:id", authorize("ORGANIZER", "ADMIN"), eventController.getById);
 
+// Mettre à jour le statut d'un événement
+router.patch("/:id/status", authorize("ORGANIZER", "ADMIN"), eventController.updateStatus);
+
 export default router;

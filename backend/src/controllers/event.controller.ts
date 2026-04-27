@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/async-handler.js";
 import { ApiResponse } from "../utils/api-response.js";
-import { createEvent, getEventsByOrganizer, getEventByIdAndOrganizer, getPublicEvents, getPublicEventById, getOrganizerDashboardKpis } from "../services/event.service.js";
+import { createEvent, getEventsByOrganizer, getEventByIdAndOrganizer, getPublicEvents, getPublicEventById, getOrganizerDashboardKpis, updateEventStatus } from "../services/event.service.js";
 
 /**
  * Crée un événement (protégé organisateur/admin)
@@ -34,6 +34,27 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
   }
 
   ApiResponse.success(res, event, "Événement récupéré");
+});
+
+/**
+ * Met à jour le statut d'un événement
+ */
+export const updateStatus = asyncHandler(async (req: Request, res: Response) => {
+  const organizer = req.user!;
+  const eventId = String(req.params.id);
+  const { status } = req.body;
+
+  if (!status || !['draft', 'published', 'cancelled'].includes(status)) {
+    return ApiResponse.error(res, "Statut invalide", 400);
+  }
+
+  const updatedEvent = await updateEventStatus(eventId, organizer.id, status);
+
+  if (!updatedEvent) {
+    return ApiResponse.error(res, "Événement introuvable ou non autorisé", 404);
+  }
+
+  ApiResponse.success(res, updatedEvent, "Statut de l'événement mis à jour");
 });
 
 /**

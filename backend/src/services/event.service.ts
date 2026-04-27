@@ -83,6 +83,19 @@ export async function getEventByIdAndOrganizer(eventId: string, organizerId: str
 }
 
 /**
+ * Met à jour le statut d'un événement si l'utilisateur est bien l'organisateur.
+ */
+export async function updateEventStatus(eventId: string, organizerId: string, status: string) {
+  const event = await getEventByIdAndOrganizer(eventId, organizerId);
+  if (!event) return null;
+
+  return (prisma as any).event.update({
+    where: { id: eventId },
+    data: { status },
+  });
+}
+
+/**
  * Retourne tous les événements publics (statut publié) pour le catalogue.
  */
 export async function getPublicEvents() {
