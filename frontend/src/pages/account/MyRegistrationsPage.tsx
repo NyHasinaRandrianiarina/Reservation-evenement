@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import RegistrationCard from './components/RegistrationCard';
 import type { RegistrationMock } from './components/RegistrationCard';
-import { Ticket } from 'lucide-react';
+import { Ticket, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const mockRegistrations: RegistrationMock[] = [
   {
@@ -39,12 +40,22 @@ export default function MyRegistrationsPage() {
   const past = registrations.filter(r => r.status === 'past' || r.status === 'cancelled');
 
   return (
-    <div className="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-center gap-4 border-b border-border pb-6">
-        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-          <Ticket className="w-6 h-6 text-primary" />
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex flex-col gap-4">
+        <Link 
+          to="/" 
+          className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors group"
+        >
+          <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+          Retour à l'accueil
+        </Link>
+
+        <div className="flex items-center gap-4 border-b border-border pb-6">
+          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+            <Ticket className="w-6 h-6 text-primary" />
+          </div>
+          <h1 className="text-3xl font-serif font-light tracking-tight">Mes Inscriptions</h1>
         </div>
-        <h1 className="text-3xl font-serif font-light tracking-tight">Mes Inscriptions</h1>
       </div>
 
       {/* Upcoming Section */}

@@ -9,6 +9,9 @@ export type EventResponse = {
   created_at: string;
 };
 
+// Re-export frontend Event type for compatibility
+export type { Event } from "@/types/event";
+
 export async function createEvent(data: EventDraft): Promise<EventResponse> {
   const payload = {
     title: data.title,
@@ -28,6 +31,30 @@ export async function createEvent(data: EventDraft): Promise<EventResponse> {
     method: "POST",
     path: "/events",
     body: payload,
+  });
+
+  return res.data;
+}
+
+/**
+ * Récupère tous les événements publics (catalogue)
+ */
+export async function getPublicEvents(): Promise<Event[]> {
+  const res = await apiRequest<Event[], null>({
+    method: "GET",
+    path: "/events/public",
+  });
+
+  return res.data;
+}
+
+/**
+ * Récupère un événement public par son ID
+ */
+export async function getPublicEventById(id: string): Promise<Event> {
+  const res = await apiRequest<Event, null>({
+    method: "GET",
+    path: `/events/public/${id}`,
   });
 
   return res.data;

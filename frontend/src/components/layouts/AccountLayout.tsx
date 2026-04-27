@@ -9,7 +9,7 @@ export default function AccountLayout() {
 
   const navItems = [
     { label: 'Mes inscriptions', path: '/account/registrations', icon: Ticket },
-    { label: 'Mon profil', path: '/profil', icon: User },
+    { label: 'Mon profil', path: '/account/profile', icon: User },
   ];
 
   return (

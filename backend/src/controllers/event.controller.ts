@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/async-handler.js";
 import { ApiResponse } from "../utils/api-response.js";
-import { createEvent, getEventsByOrganizer, getEventByIdAndOrganizer } from "../services/event.service.js";
+import { createEvent, getEventsByOrganizer, getEventByIdAndOrganizer, getPublicEvents, getPublicEventById } from "../services/event.service.js";
 
 /**
  * Crée un événement (protégé organisateur/admin)
@@ -34,4 +34,26 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
   }
 
   ApiResponse.success(res, event, "Événement récupéré");
+});
+
+/**
+ * Liste tous les événements publics (catalogue)
+ */
+export const listPublic = asyncHandler(async (req: Request, res: Response) => {
+  const events = await getPublicEvents();
+  ApiResponse.success(res, events, "Événements publics récupérés");
+});
+
+/**
+ * Détail d’un événement public (catalogue)
+ */
+export const getPublicById = asyncHandler(async (req: Request, res: Response) => {
+  const eventId = String(req.params.id);
+  const event = await getPublicEventById(eventId);
+
+  if (!event) {
+    return ApiResponse.error(res, "Événement introuvable", 404);
+  }
+
+  ApiResponse.success(res, event, "Événement public récupéré");
 });

@@ -5,7 +5,11 @@ import * as eventController from "../controllers/event.controller.js";
 
 const router = Router();
 
-// Toutes les routes nécessitent d’être connecté
+// Routes publiques (catalogue) — pas d’authentification
+router.get("/public", eventController.listPublic);
+router.get("/public/:id", eventController.getPublicById);
+
+// Routes protégées organisateur/admin
 router.use(authenticate);
 
 // Créer un événement (ORGANIZER ou ADMIN)

@@ -148,7 +148,7 @@ export default function Navbar() {
 
               {!isAuthenticated && (
                 <button
-                  onClick={() => navigate("/devenir-vendeur")}
+                  onClick={() => navigate("/organizer/dashboard")}
                   className={cn(
                     "px-4 py-2 text-[9px] font-bold tracking-[0.2em] uppercase transition-colors cursor-pointer",
                     scrolled ? "text-foreground/50 hover:text-foreground" : "text-white/70 hover:text-white"

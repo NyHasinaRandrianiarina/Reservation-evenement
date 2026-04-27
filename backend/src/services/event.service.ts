@@ -81,3 +81,22 @@ export async function getEventByIdAndOrganizer(eventId: string, organizerId: str
     where: { id: eventId, organizer_id: organizerId },
   });
 }
+
+/**
+ * Retourne tous les événements publics (statut publié) pour le catalogue.
+ */
+export async function getPublicEvents() {
+  return (prisma as any).event.findMany({
+    where: { status: "published" },
+    orderBy: { start_date: "asc" },
+  });
+}
+
+/**
+ * Retourne un événement public par son ID (doit être publié).
+ */
+export async function getPublicEventById(eventId: string) {
+  return (prisma as any).event.findFirst({
+    where: { id: eventId, status: "published" },
+  });
+}

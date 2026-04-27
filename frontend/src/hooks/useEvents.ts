@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { simulateFetch } from '@/data/mock-utils';
-import { mockEvents } from '@/data/events';
+import { getPublicEvents, getPublicEventById } from '@/api/events';
 import type { Event, EventFilters } from '@/types/event';
 import { EVENTS_PER_PAGE } from '@/lib/constants';
 
@@ -97,26 +96,29 @@ export function useEvents(filters?: EventFilters) {
   return useQuery({
     queryKey: ['events', filters],
     queryFn: async (): Promise<PaginatedEvents> => {
-      const filtered = applyFilters(mockEvents, filters);
+      // Fetch all events from API
+      const events = await getPublicEvents();
+
+      // Apply filters client-side for now (cast to Event type for compatibility)
+      const filtered = applyFilters(events as unknown as Event[], filters);
       const page = filters?.page ?? 1;
       const start = (page - 1) * EVENTS_PER_PAGE;
       const paged = filtered.slice(start, start + EVENTS_PER_PAGE);
 
-      return simulateFetch({
+      return {
         events: paged,
         total: filtered.length,
         page,
         totalPages: Math.ceil(filtered.length / EVENTS_PER_PAGE),
-      });
+      };
     },
   });
 }
 
-export function useEvent(slug: string) {
+export function useEvent(id: string) {
   return useQuery({
-    queryKey: ['event', slug],
-    queryFn: () =>
-      simulateFetch(mockEvents.find((e) => e.slug === slug) ?? null),
-    enabled: !!slug,
+    queryKey: ['event', id],
+    queryFn: () => getPublicEventById(id),
+    enabled: !!id,
   });
 }
