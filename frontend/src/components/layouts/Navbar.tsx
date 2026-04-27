@@ -259,11 +259,11 @@ export default function Navbar() {
                             <span className="tracking-wide">Dashboard Organisateur</span>
                           </button>
                         )}
-                        <button onClick={() => { setIsUserMenuOpen(false); navigate("/commandes"); }} className="flex items-center gap-4 px-5 py-4 text-xs hover:bg-foreground/5 rounded-2xl transition-all w-full text-left font-light group cursor-pointer text-foreground">
+                        <button onClick={() => { setIsUserMenuOpen(false); navigate("/account/registrations"); }} className="flex items-center gap-4 px-5 py-4 text-xs hover:bg-foreground/5 rounded-2xl transition-all w-full text-left font-light group cursor-pointer text-foreground">
                           <Package size={16} strokeWidth={1.5} className="text-foreground/60 group-hover:text-foreground transition-colors" />
-                          <span className="tracking-wide">Mes réservations</span>
+                          <span className="tracking-wide">Mes inscriptions</span>
                         </button>
-                        <button onClick={() => { setIsUserMenuOpen(false); navigate("/profil"); }} className="flex items-center gap-4 px-5 py-4 text-xs hover:bg-foreground/5 rounded-2xl transition-all w-full text-left font-light group cursor-pointer text-foreground">
+                        <button onClick={() => { setIsUserMenuOpen(false); navigate("/account/profile"); }} className="flex items-center gap-4 px-5 py-4 text-xs hover:bg-foreground/5 rounded-2xl transition-all w-full text-left font-light group cursor-pointer text-foreground">
                           <User size={16} strokeWidth={1.5} className="text-foreground/60 group-hover:text-foreground transition-colors" />
                           <span className="tracking-wide">Mon Profil</span>
                         </button>
@@ -336,7 +336,7 @@ export default function Navbar() {
                   navigate(
                     isAuthenticated && user?.role === "ORGANIZER"
                       ? "/organizer/events/new"
-                      : "/devenir-vendeur"
+                      : "/register"
                   );
                 }}
               >
@@ -348,14 +348,14 @@ export default function Navbar() {
                   <Button
                     variant="outline"
                     className="h-16 rounded-[2rem] font-bold text-xs uppercase tracking-widest"
-                    onClick={() => { setIsMobileMenuOpen(false); navigate("/connexion"); }}
+                    onClick={() => { setIsMobileMenuOpen(false); navigate("/login"); }}
                   >
                     Connexion
                   </Button>
                   <Button
                     variant="primary"
                     className="h-16 rounded-[2rem] font-bold text-xs uppercase tracking-widest shadow-xl shadow-primary/20"
-                    onClick={() => { setIsMobileMenuOpen(false); navigate("/inscription"); }}
+                    onClick={() => { setIsMobileMenuOpen(false); navigate("/register"); }}
                   >
                     S'inscrire
                   </Button>
