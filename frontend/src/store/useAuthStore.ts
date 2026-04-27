@@ -14,7 +14,6 @@ export interface User {
   avatar_url: string | null;
   onboarding_completed: boolean;
   role: authApi.Role;
-  is_seller: boolean;
   two_fa_enabled: boolean;
   is_active: boolean;
   created_at: string;
@@ -37,8 +36,8 @@ interface AuthState {
   init: () => Promise<void>;
   login: (data: { email: string; password: string }) => Promise<{ requires2fa: boolean }>;
   verify2fa: (data: { temp_token: string; code: string }) => Promise<void>;
-  registerParticipant: (data: { first_name: string; last_name: string; email: string; phone?: string; password: string }) => Promise<void>;
-  registerOrganizer: (data: { first_name: string; last_name: string; email: string; phone?: string; password: string }) => Promise<void>;
+  registerParticipant: (data: { full_name: string; email: string; phone?: string; password: string }) => Promise<void>;
+  registerOrganizer: (data: { full_name: string; email: string; phone?: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (data: Partial<User>) => Promise<void>;
 }
@@ -132,8 +131,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true });
     try {
       const res = await authApi.register({
-        first_name: data.first_name,
-        last_name: data.last_name,
+        full_name: data.full_name,
         email: data.email,
         phone: data.phone,
         password: data.password,
@@ -159,8 +157,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true });
     try {
       const res = await authApi.register({
-        first_name: data.first_name,
-        last_name: data.last_name,
+        full_name: data.full_name,
         email: data.email,
         phone: data.phone,
         password: data.password,

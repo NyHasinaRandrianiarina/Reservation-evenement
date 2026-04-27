@@ -16,7 +16,7 @@ export default function SignupPage() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  
+
   // Validation states
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -41,7 +41,7 @@ export default function SignupPage() {
 
   const validate = () => {
     let isValid = true;
-    
+
     if (!name || name.trim().length < 2) {
       setNameError("Le nom complet doit faire au moins 2 caractères.");
       isValid = false;
@@ -84,18 +84,13 @@ export default function SignupPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setApiError(null);
-    
-    if (!validate()) return;
 
-    const names = name.trim().split(" ");
-    const firstName = names[0];
-    const lastName = names.slice(1).join(" ") || " ";
+    if (!validate()) return;
 
     try {
       if (role === "participant") {
         await registerParticipant({
-          first_name: firstName,
-          last_name: lastName,
+          full_name: name,
           email,
           phone,
           password,
@@ -103,8 +98,7 @@ export default function SignupPage() {
         navigate("/account/registrations");
       } else {
         await registerOrganizer({
-          first_name: firstName,
-          last_name: lastName,
+          full_name: name,
           email,
           phone,
           password,
@@ -173,7 +167,7 @@ export default function SignupPage() {
             error={phoneError}
           />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1">
             <Input

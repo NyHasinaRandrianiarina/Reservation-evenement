@@ -13,15 +13,13 @@ export type User = {
   avatar_url: string | null;
   onboarding_completed: boolean;
   role: Role;
-  is_seller: boolean;
   two_fa_enabled: boolean;
   is_active: boolean;
   created_at: string;
 };
 
 export type RegisterInput = {
-  first_name: string;
-  last_name: string;
+  full_name: string;
   email: string;
   password: string;
   phone?: string;

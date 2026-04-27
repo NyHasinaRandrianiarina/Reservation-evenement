@@ -80,7 +80,7 @@ export default function Navbar() {
                 </span>
               </div>
             </Link>
-            
+
             {/* Main Nav Items with refined spacing */}
             <div className="hidden lg:flex items-center gap-1">
               {navItems.map((item, idx) => (
@@ -89,8 +89,8 @@ export default function Navbar() {
                   onClick={() => navigate(item.link)}
                   className={cn(
                     "px-5 py-2 text-[10px] font-bold tracking-[0.2em] uppercase transition-all duration-500 cursor-pointer relative group",
-                    location.pathname === item.link 
-                      ? (scrolled ? "text-foreground" : "text-white") 
+                    location.pathname === item.link
+                      ? (scrolled ? "text-foreground" : "text-white")
                       : (scrolled ? "text-foreground/50 hover:text-foreground" : "text-white/50 hover:text-white")
                   )}
                 >
@@ -113,7 +113,7 @@ export default function Navbar() {
               scrolled ? "border-border" : "border-white/20"
             )}>
               <ThemeToggle variant="homeNav" />
-              
+
               <button
                 className={cn(
                   "w-10 h-10 flex items-center justify-center rounded-full transition-all duration-500 cursor-pointer",
@@ -149,20 +149,26 @@ export default function Navbar() {
             {/* Target Audience Logic: Organizer CTA */}
             <div className="hidden xl:flex items-center gap-3">
               <button
-                onClick={() => navigate(isAuthenticated && user?.is_seller ? "/organizer/events/new" : "/devenir-vendeur")}
+                onClick={() =>
+                  navigate(
+                    isAuthenticated && user?.role === "ORGANIZER"
+                      ? "/organizer/events/new"
+                      : "/register"
+                  )
+                }
                 className={cn(
                   "flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-transparent transition-all duration-700 group cursor-pointer shadow-none border",
-                  scrolled 
-                    ? "border-border hover:border-foreground text-foreground hover:bg-foreground hover:text-background" 
+                  scrolled
+                    ? "border-border hover:border-foreground text-foreground hover:bg-foreground hover:text-background"
                     : "border-white/30 hover:border-white text-white hover:bg-white hover:text-black"
                 )}
               >
                 <PlusCircle size={14} className="group-hover:rotate-90 transition-transform duration-700" strokeWidth={1.5} />
                 <span className="text-[9px] font-bold tracking-[0.2em] uppercase">
-                  {isAuthenticated && user?.is_seller ? "Créer un événement" : "Publier"}
+                  {isAuthenticated && user?.role === "ORGANIZER" ? "Créer un événement" : "Publier"}
                 </span>
               </button>
-              
+
               {!isAuthenticated && (
                 <button
                   onClick={() => navigate("/devenir-vendeur")}
@@ -179,8 +185,8 @@ export default function Navbar() {
             {/* Auth Section */}
             {!isAuthenticated ? (
               <div className="flex items-center gap-2 ml-2">
-                <button 
-                  onClick={() => navigate("/connexion")}
+                <button
+                  onClick={() => navigate("/login")}
                   className={cn(
                     "px-5 py-2.5 text-[9px] font-bold tracking-[0.2em] uppercase transition-colors cursor-pointer",
                     scrolled ? "text-foreground hover:text-foreground/70" : "text-white hover:text-white/80"
@@ -194,7 +200,7 @@ export default function Navbar() {
                     "rounded-full px-6 h-10 border-none font-bold shadow-lg transition-all text-[10px] uppercase tracking-[0.2em]",
                     scrolled ? "bg-foreground text-background hover:bg-foreground/90" : "bg-white text-black hover:bg-white/90"
                   )}
-                  onClick={() => navigate("/inscription")}
+                  onClick={() => navigate("/register")}
                 >
                   S'inscrire
                 </Button>
@@ -205,8 +211,8 @@ export default function Navbar() {
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className={cn(
                     "flex items-center gap-3 pl-1 pr-3 py-1 rounded-full border transition-all backdrop-blur-md cursor-pointer group",
-                    scrolled 
-                      ? "border-border hover:border-foreground/50 bg-background/40" 
+                    scrolled
+                      ? "border-border hover:border-foreground/50 bg-background/40"
                       : "border-white/20 hover:border-white/50 bg-black/40"
                   )}
                 >
@@ -235,7 +241,7 @@ export default function Navbar() {
                       {user?.first_name}
                     </span>
                     <span className={cn("text-[8px] font-bold uppercase tracking-[0.2em]", scrolled ? "text-foreground/50" : "text-white/60")}>
-                      {user?.is_seller ? "Organisateur" : "Client"}
+                      {user?.role === "ORGANIZER" ? "Organisateur" : "Membre"}
                     </span>
                   </div>
                   <ChevronDown size={12} className={cn("transition-transform duration-500", scrolled ? "text-foreground/40" : "text-white/60", isUserMenuOpen && "rotate-180")} />
@@ -244,7 +250,7 @@ export default function Navbar() {
                 {/* Dropdown User Menu — Refined for MasterClass feel */}
                 <AnimatePresence>
                   {isUserMenuOpen && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: 15, scale: 0.98 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 15, scale: 0.98 }}
@@ -253,24 +259,24 @@ export default function Navbar() {
                     >
                       <div className="px-8 py-8 border-b border-border">
                         <div className="flex items-center gap-4 mb-4">
-                           <div className="w-14 h-14 rounded-full overflow-hidden border border-border">
-                              <img src={user?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${user?.first_name}`} alt="avatar" className="w-full h-full object-cover grayscale opacity-80" />
-                           </div>
-                           <div className="flex flex-col">
-                              <p className="text-base font-serif font-light text-foreground leading-tight">{user?.first_name} {user?.last_name}</p>
-                              <div className={cn(
-                                "inline-flex px-2 py-0.5 rounded-sm text-[8px] font-bold uppercase tracking-[0.2em] mt-2 border",
-                                user?.is_seller ? "bg-foreground text-background border-foreground" : "bg-transparent text-foreground/60 border-border"
-                              )}>
-                                {user?.is_seller ? "Organisateur" : "Membre"}
-                              </div>
-                           </div>
+                          <div className="w-14 h-14 rounded-full overflow-hidden border border-border">
+                            <img src={user?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${user?.first_name}`} alt="avatar" className="w-full h-full object-cover grayscale opacity-80" />
+                          </div>
+                          <div className="flex flex-col">
+                            <p className="text-base font-serif font-light text-foreground leading-tight">{user?.first_name} {user?.last_name}</p>
+                            <div className={cn(
+                              "inline-flex px-2 py-0.5 rounded-sm text-[8px] font-bold uppercase tracking-[0.2em] mt-2 border",
+                              user?.role === "ORGANIZER" ? "bg-foreground text-background border-foreground" : "bg-transparent text-foreground/60 border-border"
+                            )}>
+                              {user?.role === "ORGANIZER" ? "Organisateur" : "Membre"}
+                            </div>
+                          </div>
                         </div>
                         <p className="text-[10px] text-foreground/40 truncate tracking-widest">{user?.email}</p>
                       </div>
 
                       <div className="p-4 flex flex-col gap-1">
-                        {user?.is_seller && (
+                        {user?.role === "ORGANIZER" && (
                           <button onClick={() => { setIsUserMenuOpen(false); navigate("/organizer/dashboard"); }} className="flex items-center gap-4 px-5 py-4 text-xs hover:bg-foreground/5 rounded-2xl transition-all w-full text-left font-light group cursor-pointer text-foreground">
                             <Store size={16} strokeWidth={1.5} className="text-foreground/60 group-hover:text-foreground transition-colors" />
                             <span className="tracking-wide">Dashboard Organisateur</span>
@@ -295,7 +301,7 @@ export default function Navbar() {
                               navigate("/");
                             } catch {
                               // ignore error or handle
-                             }
+                            }
                           }}
                           className="flex items-center justify-center gap-2 h-12 text-[9px] font-bold text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-2xl transition-all w-full uppercase tracking-[0.2em]"
                         >
@@ -316,8 +322,8 @@ export default function Navbar() {
           <MobileNavHeader className="px-6 py-4">
             <NavbarLogo />
             <div className="flex items-center gap-4">
-               <ThemeToggle />
-               <MobileNavToggle
+              <ThemeToggle />
+              <MobileNavToggle
                 isOpen={isMobileMenuOpen}
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               />
@@ -350,12 +356,16 @@ export default function Navbar() {
                 className="w-full h-16 rounded-[2rem] bg-foreground text-background font-bold text-sm uppercase tracking-widest"
                 onClick={() => {
                   setIsMobileMenuOpen(false);
-                  navigate(isAuthenticated && user?.is_seller ? "/organizer/events/new" : "/devenir-vendeur");
+                  navigate(
+                    isAuthenticated && user?.role === "ORGANIZER"
+                      ? "/organizer/events/new"
+                      : "/devenir-vendeur"
+                  );
                 }}
               >
-                {isAuthenticated && user?.is_seller ? "Créer un événement" : "Publier un événement"}
+                {isAuthenticated && user?.role === "ORGANIZER" ? "Créer un événement" : "Publier un événement"}
               </Button>
-              
+
               {!isAuthenticated && (
                 <div className="grid grid-cols-2 gap-3">
                   <Button

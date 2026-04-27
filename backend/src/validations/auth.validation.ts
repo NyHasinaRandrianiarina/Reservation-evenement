@@ -2,19 +2,12 @@ import { body } from "express-validator";
 
 // Inscription
 export const registerValidation = [
-  body("first_name")
+  body("full_name")
     .trim()
     .notEmpty()
-    .withMessage("Le prénom est requis")
-    .isLength({ min: 2, max: 50 })
-    .withMessage("Le prénom doit faire entre 2 et 50 caractères"),
-
-  body("last_name")
-    .trim()
-    .notEmpty()
-    .withMessage("Le nom est requis")
-    .isLength({ min: 2, max: 50 })
-    .withMessage("Le nom doit faire entre 2 et 50 caractères"),
+    .withMessage("Le nom complet est requis")
+    .isLength({ min: 2, max: 120 })
+    .withMessage("Le nom complet doit faire entre 2 et 120 caractères"),
 
   body("email")
     .trim()
@@ -36,22 +29,10 @@ export const registerValidation = [
     .isMobilePhone("any")
     .withMessage("Numéro de téléphone invalide"),
 
-  body("address")
+  body("role")
     .optional()
-    .trim()
-    .isLength({ max: 255 })
-    .withMessage("L'adresse ne doit pas dépasser 255 caractères"),
-
-  body("zone")
-    .optional()
-    .trim()
-    .isLength({ min: 2, max: 120 })
-    .withMessage("La zone doit faire entre 2 et 120 caractères"),
-
-  body("is_seller")
-    .optional()
-    .isBoolean()
-    .withMessage("is_seller doit être un booléen"),
+    .isIn(["PARTICIPANT", "ORGANIZER", "ADMIN"])
+    .withMessage("Rôle invalide"),
 ];
 
 // Les validation pour le login

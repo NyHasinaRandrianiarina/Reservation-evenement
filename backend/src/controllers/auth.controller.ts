@@ -23,8 +23,17 @@ import { sendOtpEmail } from "../services/email.service.js";
  * Crée le compte et connecte directement (émet les cookies).
  */
 export const register = asyncHandler(async (req: Request, res: Response) => {
-  const { first_name, last_name, email, password, phone, address, zone, is_seller } =
-    req.body;
+  const {
+    full_name,
+    email,
+    password,
+    phone,
+    role,
+  } = req.body;
+
+  const nameParts = String(full_name ?? "").trim().split(/\s+/).filter(Boolean);
+  const first_name = nameParts[0] ?? "";
+  const last_name = nameParts.slice(1).join(" ") || " ";
 
   const user = await registerUser({
     first_name,
@@ -32,14 +41,12 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     email,
     password,
     phone,
-    address,
-    zone,
-    is_delivery: Boolean(is_seller),
+    role,
   });
 
   // Connexion immédiate après inscription
-  const accessToken = generateAccessToken(user.id, user.role);
-  const refreshToken = await generateRefreshToken(user.id, req);
+  const accessToken = generateAccessToken((user as any).id, (user as any).role);
+  const refreshToken = await generateRefreshToken((user as any).id, req);
 
   setAuthCookies(res, accessToken, refreshToken);
 

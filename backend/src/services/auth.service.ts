@@ -33,7 +33,7 @@ interface RegisterInput {
   phone?: string;
   address?: string;
   zone?: string;
-  is_delivery?: boolean;
+  role?: string;
 }
 
 /**
@@ -60,9 +60,9 @@ export async function registerUser(data: RegisterInput) {
       phone: data.phone ?? null,
       address: data.address ?? null,
       zone: data.zone ?? null,
-      role: data.is_delivery ? "DELIVERY" : "SENDER",
-    },
-    select: USER_SELECT,
+      role: (data.role ?? "PARTICIPANT") as never,
+    } as any,
+    select: USER_SELECT as any,
   });
 
   return user;

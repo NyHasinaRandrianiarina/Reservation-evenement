@@ -9,7 +9,7 @@ model User {
   address              String?
   zone                 String?
   onboarding_completed Boolean  @default(false)
-  role                 Role     @default(SENDER)
+  role                 Role     @default(PARTICIPANT)
   two_fa_enabled       Boolean  @default(false)
   is_active            Boolean  @default(true)
   created_at           DateTime @default(now())
@@ -18,6 +18,4 @@ model User {
   // Relations
   refresh_tokens RefreshToken[]
   otp_codes      OtpCode[]
-  deliveries_as_sender Delivery[] @relation("SenderDeliveries")
-  deliveries_as_driver Delivery[] @relation("DriverDeliveries")
 }
