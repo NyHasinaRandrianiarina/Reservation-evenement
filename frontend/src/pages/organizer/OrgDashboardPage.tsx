@@ -4,45 +4,73 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
+import { useQuery } from '@tanstack/react-query';
+import { getOrganizerDashboardKpis, getOrganizerEvents } from '@/api/events';
 
-const kpis = [
-  { label: "Inscrits aujourd'hui", value: "24", trend: "+12% vs hier", isPositive: true, icon: Users },
-  { label: "CA du mois", value: "3 450 €", trend: "+5% vs mois dernier", isPositive: true, icon: Euro },
-  { label: "Billets restants", value: "156", trend: "Sur 500 total", isPositive: null, icon: Ticket },
-  { label: "Événements actifs", value: "3", trend: "1 en brouillon", isPositive: null, icon: Calendar },
-];
-
-const activeEvents = [
-  {
-    id: 'evt-1',
-    title: 'MasterClass Design UX/UI',
-    date: '15 Mars 2025',
-    status: 'published',
-    registered: 120,
-    capacity: 200,
-  },
-  {
-    id: 'evt-2',
-    title: 'Tech Summit 2024: IA',
-    date: '10 Nov 2024',
-    status: 'draft',
-    registered: 0,
-    capacity: 500,
-  },
-  {
-    id: 'evt-3',
-    title: 'Atelier de photographie nocturne',
-    date: '05 Mai 2024',
-    status: 'sold_out',
-    registered: 30,
-    capacity: 30,
-  }
-];
+function formatDateFr(dateIso: string) {
+  const d = new Date(dateIso);
+  if (Number.isNaN(d.getTime())) return dateIso;
+  return new Intl.DateTimeFormat('fr-FR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(d);
+}
 
 export default function OrgDashboardPage() {
+  const { data: kpisData } = useQuery({
+    queryKey: ['organizer', 'dashboard', 'kpis'],
+    queryFn: getOrganizerDashboardKpis,
+  });
+
+  const { data: eventsData } = useQuery({
+    queryKey: ['organizer', 'events'],
+    queryFn: getOrganizerEvents,
+  });
+
+  const kpis = [
+    {
+      label: "Inscrits aujourd'hui",
+      value: String(kpisData?.registrationsToday ?? 0),
+      trend: '',
+      isPositive: null,
+      icon: Users,
+    },
+    {
+      label: 'CA du mois',
+      value: `${(kpisData?.revenueMonth ?? 0).toLocaleString('fr-FR')} €`,
+      trend: '',
+      isPositive: null,
+      icon: Euro,
+    },
+    {
+      label: 'Billets restants',
+      value: kpisData?.remainingTickets === null ? '∞' : String(kpisData?.remainingTickets ?? 0),
+      trend: '',
+      isPositive: null,
+      icon: Ticket,
+    },
+    {
+      label: 'Événements actifs',
+      value: String(kpisData?.activeEvents ?? 0),
+      trend: kpisData ? `${kpisData.draftEvents} en brouillon` : '',
+      isPositive: null,
+      icon: Calendar,
+    },
+  ];
+
+  const activeEvents = (eventsData ?? []).map((e) => ({
+    id: e.id,
+    title: e.title,
+    date: formatDateFr(e.start_date),
+    status: e.status,
+    registered: 0,
+    capacity: e.capacity,
+  }));
+
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      
+
       {/* Header */}
       <div>
         <h1 className="text-3xl font-serif font-light tracking-tight mb-2">Tableau de bord</h1>
@@ -63,8 +91,8 @@ export default function OrgDashboardPage() {
               <h3 className="text-sm font-medium text-foreground/80 mb-4">{kpi.label}</h3>
               <p className={cn(
                 "text-xs font-semibold",
-                kpi.isPositive === true ? "text-emerald-500" : 
-                kpi.isPositive === false ? "text-destructive" : "text-muted-foreground"
+                kpi.isPositive === true ? "text-emerald-500" :
+                  kpi.isPositive === false ? "text-destructive" : "text-muted-foreground"
               )}>
                 {kpi.trend}
               </p>
@@ -76,7 +104,7 @@ export default function OrgDashboardPage() {
       {/* Active Events List */}
       <div className="space-y-6">
         <h2 className="text-2xl font-serif italic text-foreground/90">Vos événements</h2>
-        
+
         <div className="bg-card rounded-3xl border border-border overflow-hidden shadow-xl">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -91,7 +119,7 @@ export default function OrgDashboardPage() {
               <tbody className="divide-y divide-border/50">
                 {activeEvents.map((event) => {
                   const fillPercentage = event.capacity ? (event.registered / event.capacity) * 100 : 0;
-                  
+
                   return (
                     <tr key={event.id} className="hover:bg-muted/10 transition-colors">
                       <td className="p-4 px-6">
@@ -101,7 +129,7 @@ export default function OrgDashboardPage() {
                         </div>
                       </td>
                       <td className="p-4">
-                        <Badge 
+                        <Badge
                           variant={event.status === 'published' ? 'default' : event.status === 'sold_out' ? 'destructive' : 'secondary'}
                           className="uppercase tracking-widest text-[10px]"
                         >

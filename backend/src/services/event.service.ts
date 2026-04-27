@@ -100,3 +100,43 @@ export async function getPublicEventById(eventId: string) {
     where: { id: eventId, status: "published" },
   });
 }
+
+export interface OrganizerDashboardKpis {
+  registrationsToday: number;
+  revenueMonth: number;
+  remainingTickets: number | null;
+  activeEvents: number;
+  draftEvents: number;
+}
+
+export async function getOrganizerDashboardKpis(organizerId: string): Promise<OrganizerDashboardKpis> {
+  const events = await (prisma as any).event.findMany({
+    where: { organizer_id: organizerId },
+    select: {
+      status: true,
+      capacity: true,
+    },
+  });
+
+  const activeEvents = events.filter((e: any) => e.status === "published").length;
+  const draftEvents = events.filter((e: any) => e.status === "draft").length;
+
+  // NOTE: V1 - Nous n'avons pas encore de table registrations/transactions,
+  // donc on retourne 0 pour ces métriques.
+  const registrationsToday = 0;
+  const revenueMonth = 0;
+
+  // Sans ventes, "remaining" = somme des capacities. Si au moins un événement illimité (capacity null), alors null.
+  const hasUnlimited = events.some((e: any) => e.capacity === null);
+  const remainingTickets = hasUnlimited
+    ? null
+    : events.reduce((sum: number, e: any) => sum + (e.capacity ?? 0), 0);
+
+  return {
+    registrationsToday,
+    revenueMonth,
+    remainingTickets,
+    activeEvents,
+    draftEvents,
+  };
+}

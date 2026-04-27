@@ -12,6 +12,9 @@ router.get("/public/:id", eventController.getPublicById);
 // Routes protégées organisateur/admin
 router.use(authenticate);
 
+// Dashboard KPIs organisateur
+router.get("/dashboard/kpis", authorize("ORGANIZER", "ADMIN"), eventController.dashboardKpis);
+
 // Créer un événement (ORGANIZER ou ADMIN)
 router.post("/", authorize("ORGANIZER", "ADMIN"), eventController.create);
 

@@ -12,6 +12,24 @@ export type EventResponse = {
 // Re-export frontend Event type for compatibility
 export type { Event } from "@/types/event";
 
+export type OrganizerDashboardKpis = {
+  registrationsToday: number;
+  revenueMonth: number;
+  remainingTickets: number | null;
+  activeEvents: number;
+  draftEvents: number;
+};
+
+export type OrganizerEventRow = {
+  id: string;
+  title: string;
+  status: string;
+  start_date: string;
+  end_date: string;
+  capacity: number | null;
+  created_at: string;
+};
+
 export async function createEvent(data: EventDraft): Promise<EventResponse> {
   const payload = {
     title: data.title,
@@ -55,6 +73,30 @@ export async function getPublicEventById(id: string): Promise<Event> {
   const res = await apiRequest<Event, null>({
     method: "GET",
     path: `/events/public/${id}`,
+  });
+
+  return res.data;
+}
+
+/**
+ * KPIs dashboard organisateur
+ */
+export async function getOrganizerDashboardKpis(): Promise<OrganizerDashboardKpis> {
+  const res = await apiRequest<OrganizerDashboardKpis, null>({
+    method: "GET",
+    path: "/events/dashboard/kpis",
+  });
+
+  return res.data;
+}
+
+/**
+ * Liste des événements de l’organisateur connecté
+ */
+export async function getOrganizerEvents(): Promise<OrganizerEventRow[]> {
+  const res = await apiRequest<OrganizerEventRow[], null>({
+    method: "GET",
+    path: "/events",
   });
 
   return res.data;

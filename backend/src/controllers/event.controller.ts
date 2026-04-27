@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/async-handler.js";
 import { ApiResponse } from "../utils/api-response.js";
-import { createEvent, getEventsByOrganizer, getEventByIdAndOrganizer, getPublicEvents, getPublicEventById } from "../services/event.service.js";
+import { createEvent, getEventsByOrganizer, getEventByIdAndOrganizer, getPublicEvents, getPublicEventById, getOrganizerDashboardKpis } from "../services/event.service.js";
 
 /**
  * Crée un événement (protégé organisateur/admin)
@@ -56,4 +56,13 @@ export const getPublicById = asyncHandler(async (req: Request, res: Response) =>
   }
 
   ApiResponse.success(res, event, "Événement public récupéré");
+});
+
+/**
+ * KPIs du dashboard organisateur
+ */
+export const dashboardKpis = asyncHandler(async (req: Request, res: Response) => {
+  const organizer = req.user!;
+  const kpis = await getOrganizerDashboardKpis(organizer.id);
+  ApiResponse.success(res, kpis, "KPIs récupérés");
 });
