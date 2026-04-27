@@ -27,8 +27,8 @@ export default function LoginPage() {
         // Redirection based on role
         const currentUser = useAuthStore.getState().user;
         if (currentUser?.role === "ADMIN") navigate("/admin/dashboard");
-        else if (currentUser?.role === "DELIVERY") navigate("/delivery/dashboard");
-        else navigate("/sender/dashboard");
+        else if (currentUser?.role === "ORGANIZER") navigate("/organizer/dashboard");
+        else navigate("/account/registrations");
       }
     } catch (err) {
       if (err instanceof Error) {
@@ -108,22 +108,13 @@ export default function LoginPage() {
 
       <div className="mt-6 flex flex-col items-center gap-2.5 text-sm text-muted-foreground">
         <p className="text-xs">Pas encore de compte ?</p>
-        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 w-full">
-          <Link 
-            to="/register" 
-            className="flex items-center justify-center gap-1.5 font-bold text-foreground hover:text-primary transition-all bg-muted/40 hover:bg-muted/60 px-4 py-2 rounded-xl w-full text-[13px]"
-          >
-            Créer un compte
-            <ArrowRight size={14} />
-          </Link>
-          <Link 
-            to="/register/delivery" 
-            className="flex items-center justify-center gap-1.5 font-bold text-foreground hover:text-primary transition-all bg-muted/40 hover:bg-muted/60 px-4 py-2 rounded-xl w-full text-[13px]"
-          >
-            Devenir livreur
-            <ArrowRight size={14} />
-          </Link>
-        </div>
+        <Link 
+          to="/auth/signup" 
+          className="flex items-center justify-center gap-1.5 font-bold text-foreground hover:text-primary transition-all bg-muted/40 hover:bg-muted/60 px-4 py-2 rounded-xl w-full sm:w-auto text-[13px]"
+        >
+          Créer un compte
+          <ArrowRight size={14} />
+        </Link>
       </div>
     </AuthLayout>
   );

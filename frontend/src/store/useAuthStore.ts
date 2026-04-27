@@ -37,8 +37,8 @@ interface AuthState {
   init: () => Promise<void>;
   login: (data: { email: string; password: string }) => Promise<{ requires2fa: boolean }>;
   verify2fa: (data: { temp_token: string; code: string }) => Promise<void>;
-  registerClient: (data: { first_name: string; last_name: string; email: string; phone?: string; password: string }) => Promise<void>;
-  registerDelivery: (data: { first_name: string; last_name: string; email: string; phone?: string; zone?: string; password: string }) => Promise<void>;
+  registerParticipant: (data: { first_name: string; last_name: string; email: string; phone?: string; password: string }) => Promise<void>;
+  registerOrganizer: (data: { first_name: string; last_name: string; email: string; phone?: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (data: Partial<User>) => Promise<void>;
 }
@@ -128,7 +128,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  registerClient: async (data) => {
+  registerParticipant: async (data) => {
     set({ isLoading: true });
     try {
       const res = await authApi.register({
@@ -137,7 +137,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         email: data.email,
         phone: data.phone,
         password: data.password,
-        is_seller: false,
+        role: "PARTICIPANT",
       });
 
       set({
@@ -146,7 +146,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         status: AuthStatus.Authenticated,
         isLoading: false,
       });
-      toast.success(res.message || "Compte expéditeur créé avec succès");
+      toast.success(res.message || "Compte participant créé avec succès");
     } catch (err) {
       set({ isLoading: false });
       const message = err instanceof Error ? err.message : "Erreur lors de l'inscription";
@@ -155,7 +155,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  registerDelivery: async (data) => {
+  registerOrganizer: async (data) => {
     set({ isLoading: true });
     try {
       const res = await authApi.register({
@@ -163,9 +163,8 @@ export const useAuthStore = create<AuthState>((set) => ({
         last_name: data.last_name,
         email: data.email,
         phone: data.phone,
-        zone: data.zone,
         password: data.password,
-        is_seller: true,
+        role: "ORGANIZER",
       });
 
       set({
@@ -174,7 +173,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         status: AuthStatus.Authenticated,
         isLoading: false,
       });
-      toast.success(res.message || "Compte livreur créé avec succès");
+      toast.success(res.message || "Compte organisateur créé avec succès");
     } catch (err) {
       set({ isLoading: false });
       const message = err instanceof Error ? err.message : "Erreur lors de l'inscription";

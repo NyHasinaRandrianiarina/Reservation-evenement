@@ -14,6 +14,9 @@ import Step2InfoPage from './pages/registration/Step2InfoPage';
 import Step3PaymentPage from './pages/registration/Step3PaymentPage';
 import ConfirmationPage from './pages/registration/ConfirmationPage';
 
+import LoginPage from './pages/auth/LoginPage';
+import SignupPage from './pages/auth/SignupPage';
+
 import AccountLayout from './components/layouts/AccountLayout';
 import MyRegistrationsPage from './pages/account/MyRegistrationsPage';
 
@@ -61,13 +64,9 @@ function App() {
           </Route>
           <Route path='/events/:slug/confirmation' element={<ConfirmationPage />} />
 
-          {/* Legacy Public Routes */}
-          {/* <Route path='/' element={<LandingPage/>}/>
-          <Route path='/login' element={<LoginPage/>}/>
-          <Route path='/register' element={<RegisterPage/>}/>
-          <Route path='/register/delivery' element={<RegisterDeliveryPage/>}/>
-          <Route path='/track' element={<TrackPage/>}/>
-          <Route path='/track/:trackingNumber' element={<TrackResultPage/>}/> */}
+          {/* Auth Routes */}
+          <Route path='/login' element={<LoginPage />} />
+          <Route path='/register' element={<SignupPage />} />
           
           {/* Protected Participant Routes */}
           <Route path='/account' element={<AccountLayout />}>

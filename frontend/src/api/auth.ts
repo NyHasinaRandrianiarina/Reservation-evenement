@@ -1,6 +1,6 @@
 import { apiRequest } from "@/api/http";
 
-export type Role = "SENDER" | "DELIVERY" | "ADMIN";
+export type Role = "PARTICIPANT" | "ORGANIZER" | "ADMIN";
 
 export type User = {
   id: string;
@@ -25,9 +25,7 @@ export type RegisterInput = {
   email: string;
   password: string;
   phone?: string;
-  address?: string;
-  zone?: string;
-  is_seller?: boolean;
+  role?: Role;
 };
 
 export type LoginInput = {

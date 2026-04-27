@@ -1,32 +1,32 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, ArrowRight, User, Phone, MapPin, AlertCircle } from "lucide-react";
+import { Mail, Lock, ArrowRight, User, Phone, AlertCircle, Building2 } from "lucide-react";
 import AuthLayout from "@/components/auth/AuthLayout";
 import Input from "@/components/reusable/Input";
 import Button from "@/components/reusable/Button";
-
+import SocialAuthButtons from "@/components/auth/SocialAuthButtons";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function RegisterDeliveryPage() {
+export default function SignupPage() {
+  const [role, setRole] = useState<"participant" | "organizer">("participant");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [zone, setZone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
+  
   // Validation states
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [phoneError, setPhoneError] = useState("");
-  const [zoneError, setZoneError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [apiError, setApiError] = useState<string | null>(null);
 
   const navigate = useNavigate();
-  const { registerDelivery, isLoading } = useAuthStore();
+  const { registerParticipant, registerOrganizer, isLoading } = useAuthStore();
 
   const getPasswordStrength = (pwd: string) => {
     if (!pwd) return { label: "", color: "bg-transparent", width: "w-0" };
@@ -41,7 +41,7 @@ export default function RegisterDeliveryPage() {
 
   const validate = () => {
     let isValid = true;
-
+    
     if (!name || name.trim().length < 2) {
       setNameError("Le nom complet doit faire au moins 2 caractères.");
       isValid = false;
@@ -56,18 +56,12 @@ export default function RegisterDeliveryPage() {
       setEmailError("");
     }
 
-    if (!phone || phone.trim().length < 8) {
+    // Phone is optional for participant but let's just make it valid if typed
+    if (phone && phone.trim().length < 8) {
       setPhoneError("Veuillez entrer un numéro de téléphone valide.");
       isValid = false;
     } else {
       setPhoneError("");
-    }
-
-    if (!zone || zone.trim().length < 2) {
-      setZoneError("Veuillez indiquer votre zone de livraison principale.");
-      isValid = false;
-    } else {
-      setZoneError("");
     }
 
     if (!password || password.length < 8) {
@@ -90,7 +84,7 @@ export default function RegisterDeliveryPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setApiError(null);
-
+    
     if (!validate()) return;
 
     const names = name.trim().split(" ");
@@ -98,15 +92,25 @@ export default function RegisterDeliveryPage() {
     const lastName = names.slice(1).join(" ") || " ";
 
     try {
-      await registerDelivery({
-        first_name: firstName,
-        last_name: lastName,
-        email,
-        phone,
-        zone,
-        password,
-      });
-      navigate("/delivery/dashboard");
+      if (role === "participant") {
+        await registerParticipant({
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          phone,
+          password,
+        });
+        navigate("/account/registrations");
+      } else {
+        await registerOrganizer({
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          phone,
+          password,
+        });
+        navigate("/organizer/dashboard");
+      }
     } catch (err) {
       if (err instanceof Error) {
         setApiError(err.message);
@@ -118,10 +122,17 @@ export default function RegisterDeliveryPage() {
 
   return (
     <AuthLayout
-      title="Rejoindre l'équipe"
-      subtitle="Inscrivez-vous en tant que livreur et démarrez vos missions."
+      title="Créer un compte"
+      subtitle="Rejoignez EventNest pour découvrir ou organiser des événements."
     >
-      <form onSubmit={handleRegister} className="space-y-4" noValidate>
+      <Tabs defaultValue="participant" onValueChange={(v) => setRole(v as "participant" | "organizer")} className="mb-6">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="participant" className="text-xs sm:text-sm">Participant</TabsTrigger>
+          <TabsTrigger value="organizer" className="text-xs sm:text-sm">Organisateur</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      <form onSubmit={handleRegister} className="space-y-5" noValidate>
         {apiError && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
@@ -130,12 +141,12 @@ export default function RegisterDeliveryPage() {
         )}
 
         <Input
-          label="Nom complet"
+          label={role === "organizer" ? "Nom de l'organisation ou complet" : "Nom complet"}
           type="text"
-          placeholder="Jean Dupont"
+          placeholder={role === "organizer" ? "EventCorp / Jean Dupont" : "Jean Dupont"}
           value={name}
           onChange={(e) => { setName(e.target.value); setNameError(""); }}
-          leftIcon={<User size={18} />}
+          leftIcon={role === "organizer" ? <Building2 size={18} /> : <User size={18} />}
           error={nameError}
           required
         />
@@ -153,30 +164,18 @@ export default function RegisterDeliveryPage() {
           />
 
           <Input
-            label="Téléphone"
+            label="Téléphone (Optionnel)"
             type="tel"
             placeholder="+33 6 12 34 56 78"
             value={phone}
             onChange={(e) => { setPhone(e.target.value); setPhoneError(""); }}
             leftIcon={<Phone size={18} />}
             error={phoneError}
-            required
           />
         </div>
-
-        <Input
-          label="Zone de livraison"
-          type="text"
-          placeholder="Ex: Paris 15e, Lyon Centre..."
-          value={zone}
-          onChange={(e) => { setZone(e.target.value); setZoneError(""); }}
-          leftIcon={<MapPin size={18} />}
-          error={zoneError}
-          required
-        />
-
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1 mt-2 md:mt-0">
+          <div className="space-y-1">
             <Input
               label="Mot de passe"
               type="password"
@@ -220,13 +219,15 @@ export default function RegisterDeliveryPage() {
           className="w-full h-12 mt-4 rounded-xl text-sm font-semibold shadow-md shadow-primary/20"
           rightIcon={!isLoading ? <ArrowRight size={16} /> : undefined}
         >
-          {isLoading ? "Inscription en cours..." : "Rejoindre l'équipe"}
+          {isLoading ? "Inscription en cours..." : (role === "organizer" ? "Créer mon compte organisateur" : "Créer mon compte participant")}
         </Button>
       </form>
 
+      <SocialAuthButtons label="Ou s'inscrire avec" />
+
       <p className="mt-8 text-center text-sm text-muted-foreground">
-        Déjà livreur ?{" "}
-        <Link to="/login" className="font-semibold text-primary hover:underline">
+        Déjà un compte ?{" "}
+        <Link to="/auth/login" className="font-semibold text-primary hover:underline">
           Connectez-vous
         </Link>
       </p>
