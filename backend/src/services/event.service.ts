@@ -1,5 +1,14 @@
 import prisma from "../db/client.js";
 
+function slugify(input: string): string {
+  return String(input)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
 // Inline types to avoid cross-package imports
 interface TicketType {
   id: string;
@@ -188,6 +197,24 @@ export async function getPublicEventById(eventId: string) {
   return (prisma as any).event.findFirst({
     where: { id: eventId, status: "published" },
   });
+}
+
+/**
+ * Retourne un événement public par son ID ou par son slug (dérivé du titre).
+ * Utile côté frontend : les URLs publiques utilisent souvent le slug.
+ */
+export async function getPublicEventByIdOrSlug(idOrSlug: string) {
+  const byId = await getPublicEventById(idOrSlug);
+  if (byId) return byId;
+
+  const published = await (prisma as any).event.findMany({
+    where: { status: "published" },
+    orderBy: { created_at: "desc" },
+  });
+
+  return (
+    published.find((e: any) => slugify(String(e.title ?? "")) === idOrSlug) ?? null
+  );
 }
 
 export interface OrganizerDashboardKpis {

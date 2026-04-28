@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/async-handler.js";
 import { ApiResponse } from "../utils/api-response.js";
-import { createEvent, getEventsByOrganizer, getEventByIdAndOrganizer, getPublicEvents, getPublicEventById, getOrganizerDashboardKpis, updateEventStatus, updateEvent, deleteEvent } from "../services/event.service.js";
+import { createEvent, getEventsByOrganizer, getEventByIdAndOrganizer, getPublicEvents, getPublicEventByIdOrSlug, getOrganizerDashboardKpis, updateEventStatus, updateEvent, deleteEvent } from "../services/event.service.js";
 import { uploadToCloudinary } from "../utils/cloudinary.js";
 
 /**
@@ -101,7 +101,7 @@ export const listPublic = asyncHandler(async (req: Request, res: Response) => {
  */
 export const getPublicById = asyncHandler(async (req: Request, res: Response) => {
   const eventId = String(req.params.id);
-  const event = await getPublicEventById(eventId);
+  const event = await getPublicEventByIdOrSlug(eventId);
 
   if (!event) {
     return ApiResponse.error(res, "Événement introuvable", 404);
