@@ -1,6 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import express from "express";
 import cookieParser from "cookie-parser";
+import path from "path";
 import { PORT } from "./secrets.js";
 import routes from "./routes/index.js";
 import { securityMiddleware, authRateLimiter } from "./middlewares/security.js";
@@ -22,6 +23,9 @@ setupSwagger(app);
 
 //Rate limit strict sur les routes d'authentification
 app.use("/api/v1/auth", authRateLimiter);
+
+// Static uploads
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Routes 
 app.use("/api/v1", routes);

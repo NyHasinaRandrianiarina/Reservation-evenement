@@ -108,6 +108,10 @@ export type OrganizerEventRow = {
   created_at: string;
 };
 
+type UploadCoverResponse = {
+  url: string;
+};
+
 export async function createEvent(data: EventDraft): Promise<EventResponse> {
   const payload = {
     title: data.title,
@@ -202,4 +206,28 @@ export async function updateEventStatus(id: string, status: "draft" | "published
   });
 
   return toFrontendEvent(res.data);
+}
+
+/**
+ * Upload d'image de couverture (multipart) — retourne une URL publique
+ */
+export async function uploadEventCover(file: File): Promise<UploadCoverResponse> {
+  const API_URL = import.meta.env.VITE_API_URL || "";
+  const API_BASE_URL = `${API_URL}/api/v1`;
+
+  const form = new FormData();
+  form.append("file", file);
+
+  const res = await fetch(`${API_BASE_URL}/events/upload/cover`, {
+    method: "POST",
+    body: form,
+    credentials: "include",
+  });
+
+  const payload = await res.json();
+  if (!res.ok) {
+    throw new Error(payload?.message || "Erreur upload image");
+  }
+
+  return payload.data as UploadCoverResponse;
 }

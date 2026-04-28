@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authenticate } from "../middlewares/authenticate.js";
 import { authorize } from "../middlewares/authorize.js";
+import { eventCoverUpload } from "../middlewares/upload.js";
 import * as eventController from "../controllers/event.controller.js";
 
 const router = Router();
@@ -14,6 +15,14 @@ router.use(authenticate);
 
 // Dashboard KPIs organisateur
 router.get("/dashboard/kpis", authorize("ORGANIZER", "ADMIN"), eventController.dashboardKpis);
+
+// Upload cover image
+router.post(
+    "/upload/cover",
+    authorize("ORGANIZER", "ADMIN"),
+    eventCoverUpload.single("file"),
+    eventController.uploadCover,
+);
 
 // Créer un événement (ORGANIZER ou ADMIN)
 router.post("/", authorize("ORGANIZER", "ADMIN"), eventController.create);

@@ -87,3 +87,19 @@ export const dashboardKpis = asyncHandler(async (req: Request, res: Response) =>
   const kpis = await getOrganizerDashboardKpis(organizer.id);
   ApiResponse.success(res, kpis, "KPIs récupérés");
 });
+
+/**
+ * Upload image de couverture (stockée sur le serveur)
+ */
+export const uploadCover = asyncHandler(async (req: Request, res: Response) => {
+  const file = req.file;
+
+  if (!file) {
+    return ApiResponse.error(res, "Aucun fichier reçu", 400);
+  }
+
+  const baseUrl = `${req.protocol}://${req.get("host")}`;
+  const url = `${baseUrl}/uploads/events/${file.filename}`;
+
+  ApiResponse.created(res, { url }, "Image uploadée");
+});

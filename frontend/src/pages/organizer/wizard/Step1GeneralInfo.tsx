@@ -3,6 +3,10 @@ import { useEventWizardStore } from "@/store/useEventWizardStore";
 import Input from "@/components/reusable/Input";
 import Button from "@/components/reusable/Button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { useDropzone } from "react-dropzone";
+import { ImagePlus, X } from "lucide-react";
+import { uploadEventCover } from "@/api/events";
+import toast from "react-hot-toast";
 
 interface Props {
   onNext: () => void;
@@ -40,8 +44,8 @@ export default function Step1GeneralInfo({ onNext }: Props) {
           <label className="block text-[13px] font-semibold text-foreground mb-1.5 uppercase tracking-wide">
             Catégorie
           </label>
-          <Select 
-            value={draft.category} 
+          <Select
+            value={draft.category}
             onValueChange={(val: string) => updateDraft({ category: val as any })}
           >
             <SelectTrigger className="w-full h-11 bg-background">
@@ -62,8 +66,8 @@ export default function Step1GeneralInfo({ onNext }: Props) {
           <label className="block text-[13px] font-semibold text-foreground mb-1.5 uppercase tracking-wide">
             Lieu de l'événement
           </label>
-          <Select 
-            value={draft.location.type} 
+          <Select
+            value={draft.location.type}
             onValueChange={(val: string) => updateDraft({ location: { ...draft.location, type: val as any } })}
           >
             <SelectTrigger className="w-full h-11 bg-background">
@@ -131,6 +135,47 @@ export default function Step1GeneralInfo({ onNext }: Props) {
           />
         </div>
 
+        <div className="md:col-span-2">
+          <label className="block text-[13px] font-semibold text-foreground mb-1.5 uppercase tracking-wide">
+            Image de couverture
+          </label>
+          <div className="mt-2">
+            {draft.coverImageUrl ? (
+              <div className="relative rounded-2xl overflow-hidden border border-border h-[240px] group">
+                <img
+                  src={draft.coverImageUrl}
+                  alt="Cover preview"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    className="rounded-full shadow-lg"
+                    onClick={() => updateDraft({ coverImageUrl: undefined })}
+                  >
+                    <X className="w-4 h-4 mr-2" /> Supprimer l'image
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <DropzoneArea
+                onFileAccepted={(file) => {
+                  (async () => {
+                    try {
+                      const { url } = await uploadEventCover(file);
+                      updateDraft({ coverImageUrl: url });
+                    } catch (err) {
+                      console.error(err);
+                      toast.error("Erreur lors de l'upload de l'image");
+                    }
+                  })();
+                }}
+              />
+            )}
+          </div>
+        </div>
+
       </div>
 
       <div className="flex justify-end pt-6 border-t border-border mt-8">
@@ -139,5 +184,40 @@ export default function Step1GeneralInfo({ onNext }: Props) {
         </Button>
       </div>
     </form>
+  );
+}
+
+function DropzoneArea({ onFileAccepted }: { onFileAccepted: (file: File) => void }) {
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: {
+      'image/jpeg': ['.jpg', '.jpeg'],
+      'image/png': ['.png'],
+      'image/webp': ['.webp']
+    },
+    maxFiles: 1,
+    onDrop: acceptedFiles => {
+      if (acceptedFiles.length > 0) {
+        onFileAccepted(acceptedFiles[0]);
+      }
+    }
+  });
+
+  return (
+    <div
+      {...getRootProps()}
+      className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-colors duration-300 flex flex-col items-center justify-center min-h-[200px] ${isDragActive ? "border-primary bg-primary/5" : "border-border hover:border-primary/50 hover:bg-muted/30"
+        }`}
+    >
+      <input {...getInputProps()} />
+      <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
+        <ImagePlus className="w-8 h-8" />
+      </div>
+      <p className="text-foreground font-medium mb-1">
+        {isDragActive ? "Relâchez l'image ici..." : "Cliquez ou glissez une image ici"}
+      </p>
+      <p className="text-xs text-muted-foreground">
+        JPG, PNG ou WEBP. Max 5MB. Format recommandé 16:9.
+      </p>
+    </div>
   );
 }
