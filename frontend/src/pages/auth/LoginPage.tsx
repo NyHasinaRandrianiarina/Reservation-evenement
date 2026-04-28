@@ -109,7 +109,7 @@ export default function LoginPage() {
       <div className="mt-6 flex flex-col items-center gap-2.5 text-sm text-muted-foreground">
         <p className="text-xs">Pas encore de compte ?</p>
         <Link 
-          to="/auth/signup" 
+          to="/register" 
           className="flex items-center justify-center gap-1.5 font-bold text-foreground hover:text-primary transition-all bg-muted/40 hover:bg-muted/60 px-4 py-2 rounded-xl w-full sm:w-auto text-[13px]"
         >
           Créer un compte

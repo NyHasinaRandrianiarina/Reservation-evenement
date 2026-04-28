@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import React, { forwardRef } from "react";
+import { Loader2 } from "lucide-react";
 
 type Variant = "primary" | "secondary" | "outline" | "ghost" | "destructive";
 type Size = "sm" | "md" | "lg" | "icon";
@@ -15,7 +16,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   { variant = "primary", size = "md", isLoading, leftIcon, rightIcon, className, children, ...props }, ref
 ) {
-  
+
   const variants: Record<Variant, string> = {
     // Utilise ta couleur dorée oklch comme identité forte
     primary: "bg-primary text-primary-foreground shadow-sm hover:brightness-110",
@@ -45,17 +46,17 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
         sizes[size],
         className
       )}
-      disabled={isLoading}
+      disabled={isLoading || props.disabled}
       {...props}
     >
+      {leftIcon && <span className="opacity-90">{leftIcon}</span>}
+      {children}
       {isLoading ? (
-         <span className="animate-spin mr-2">◌</span> 
+        <span className="opacity-90">
+          <Loader2 className="animate-spin" size={16} />
+        </span>
       ) : (
-        <>
-          {leftIcon && <span className="opacity-90">{leftIcon}</span>}
-          {children}
-          {rightIcon && <span className="opacity-90">{rightIcon}</span>}
-        </>
+        rightIcon && <span className="opacity-90">{rightIcon}</span>
       )}
     </button>
   );

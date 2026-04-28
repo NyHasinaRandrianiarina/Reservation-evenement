@@ -8,8 +8,7 @@ import type { AuthUser } from "../types/express.js";
  */
 const USER_SELECT = {
   id: true,
-  first_name: true,
-  last_name: true,
+  full_name: true,
   email: true,
   phone: true,
   address: true,
@@ -26,8 +25,7 @@ const USER_SELECT = {
  * Données nécessaires à l'inscription.
  */
 interface RegisterInput {
-  first_name: string;
-  last_name: string;
+  full_name: string;
   email: string;
   password: string;
   phone?: string;
@@ -53,8 +51,7 @@ export async function registerUser(data: RegisterInput) {
 
   const user = await prisma.user.create({
     data: {
-      first_name: data.first_name,
-      last_name: data.last_name,
+      full_name: data.full_name,
       email: data.email,
       password: hashedPassword,
       phone: data.phone ?? null,
@@ -99,5 +96,5 @@ export async function getUserById(id: string): Promise<AuthUser | null> {
     select: USER_SELECT,
   });
 
-  return user;
+  return user as AuthUser | null;
 }

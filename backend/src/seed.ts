@@ -39,8 +39,7 @@ async function seedAdmin() {
 
   const admin = await prisma.user.create({
     data: {
-      first_name: "Admin",
-      last_name: "TrackIt",
+      full_name: "Admin TrackIt",
       email: adminEmail,
       password: hashedPassword,
       role: "ADMIN",

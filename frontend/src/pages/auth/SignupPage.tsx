@@ -137,7 +137,7 @@ export default function SignupPage() {
         <Input
           label={role === "organizer" ? "Nom de l'organisation ou complet" : "Nom complet"}
           type="text"
-          placeholder={role === "organizer" ? "EventCorp / Jean Dupont" : "Jean Dupont"}
+          placeholder={role === "organizer" ? "EventCorp / John Doe" : "John Doe"}
           value={name}
           onChange={(e) => { setName(e.target.value); setNameError(""); }}
           leftIcon={role === "organizer" ? <Building2 size={18} /> : <User size={18} />}
@@ -149,7 +149,7 @@ export default function SignupPage() {
           <Input
             label="Adresse email"
             type="email"
-            placeholder="nom@exemple.com"
+            placeholder="john@doe.com"
             value={email}
             onChange={(e) => { setEmail(e.target.value); setEmailError(""); }}
             leftIcon={<Mail size={18} />}

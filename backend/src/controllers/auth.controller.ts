@@ -31,13 +31,8 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     role,
   } = req.body;
 
-  const nameParts = String(full_name ?? "").trim().split(/\s+/).filter(Boolean);
-  const first_name = nameParts[0] ?? "";
-  const last_name = nameParts.slice(1).join(" ") || " ";
-
   const user = await registerUser({
-    first_name,
-    last_name,
+    full_name,
     email,
     password,
     phone,
@@ -66,7 +61,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   // Si 2FA activé → envoyer OTP et retourner un token temporaire
   if (user.two_fa_enabled) {
     const otpCode = await generateOtp(user.id, "TWO_FA");
-    await sendOtpEmail(user.email, otpCode, user.first_name);
+    await sendOtpEmail(user.email, otpCode, (user as any).full_name ?? "");
 
     const tempToken = generateTwoFaToken(user.id);
 
@@ -119,8 +114,7 @@ export const verifyLogin2fa = asyncHandler(
       where: { id: payload.userId },
       select: {
         id: true,
-        first_name: true,
-        last_name: true,
+        full_name: true,
         email: true,
         phone: true,
         address: true,
@@ -222,7 +216,7 @@ export const enable2fa = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const otpCode = await generateOtp(user.id, "TWO_FA");
-  await sendOtpEmail(user.email, otpCode, user.first_name);
+  await sendOtpEmail(user.email, otpCode, (user as any).full_name ?? "");
 
   ApiResponse.success(
     res,
