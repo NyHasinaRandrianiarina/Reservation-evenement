@@ -193,7 +193,7 @@ export default function OrganizerDetailPage() {
             variant="ghost"
             size="sm"
             onClick={() => navigate("/organisateurs")}
-            className="mb-10 text-white/60 hover:text-white hover:bg-white/10 -ml-2"
+            className="mb-10 text-white/60 hover:text-white hover:bg-white/10 -ml-2 mt-15"
           >
             <ChevronLeft className="w-4 h-4 mr-1" />
             Tous les organisateurs
