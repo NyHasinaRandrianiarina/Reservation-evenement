@@ -174,10 +174,11 @@ export default function Navbar() {
                   Connexion
                 </button>
                 <Button
-                  variant="outline"
                   className={cn(
                     "rounded-full px-6 h-10 border-none font-bold shadow-lg transition-all text-[10px] uppercase tracking-[0.2em]",
-                    scrolled ? "bg-foreground text-background hover:bg-foreground/90" : "bg-white text-black hover:bg-white/90"
+                    scrolled || !isHomePage
+                      ? "bg-primary text-primary-foreground hover:opacity-90" 
+                      : "bg-white text-black hover:bg-white/90"
                   )}
                   onClick={() => navigate("/register")}
                 >
