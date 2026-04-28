@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEventWizardStore } from "@/store/useEventWizardStore";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Button from "@/components/reusable/Button";
-import { createEvent } from "@/api/events";
+import { createEvent, updateEvent } from "@/api/events";
 import toast from "react-hot-toast";
-import { CheckCircle2, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface Props {
@@ -13,8 +13,9 @@ interface Props {
 
 export default function Step4Publish({ onPrev }: Props) {
   const { draft, resetDraft } = useEventWizardStore();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const queryClient = useQueryClient();
 
   // Basic validation check before publishing
   const missingFields = [];
@@ -25,21 +26,49 @@ export default function Step4Publish({ onPrev }: Props) {
 
   const canPublish = missingFields.length === 0;
 
-  const handlePublish = async () => {
-    if (!canPublish) return;
-    
-    setIsSubmitting(true);
-    try {
-      await createEvent(draft);
-      toast.success("Événement publié avec succès !");
+  const mutation = useMutation({
+    mutationFn: async () => {
+      let finalCoverImageUrl = draft.coverImageUrl;
+
+      // Si on a un objet File, on doit l'uploader d'abord
+      if (draft.coverImage) {
+        try {
+          const { uploadEventCover } = await import("@/api/events");
+          const uploadRes = await uploadEventCover(draft.coverImage);
+          finalCoverImageUrl = uploadRes.url;
+        } catch (error) {
+          console.error("Image upload failed:", error);
+          throw new Error("Échec de l'envoi de l'image de couverture.");
+        }
+      }
+
+      const finalDraft = { ...draft, coverImageUrl: finalCoverImageUrl };
+
+      if (id) {
+        return updateEvent(id, finalDraft);
+      } else {
+        return createEvent(finalDraft);
+      }
+    },
+    onSuccess: () => {
+      toast.success(id ? "Événement mis à jour avec succès !" : "Événement créé avec succès !");
       resetDraft();
-      navigate("/organizer/dashboard");
-    } catch (error) {
+      queryClient.invalidateQueries({ queryKey: ['organizer', 'events'] });
+      if (id) {
+        queryClient.invalidateQueries({ queryKey: ['organizer', 'event', id] });
+      }
+      navigate("/organizer/events");
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
       console.error(error);
-      toast.error("Erreur lors de la publication de l'événement.");
-    } finally {
-      setIsSubmitting(false);
-    }
+      toast.error(error.message || "Une erreur est survenue lors de l'enregistrement de l'événement.");
+    },
+  });
+
+  const handlePublish = () => {
+    if (!canPublish) return;
+    mutation.mutate();
   };
 
   return (
@@ -47,7 +76,7 @@ export default function Step4Publish({ onPrev }: Props) {
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-foreground">Récapitulatif & Publication</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Vérifiez les informations avant de publier votre événement.
+          Vérifiez les informations avant de {id ? "mettre à jour" : "publier"} votre événement.
         </p>
       </div>
 
@@ -55,7 +84,7 @@ export default function Step4Publish({ onPrev }: Props) {
         <Alert variant="destructive" className="mb-6">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Il manque des informations obligatoires pour pouvoir publier :
+            Il manque des informations obligatoires :
             <ul className="list-disc ml-5 mt-2">
               {missingFields.map((field, i) => (
                 <li key={i}>{field}</li>
@@ -125,28 +154,11 @@ export default function Step4Publish({ onPrev }: Props) {
               </ul>
             )}
           </div>
-
-          <div className="bg-muted/30 rounded-xl p-5 border border-border">
-            <h3 className="font-semibold text-sm text-muted-foreground mb-4 uppercase tracking-wider">
-              Formulaire ({draft.customFields.length} questions)
-            </h3>
-            {draft.customFields.length === 0 ? (
-              <span className="text-sm text-muted-foreground">Champs standards uniquement</span>
-            ) : (
-              <ul className="space-y-2">
-                {draft.customFields.map((f) => (
-                  <li key={f.id} className="text-sm">
-                    • {f.label} {f.required && <span className="text-destructive">*</span>}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
         </div>
       </div>
 
       <div className="flex justify-between pt-6 border-t border-border mt-8">
-        <Button type="button" variant="outline" onClick={onPrev} disabled={isSubmitting}>
+        <Button type="button" variant="outline" onClick={onPrev} disabled={mutation.isPending}>
           Retour
         </Button>
         <Button 
@@ -154,11 +166,10 @@ export default function Step4Publish({ onPrev }: Props) {
           variant="primary" 
           className="px-8" 
           onClick={handlePublish}
-          disabled={!canPublish || isSubmitting}
-          isLoading={isSubmitting}
-          leftIcon={!isSubmitting ? <CheckCircle2 size={16} /> : undefined}
+          disabled={!canPublish || mutation.isPending}
+          isLoading={mutation.isPending}
         >
-          {isSubmitting ? "Publication en cours..." : "Publier l'événement"}
+          {mutation.isPending ? "Enregistrement..." : id ? "Mettre à jour" : "Publier l'événement"}
         </Button>
       </div>
     </div>

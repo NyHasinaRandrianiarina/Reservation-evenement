@@ -83,6 +83,7 @@ function toFrontendEvent(e: BackendEvent): Event {
       avatar: "",
     },
     ticketTypes,
+    customFields: e.custom_fields || [],
     tags: [],
     isPublic: !e.is_private,
     createdAt: e.created_at,
@@ -230,4 +231,41 @@ export async function uploadEventCover(file: File): Promise<UploadCoverResponse>
   }
 
   return payload.data as UploadCoverResponse;
+}
+
+/**
+ * Supprimer un événement
+ */
+export async function deleteEvent(id: string): Promise<void> {
+  await apiRequest<void, null>({
+    method: "DELETE",
+    path: `/events/${id}`,
+  });
+}
+
+/**
+ * Mettre à jour un événement
+ */
+export async function updateEvent(id: string, data: EventDraft): Promise<EventResponse> {
+  const payload = {
+    title: data.title,
+    category: data.category,
+    description: data.description,
+    start_date: data.startDate,
+    end_date: data.endDate,
+    location: data.location,
+    capacity: data.capacity,
+    is_private: data.isPrivate,
+    cover_image_url: data.coverImageUrl,
+    tickets: data.tickets,
+    custom_fields: data.customFields,
+  };
+
+  const res = await apiRequest<EventResponse, typeof payload>({
+    method: "PUT",
+    path: `/events/${id}`,
+    body: payload,
+  });
+
+  return res.data;
 }

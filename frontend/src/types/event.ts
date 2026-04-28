@@ -65,6 +65,8 @@ export interface Event {
   totalSold: number;
   organizer: OrganizerSummary;
   ticketTypes: TicketType[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  customFields: any[];
   tags: string[];
   isPublic: boolean;
   createdAt: string;

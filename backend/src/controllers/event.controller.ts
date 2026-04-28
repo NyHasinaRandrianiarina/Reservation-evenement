@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/async-handler.js";
 import { ApiResponse } from "../utils/api-response.js";
-import { createEvent, getEventsByOrganizer, getEventByIdAndOrganizer, getPublicEvents, getPublicEventById, getOrganizerDashboardKpis, updateEventStatus } from "../services/event.service.js";
+import { createEvent, getEventsByOrganizer, getEventByIdAndOrganizer, getPublicEvents, getPublicEventById, getOrganizerDashboardKpis, updateEventStatus, updateEvent, deleteEvent } from "../services/event.service.js";
 
 /**
  * Crée un événement (protégé organisateur/admin)
@@ -55,6 +55,36 @@ export const updateStatus = asyncHandler(async (req: Request, res: Response) => 
   }
 
   ApiResponse.success(res, updatedEvent, "Statut de l'événement mis à jour");
+});
+
+/**
+ * Met à jour un événement (ownership)
+ */
+export const update = asyncHandler(async (req: Request, res: Response) => {
+  const organizer = req.user!;
+  const eventId = String(req.params.id);
+
+  const updated = await updateEvent(eventId, organizer.id, req.body);
+  if (!updated) {
+    return ApiResponse.error(res, "Événement introuvable ou non autorisé", 404);
+  }
+
+  ApiResponse.success(res, updated, "Événement mis à jour");
+});
+
+/**
+ * Supprime un événement (ownership)
+ */
+export const remove = asyncHandler(async (req: Request, res: Response) => {
+  const organizer = req.user!;
+  const eventId = String(req.params.id);
+
+  const ok = await deleteEvent(eventId, organizer.id);
+  if (!ok) {
+    return ApiResponse.error(res, "Événement introuvable ou non autorisé", 404);
+  }
+
+  ApiResponse.success(res, null, "Événement supprimé");
 });
 
 /**

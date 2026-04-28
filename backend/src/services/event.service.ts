@@ -123,6 +123,55 @@ export async function updateEventStatus(eventId: string, organizerId: string, st
 }
 
 /**
+ * Met à jour un événement si l'utilisateur est bien l'organisateur.
+ * Accepte le payload snake_case (API) et tolère aussi camelCase (compat).
+ */
+export async function updateEvent(eventId: string, organizerId: string, data: unknown) {
+  const existing = await getEventByIdAndOrganizer(eventId, organizerId);
+  if (!existing) return null;
+
+  const payload = data as unknown as Partial<CreateEventInput> & Partial<EventDraft>;
+  const startDate = payload.start_date ?? payload.startDate;
+  const endDate = payload.end_date ?? payload.endDate;
+
+  const isPrivate = payload.is_private ?? payload.isPrivate;
+  const coverImageUrl = payload.cover_image_url ?? payload.coverImageUrl;
+  const tickets = payload.tickets;
+  const customFields = payload.custom_fields ?? payload.customFields;
+
+  return (prisma as any).event.update({
+    where: { id: eventId },
+    data: {
+      title: payload.title,
+      category: payload.category,
+      description: payload.description,
+      start_date: startDate ? new Date(String(startDate)) : undefined,
+      end_date: endDate ? new Date(String(endDate)) : undefined,
+      location: payload.location,
+      capacity: payload.capacity ?? undefined,
+      is_private: isPrivate ?? undefined,
+      cover_image_url: coverImageUrl === undefined ? undefined : coverImageUrl,
+      tickets: tickets ?? undefined,
+      custom_fields: customFields ?? undefined,
+    },
+  });
+}
+
+/**
+ * Supprime un événement si l'utilisateur est bien l'organisateur.
+ */
+export async function deleteEvent(eventId: string, organizerId: string) {
+  const existing = await getEventByIdAndOrganizer(eventId, organizerId);
+  if (!existing) return null;
+
+  await (prisma as any).event.delete({
+    where: { id: eventId },
+  });
+
+  return true;
+}
+
+/**
  * Retourne tous les événements publics (statut publié) pour le catalogue.
  */
 export async function getPublicEvents() {

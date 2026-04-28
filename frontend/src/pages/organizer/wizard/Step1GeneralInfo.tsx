@@ -5,8 +5,6 @@ import Button from "@/components/reusable/Button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useDropzone } from "react-dropzone";
 import { ImagePlus, X } from "lucide-react";
-import { uploadEventCover } from "@/api/events";
-import toast from "react-hot-toast";
 
 interface Props {
   onNext: () => void;
@@ -46,6 +44,7 @@ export default function Step1GeneralInfo({ onNext }: Props) {
           </label>
           <Select
             value={draft.category}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onValueChange={(val: string) => updateDraft({ category: val as any })}
           >
             <SelectTrigger className="w-full h-11 bg-background">
@@ -68,6 +67,7 @@ export default function Step1GeneralInfo({ onNext }: Props) {
           </label>
           <Select
             value={draft.location.type}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onValueChange={(val: string) => updateDraft({ location: { ...draft.location, type: val as any } })}
           >
             <SelectTrigger className="w-full h-11 bg-background">
@@ -143,16 +143,22 @@ export default function Step1GeneralInfo({ onNext }: Props) {
             {draft.coverImageUrl ? (
               <div className="relative rounded-2xl overflow-hidden border border-border h-[240px] group">
                 <img
-                  src={draft.coverImageUrl}
+                  src={draft.coverImageUrl.startsWith('blob:') || draft.coverImageUrl.startsWith('http') 
+                    ? draft.coverImageUrl 
+                    : `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${draft.coverImageUrl}`
+                  }
                   alt="Cover preview"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=2070&auto=format&fit=crop';
+                  }}
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <Button
                     type="button"
                     variant="destructive"
                     className="rounded-full shadow-lg"
-                    onClick={() => updateDraft({ coverImageUrl: undefined })}
+                    onClick={() => updateDraft({ coverImageUrl: undefined, coverImage: null })}
                   >
                     <X className="w-4 h-4 mr-2" /> Supprimer l'image
                   </Button>
@@ -161,15 +167,11 @@ export default function Step1GeneralInfo({ onNext }: Props) {
             ) : (
               <DropzoneArea
                 onFileAccepted={(file) => {
-                  (async () => {
-                    try {
-                      const { url } = await uploadEventCover(file);
-                      updateDraft({ coverImageUrl: url });
-                    } catch (err) {
-                      console.error(err);
-                      toast.error("Erreur lors de l'upload de l'image");
-                    }
-                  })();
+                  const url = URL.createObjectURL(file);
+                  updateDraft({ 
+                    coverImageUrl: url,
+                    coverImage: file 
+                  });
                 }}
               />
             )}

@@ -1,6 +1,9 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Check } from "lucide-react";
+import { useQuery } from '@tanstack/react-query';
+import { getOrganizerEventById } from '@/api/events';
+import { useEventWizardStore } from "@/store/useEventWizardStore";
 
 import Step1GeneralInfo from "./wizard/Step1GeneralInfo";
 import Step2Ticketing from "./wizard/Step2Ticketing";
@@ -15,8 +18,47 @@ const steps = [
 ];
 
 export default function EventWizardPage() {
+  const { id } = useParams<{ id: string }>();
   const [currentStep, setCurrentStep] = useState(1);
   const navigate = useNavigate();
+  const { updateDraft, resetDraft } = useEventWizardStore();
+
+  const { data: eventData, isLoading } = useQuery({
+    queryKey: ['organizer', 'event', id],
+    queryFn: () => getOrganizerEventById(id!),
+    enabled: !!id,
+  });
+
+  useEffect(() => {
+    if (id && eventData) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const e = eventData as any;
+      updateDraft({
+        title: e.title,
+        category: e.category,
+        description: e.description,
+        startDate: (() => { try { return e.startDate ? new Date(e.startDate).toISOString().slice(0, 16) : "" } catch { return "" } })(),
+        endDate: (() => { try { return e.endDate ? new Date(e.endDate).toISOString().slice(0, 16) : "" } catch { return "" } })(),
+        location: e.location || { type: "in_person", address: "" },
+        capacity: e.capacity,
+        isPrivate: !e.isPublic,
+        coverImageUrl: e.coverImage || undefined,
+        tickets: e.ticketTypes ? e.ticketTypes.map((t: any) => ({
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          id: t.id,
+          name: t.name,
+          type: t.price > 0 ? "paid" : "free",
+          price: t.price,
+          quota: t.quota,
+          description: t.description || "",
+          limitPerOrder: t.maxPerOrder || 10,
+        })) : [],
+        customFields: e.customFields || [],
+      });
+    } else if (!id) {
+      resetDraft();
+    }
+  }, [id, eventData, updateDraft, resetDraft]);
 
   const handleNext = () => {
     if (currentStep < 4) setCurrentStep(currentStep + 1);
@@ -37,7 +79,9 @@ export default function EventWizardPage() {
           >
             <ArrowLeft size={18} />
           </button>
-          <h1 className="text-lg font-semibold hidden sm:block">Créer un événement</h1>
+          <h1 className="text-lg font-semibold hidden sm:block">
+            {id ? "Modifier l'événement" : "Créer un événement"}
+          </h1>
         </div>
 
         {/* Stepper */}
@@ -73,10 +117,18 @@ export default function EventWizardPage() {
       {/* Main Content */}
       <main className="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 lg:p-8">
         <div className="bg-card border border-border shadow-sm rounded-2xl p-6 sm:p-8 min-h-[60vh]">
-          {currentStep === 1 && <Step1GeneralInfo onNext={handleNext} />}
-          {currentStep === 2 && <Step2Ticketing onNext={handleNext} onPrev={handlePrev} />}
-          {currentStep === 3 && <Step3FormBuilder onNext={handleNext} onPrev={handlePrev} />}
-          {currentStep === 4 && <Step4Publish onPrev={handlePrev} />}
+          {isLoading ? (
+            <div className="flex items-center justify-center h-64 text-muted-foreground animate-pulse">
+              Chargement des données de l'événement...
+            </div>
+          ) : (
+            <>
+              {currentStep === 1 && <Step1GeneralInfo onNext={handleNext} />}
+              {currentStep === 2 && <Step2Ticketing onNext={handleNext} onPrev={handlePrev} />}
+              {currentStep === 3 && <Step3FormBuilder onNext={handleNext} onPrev={handlePrev} />}
+              {currentStep === 4 && <Step4Publish onPrev={handlePrev} />}
+            </>
+          )}
         </div>
       </main>
     </div>

@@ -1,9 +1,9 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getOrganizerEventById, updateEventStatus } from '@/api/events';
+import { getOrganizerEventById, updateEventStatus, deleteEvent } from '@/api/events';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Calendar, MapPin, Users, Ticket, Eye, EyeOff, Ban } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Users, Ticket, Eye, EyeOff, Ban, Edit } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import toast from 'react-hot-toast';
 
@@ -47,6 +47,18 @@ export default function OrgEventDetailPage() {
     }
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteEvent(id!),
+    onSuccess: () => {
+      toast.success("Événement supprimé avec succès");
+      queryClient.invalidateQueries({ queryKey: ['organizer', 'events'] });
+      navigate('/organizer/events');
+    },
+    onError: () => {
+      toast.error("Erreur lors de la suppression de l'événement");
+    }
+  });
+
   if (isLoading) {
     return <div className="p-12 text-center text-muted-foreground animate-pulse">Chargement de l'événement...</div>;
   }
@@ -78,7 +90,7 @@ export default function OrgEventDetailPage() {
         {event?.cover_image_url && (
           <div 
             className="absolute inset-0 opacity-10 bg-cover bg-center mix-blend-overlay pointer-events-none"
-            style={{ backgroundImage: `url(${event.cover_image_url})` }}
+            style={{ backgroundImage: `url(${event.cover_image_url.startsWith('http') ? event.cover_image_url : (import.meta.env.VITE_API_URL || 'http://localhost:8000') + event.cover_image_url})` }}
           />
         )}
         
@@ -98,6 +110,14 @@ export default function OrgEventDetailPage() {
         </div>
 
         <div className="relative z-10 flex flex-wrap gap-3 w-full md:w-auto">
+          <Button 
+            variant="outline" 
+            className="rounded-full flex-1 md:flex-none"
+            onClick={() => navigate(`/organizer/events/${id}/edit`)}
+          >
+            <Edit className="w-4 h-4 mr-2" /> Modifier
+          </Button>
+
           {event.status === 'draft' && (
             <Button 
               variant="default" 
@@ -132,6 +152,19 @@ export default function OrgEventDetailPage() {
               <Ban className="w-4 h-4 mr-2" /> Annuler l'événement
             </Button>
           )}
+
+          <Button 
+            variant="destructive" 
+            className="rounded-full flex-1 md:flex-none bg-red-600 hover:bg-red-700"
+            onClick={() => {
+              if(window.confirm("Êtes-vous sûr de vouloir SUPPRIMER cet événement définitivement ?")) {
+                deleteMutation.mutate();
+              }
+            }}
+            disabled={deleteMutation.isPending}
+          >
+            Supprimer définitivement
+          </Button>
         </div>
       </div>
 

@@ -36,4 +36,10 @@ router.get("/:id", authorize("ORGANIZER", "ADMIN"), eventController.getById);
 // Mettre à jour le statut d'un événement
 router.patch("/:id/status", authorize("ORGANIZER", "ADMIN"), eventController.updateStatus);
 
+// Mettre à jour un événement
+router.put("/:id", authorize("ORGANIZER", "ADMIN"), eventController.update);
+
+// Supprimer un événement
+router.delete("/:id", authorize("ORGANIZER", "ADMIN"), eventController.remove);
+
 export default router;

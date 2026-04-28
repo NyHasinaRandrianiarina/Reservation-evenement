@@ -35,8 +35,14 @@ export default function EventCard({ event, className }: EventCardProps) {
         {/* Cinematic Image Container - Taller 3:4 aspect ratio */}
         <div className="relative aspect-[3/4] overflow-hidden rounded-[1rem] bg-black">
           <img
-            src={event.coverImage}
+            src={event.coverImage?.startsWith('blob:') || event.coverImage?.startsWith('http') 
+              ? event.coverImage 
+              : `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${event.coverImage}`
+            }
             alt={event.title}
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=2070&auto=format&fit=crop';
+            }}
             className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 opacity-80 group-hover:opacity-100"
             loading="lazy"
           />
