@@ -99,8 +99,8 @@ export function useEvents(filters?: EventFilters) {
       // Fetch all events from API
       const events = await getPublicEvents();
 
-      // Apply filters client-side for now (cast to Event type for compatibility)
-      const filtered = applyFilters(events as unknown as Event[], filters);
+      // Apply filters client-side for now
+      const filtered = applyFilters(events, filters);
       const page = filters?.page ?? 1;
       const start = (page - 1) * EVENTS_PER_PAGE;
       const paged = filtered.slice(start, start + EVENTS_PER_PAGE);

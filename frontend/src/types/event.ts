@@ -73,9 +73,12 @@ export interface Event {
 
 // Derived helpers
 export function getMinPrice(event: Event): number | null {
-  const visibleTickets = event.ticketTypes.filter((t) => t.visible);
+  const ticketTypes = Array.isArray((event as any).ticketTypes)
+    ? (event as any).ticketTypes
+    : [];
+  const visibleTickets = ticketTypes.filter((t: any) => t && t.visible);
   if (visibleTickets.length === 0) return null;
-  return Math.min(...visibleTickets.map((t) => t.price));
+  return Math.min(...visibleTickets.map((t: any) => t.price));
 }
 
 export function getRemainingCapacity(event: Event): number | null {
