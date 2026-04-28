@@ -37,26 +37,53 @@ interface EventDraft {
   customFields: CustomField[];
 }
 
+interface CreateEventInput {
+  title: string;
+  category: string;
+  description: string;
+  start_date: string;
+  end_date: string;
+  location: {
+    type: "in_person" | "online" | "hybrid";
+    address?: string;
+    onlineUrl?: string;
+  };
+  capacity: number | null;
+  is_private: boolean;
+  cover_image_url?: string;
+  tickets: TicketType[];
+  custom_fields: CustomField[];
+}
+
 /**
  * Crée un événement pour un organisateur authentifié.
  * Persiste les champs simples + les JSON (location, tickets, custom_fields).
  */
 export async function createEvent(organizerId: string, data: EventDraft) {
+  const payload = data as unknown as Partial<CreateEventInput> & Partial<EventDraft>;
+  const startDate = payload.start_date ?? payload.startDate;
+  const endDate = payload.end_date ?? payload.endDate;
+
+  const isPrivate = payload.is_private ?? payload.isPrivate ?? false;
+  const coverImageUrl = payload.cover_image_url ?? payload.coverImageUrl ?? undefined;
+  const tickets = payload.tickets ?? [];
+  const customFields = payload.custom_fields ?? payload.customFields ?? [];
+
   const event = await (prisma as any).event.create({
     data: {
-      title: data.title,
-      category: data.category,
-      description: data.description,
-      start_date: new Date(data.startDate),
-      end_date: new Date(data.endDate),
-      location: data.location,
-      capacity: data.capacity,
-      is_private: data.isPrivate,
-      cover_image_url: data.coverImageUrl,
+      title: payload.title,
+      category: payload.category,
+      description: payload.description,
+      start_date: new Date(String(startDate)),
+      end_date: new Date(String(endDate)),
+      location: payload.location,
+      capacity: payload.capacity ?? null,
+      is_private: isPrivate,
+      cover_image_url: coverImageUrl,
       status: "published", // pour EventNest V1 : on publie directement
       organizer_id: organizerId,
-      tickets: data.tickets,
-      custom_fields: data.customFields,
+      tickets,
+      custom_fields: customFields,
     },
   });
 
