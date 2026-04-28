@@ -146,7 +146,7 @@ export default function EventDetailPage() {
       ═══════════════════════════════════════════════ */}
       <section className="relative h-[60vh] lg:h-[70vh] flex items-end pb-12 px-6 overflow-hidden bg-black">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent z-10" />
+          <div className="absolute inset-0 bg-linear-to-t from-black via-black/60 via-40% to-transparent z-10" />
           <motion.img 
             initial={{ scale: 1.1 }}
             animate={{ scale: 1 }}
@@ -188,16 +188,16 @@ export default function EventDetailPage() {
               {event.title}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-6 text-white/80 text-sm font-medium">
+            <div className="flex flex-wrap items-center gap-6 text-white/90 text-sm font-medium drop-shadow-md">
               <div className="flex items-center gap-2">
-                <CalendarDays className="w-5 h-5 text-primary" />
+                <CalendarDays className="w-5 h-5 text-white" />
                 <span className="capitalize">{formatDate(event.startDate)}</span>
               </div>
               <div className="flex items-center gap-2">
                 {event.location.type === 'online' ? (
-                   <Video className="w-5 h-5 text-primary" />
+                   <Video className="w-5 h-5 text-white" />
                 ) : (
-                   <MapPin className="w-5 h-5 text-primary" />
+                   <MapPin className="w-5 h-5 text-white" />
                 )}
                 <span>
                   {event.location.type === 'online' 

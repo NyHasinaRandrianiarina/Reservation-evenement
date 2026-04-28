@@ -36,7 +36,10 @@ interface EventDraft {
   endDate: string;
   location: {
     type: "in_person" | "online" | "hybrid";
+    venue?: string;
     address?: string;
+    city?: string;
+    zipCode?: string;
     onlineUrl?: string;
   };
   capacity: number | null;
@@ -54,7 +57,10 @@ interface CreateEventInput {
   end_date: string;
   location: {
     type: "in_person" | "online" | "hybrid";
+    venue?: string;
     address?: string;
+    city?: string;
+    zipCode?: string;
     onlineUrl?: string;
   };
   capacity: number | null;
@@ -183,10 +189,16 @@ export async function deleteEvent(eventId: string, organizerId: string) {
 /**
  * Retourne tous les événements publics (statut publié) pour le catalogue.
  */
-export async function getPublicEvents() {
+export async function getPublicEvents(filters?: { organizer_id?: string; limit?: number }) {
+  const where: Record<string, unknown> = { status: "published" };
+  if (filters?.organizer_id) {
+    where["organizer_id"] = filters.organizer_id;
+  }
+
   return (prisma as any).event.findMany({
-    where: { status: "published" },
+    where,
     orderBy: { start_date: "asc" },
+    take: filters?.limit,
   });
 }
 

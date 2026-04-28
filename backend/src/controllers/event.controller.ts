@@ -92,7 +92,15 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
  * Liste tous les événements publics (catalogue)
  */
 export const listPublic = asyncHandler(async (req: Request, res: Response) => {
-  const events = await getPublicEvents();
+  const organizer_id = typeof req.query.organizer_id === "string" ? req.query.organizer_id : undefined;
+  const limitRaw = typeof req.query.limit === "string" ? Number(req.query.limit) : undefined;
+  const limit = Number.isFinite(limitRaw as number) ? (limitRaw as number) : undefined;
+
+  const filters: { organizer_id?: string; limit?: number } = {};
+  if (organizer_id) filters.organizer_id = organizer_id;
+  if (limit !== undefined) filters.limit = limit;
+
+  const events = await getPublicEvents(filters);
   ApiResponse.success(res, events, "Événements publics récupérés");
 });
 
