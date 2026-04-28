@@ -31,11 +31,13 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     role,
   } = req.body;
 
+  const normalizedPhone = typeof phone === "string" && phone.trim() === "" ? undefined : phone;
+
   const user = await registerUser({
     full_name,
     email,
     password,
-    phone,
+    phone: normalizedPhone,
     role,
   });
 

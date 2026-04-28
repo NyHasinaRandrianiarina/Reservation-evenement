@@ -24,7 +24,7 @@ export const registerValidation = [
     .withMessage("Le mot de passe doit faire au moins 6 caractères"),
 
   body("phone")
-    .optional()
+    .optional({ checkFalsy: true })
     .trim()
     .isMobilePhone("any")
     .withMessage("Numéro de téléphone invalide"),

@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/async-handler.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { createEvent, getEventsByOrganizer, getEventByIdAndOrganizer, getPublicEvents, getPublicEventById, getOrganizerDashboardKpis, updateEventStatus, updateEvent, deleteEvent } from "../services/event.service.js";
+import { uploadToCloudinary } from "../utils/cloudinary.js";
 
 /**
  * Crée un événement (protégé organisateur/admin)
@@ -128,8 +129,11 @@ export const uploadCover = asyncHandler(async (req: Request, res: Response) => {
     return ApiResponse.error(res, "Aucun fichier reçu", 400);
   }
 
-  const baseUrl = `${req.protocol}://${req.get("host")}`;
-  const url = `${baseUrl}/uploads/events/${file.filename}`;
+  const uploaded = await uploadToCloudinary(file.buffer, "events/covers");
 
-  ApiResponse.created(res, { url }, "Image uploadée");
+  ApiResponse.created(
+    res,
+    { url: uploaded.url, public_id: uploaded.public_id },
+    "Image uploadée"
+  );
 });

@@ -53,8 +53,8 @@ export default function Navbar() {
   }, []);
 
   const navItems = [
-    { name: "Découvrir", link: "/catalogue" },
-    { name: "Organisateurs", link: "/vendeurs" },
+    { name: "Événements", link: "/" },
+    { name: "Organisateurs", link: "/organisateurs" },
   ];
 
   return (
@@ -96,7 +96,7 @@ export default function Navbar() {
                   {item.name}
                   {location.pathname === item.link && (
                     <motion.div layoutId="nav-underline" className={cn(
-                      "absolute bottom-0 left-5 right-5 h-[1px]",
+                      "absolute bottom-0 left-5 right-5 h-px",
                       scrolled ? "bg-foreground" : "bg-white"
                     )} />
                   )}
@@ -234,7 +234,7 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 15, scale: 0.98 }}
                       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                      className="absolute right-0 mt-4 w-72 bg-background/80 backdrop-blur-3xl rounded-[2rem] border border-border shadow-2xl overflow-hidden origin-top-right z-[100]"
+                      className="absolute right-0 mt-4 w-72 bg-background/80 backdrop-blur-3xl rounded-4xl border border-border shadow-2xl overflow-hidden origin-top-right z-100"
                     >
                       <div className="px-8 py-8 border-b border-border">
                         <div className="flex items-center gap-4 mb-4">
@@ -332,7 +332,7 @@ export default function Navbar() {
 
             <div className="flex flex-col gap-4">
               <Button
-                className="w-full h-16 rounded-[2rem] bg-foreground text-background font-bold text-sm uppercase tracking-widest"
+                className="w-full h-16 rounded-4xl bg-foreground text-background font-bold text-sm uppercase tracking-widest"
                 onClick={() => {
                   setIsMobileMenuOpen(false);
                   navigate(
@@ -349,14 +349,14 @@ export default function Navbar() {
                 <div className="grid grid-cols-2 gap-3">
                   <Button
                     variant="outline"
-                    className="h-16 rounded-[2rem] font-bold text-xs uppercase tracking-widest"
+                    className="h-16 rounded-4xl font-bold text-xs uppercase tracking-widest"
                     onClick={() => { setIsMobileMenuOpen(false); navigate("/login"); }}
                   >
                     Connexion
                   </Button>
                   <Button
                     variant="primary"
-                    className="h-16 rounded-[2rem] font-bold text-xs uppercase tracking-widest shadow-xl shadow-primary/20"
+                    className="h-16 rounded-4xl font-bold text-xs uppercase tracking-widest shadow-xl shadow-primary/20"
                     onClick={() => { setIsMobileMenuOpen(false); navigate("/register"); }}
                   >
                     S'inscrire

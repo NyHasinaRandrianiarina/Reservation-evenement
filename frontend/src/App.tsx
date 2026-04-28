@@ -8,6 +8,8 @@ import { usePageTitle } from './hooks/usePageTitle';
 import PublicLayout from './components/layouts/PublicLayout';
 import CatalogPage from './pages/CatalogPage';
 import EventDetailPage from './pages/EventDetailPage';
+import OrganizersPage from './pages/OrganizersPage';
+import OrganizerDetailPage from './pages/OrganizerDetailPage';
 import RegistrationLayout from './components/layouts/RegistrationLayout';
 import Step1TicketsPage from './pages/registration/Step1TicketsPage';
 import Step2InfoPage from './pages/registration/Step2InfoPage';
@@ -58,6 +60,8 @@ function App() {
           <Route element={<PublicLayout />}>
             <Route path='/' element={<CatalogPage />} />
             <Route path='/events/:slug' element={<EventDetailPage />} />
+            <Route path='/organisateurs' element={<OrganizersPage />} />
+            <Route path='/organisateurs/:id' element={<OrganizerDetailPage />} />
           </Route>
           
           <Route path='/events/:slug/register' element={<RegistrationLayout />}>

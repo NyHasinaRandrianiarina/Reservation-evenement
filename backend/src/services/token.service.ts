@@ -7,6 +7,7 @@ import {
   JWT_ACCESS_SECRET,
   JWT_REFRESH_SECRET,
   ACCESS_TOKEN_EXPIRES_IN,
+  ACCESS_TOKEN_EXPIRES_IN_MS,
   REFRESH_TOKEN_EXPIRES_IN_MS,
   NODE_ENV,
 } from "../secrets.js";
@@ -16,7 +17,7 @@ import {
 // ──────────────────────────────────────────────
 
 /**
- * Génère un access token JWT (courte durée — 15 min).
+ * Génère un access token JWT.
  */
 export function generateAccessToken(userId: string, role: Role): string {
   const payload: JwtPayload = { userId, role };
@@ -26,7 +27,7 @@ export function generateAccessToken(userId: string, role: Role): string {
 }
 
 /**
- * Génère un refresh token JWT (longue durée — 7 jours)
+ * Génère un refresh token JWT (longue durée)
  * et le persiste en base pour pouvoir le révoquer.
  */
 export async function generateRefreshToken(
@@ -35,8 +36,12 @@ export async function generateRefreshToken(
 ): Promise<string> {
   const expiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRES_IN_MS);
 
+  const refreshTokenExpiresInSeconds = Math.floor(
+    REFRESH_TOKEN_EXPIRES_IN_MS / 1000
+  );
+
   const token = jwt.sign({ userId }, JWT_REFRESH_SECRET, {
-    expiresIn: "7d",
+    expiresIn: refreshTokenExpiresInSeconds,
   });
 
   await prisma.refreshToken.create({
@@ -155,12 +160,12 @@ export function setAuthCookies(
 ): void {
   res.cookie("access_token", accessToken, {
     ...COOKIE_OPTIONS_BASE,
-    maxAge: 15 * 60 * 1000, // 15 minutes
+    maxAge: ACCESS_TOKEN_EXPIRES_IN_MS,
   });
 
   res.cookie("refresh_token", refreshToken, {
     ...COOKIE_OPTIONS_BASE,
-    maxAge: REFRESH_TOKEN_EXPIRES_IN_MS, // 7 jours
+    maxAge: REFRESH_TOKEN_EXPIRES_IN_MS,
   });
 }
 

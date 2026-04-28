@@ -41,7 +41,7 @@ function slugify(input: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
-function toFrontendEvent(e: BackendEvent): Event {
+export function toFrontendEvent(e: BackendEvent): Event {
   const coverImage = e.cover_image_url ?? "";
 
   const ticketTypes = (Array.isArray(e.tickets) ? e.tickets : []).map((t: any) => {
