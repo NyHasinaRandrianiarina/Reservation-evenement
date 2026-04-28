@@ -26,6 +26,11 @@ type BackendEvent = {
   cover_image_url: string | null;
   status: string;
   organizer_id: string;
+  organizer?: {
+    id: string;
+    full_name: string;
+    avatar_url: string | null;
+  };
   created_at: string;
   updated_at: string;
   tickets: any[];
@@ -43,6 +48,13 @@ function slugify(input: string): string {
 
 export function toFrontendEvent(e: BackendEvent): Event {
   const coverImage = e.cover_image_url ?? "";
+
+  const organizerName = e.organizer?.full_name ?? "";
+  const organizerAvatar =
+    e.organizer?.avatar_url ??
+    (organizerName
+      ? `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(organizerName)}`
+      : "");
 
   const ticketTypes = (Array.isArray(e.tickets) ? e.tickets : []).map((t: any) => {
     const price = t?.type === "paid" ? Number(t?.price ?? 0) : 0;
@@ -78,9 +90,9 @@ export function toFrontendEvent(e: BackendEvent): Event {
     capacity: e.capacity,
     totalSold: 0,
     organizer: {
-      id: e.organizer_id,
-      name: "",
-      avatar: "",
+      id: e.organizer?.id ?? e.organizer_id,
+      name: organizerName,
+      avatar: organizerAvatar,
     },
     ticketTypes,
     customFields: e.custom_fields || [],

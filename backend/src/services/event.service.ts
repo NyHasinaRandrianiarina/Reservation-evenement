@@ -199,6 +199,15 @@ export async function getPublicEvents(filters?: { organizer_id?: string; limit?:
     where,
     orderBy: { start_date: "asc" },
     take: filters?.limit,
+    include: {
+      organizer: {
+        select: {
+          id: true,
+          full_name: true,
+          avatar_url: true,
+        },
+      },
+    },
   });
 }
 
@@ -208,6 +217,15 @@ export async function getPublicEvents(filters?: { organizer_id?: string; limit?:
 export async function getPublicEventById(eventId: string) {
   return (prisma as any).event.findFirst({
     where: { id: eventId, status: "published" },
+    include: {
+      organizer: {
+        select: {
+          id: true,
+          full_name: true,
+          avatar_url: true,
+        },
+      },
+    },
   });
 }
 
@@ -219,14 +237,9 @@ export async function getPublicEventByIdOrSlug(idOrSlug: string) {
   const byId = await getPublicEventById(idOrSlug);
   if (byId) return byId;
 
-  const published = await (prisma as any).event.findMany({
-    where: { status: "published" },
-    orderBy: { created_at: "desc" },
-  });
+  const published = await getPublicEvents();
 
-  return (
-    published.find((e: any) => slugify(String(e.title ?? "")) === idOrSlug) ?? null
-  );
+  return published.find((e: any) => slugify(String(e.title ?? "")) === idOrSlug) ?? null;
 }
 
 export interface OrganizerDashboardKpis {

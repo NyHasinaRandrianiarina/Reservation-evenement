@@ -86,7 +86,7 @@ export default function Step1GeneralInfo({ onNext }: Props) {
             <div className="md:col-span-2">
               <Input
                 label="Nom du lieu (optionnel)"
-                placeholder="Ex: Palais des Congrès, Hôtel Hilton..."
+                placeholder="Ex: Alliance Française..."
                 value={draft.location.venue}
                 onChange={(e) => updateDraft({ location: { ...draft.location, venue: e.target.value } })}
               />
@@ -94,7 +94,7 @@ export default function Step1GeneralInfo({ onNext }: Props) {
             <div className="md:col-span-2">
               <Input
                 label="Adresse"
-                placeholder="Ex: 123 Rue de la République"
+                placeholder="Ex: 17 Rue Colbert"
                 value={draft.location.address}
                 onChange={(e) => updateDraft({ location: { ...draft.location, address: e.target.value } })}
                 required
@@ -103,14 +103,14 @@ export default function Step1GeneralInfo({ onNext }: Props) {
             <div className="grid grid-cols-2 gap-4 md:col-span-2">
               <Input
                 label="Ville"
-                placeholder="Ex: Paris"
+                placeholder="Ex: Diego Suarez"
                 value={draft.location.city}
                 onChange={(e) => updateDraft({ location: { ...draft.location, city: e.target.value } })}
                 required
               />
               <Input
                 label="Code Postal"
-                placeholder="Ex: 75001"
+                placeholder="Ex: 201"
                 value={draft.location.zipCode}
                 onChange={(e) => updateDraft({ location: { ...draft.location, zipCode: e.target.value } })}
               />
