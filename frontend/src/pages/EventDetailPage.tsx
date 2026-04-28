@@ -202,7 +202,9 @@ export default function EventDetailPage() {
                 <span>
                   {event.location.type === 'online' 
                     ? 'Événement en ligne' 
-                    : `${event.location.venue}, ${event.location.city}`}
+                    : (event.location.venue || event.location.city)
+                      ? `${event.location.venue || ''}${event.location.venue && event.location.city ? ', ' : ''}${event.location.city || ''}`
+                      : (event.location.address || 'Lieu non spécifié')}
                 </span>
               </div>
             </div>
@@ -261,8 +263,11 @@ export default function EventDetailPage() {
                       'Lien de visioconférence fourni après inscription'
                     ) : (
                       <>
-                        {event.location.venue}<br />
-                        {event.location.address}, {event.location.zipCode} {event.location.city}
+                        {event.location.venue && <>{event.location.venue}<br /></>}
+                        {[
+                          event.location.address,
+                          [event.location.zipCode, event.location.city].filter(Boolean).join(' ')
+                        ].filter(Boolean).join(', ') || 'Lieu non spécifié'}
                       </>
                     )}
                   </p>
