@@ -1,26 +1,37 @@
 import { useState } from 'react';
 import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, CalendarDays, Settings, ExternalLink, LogOut, Plus, Menu, X } from 'lucide-react';
+import {
+  LayoutDashboard,
+  CalendarRange,
+  Users,
+  Tags,
+  BarChart3,
+  ShieldCheck,
+  LogOut,
+  Menu,
+  X,
+  ExternalLink,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/store/useAuthStore';
 import type { User } from '@/store/useAuthStore';
-import { Button } from '@/components/ui/button';
 
 const navItems = [
-  { label: 'Tableau de bord', path: '/organizer/dashboard', icon: LayoutDashboard },
-  { label: 'Calendrier', path: '/organizer/calendar', icon: CalendarDays },
-  { label: 'Mes événements', path: '/organizer/events', icon: CalendarDays },
-  { label: 'Mon profil', path: '/organizer/profile', icon: Settings },
+  { label: 'Tableau de bord', path: '/admin/dashboard', icon: LayoutDashboard },
+  { label: 'Calendrier', path: '/admin/calendrier', icon: CalendarRange },
+  { label: 'Utilisateurs', path: '/admin/utilisateurs', icon: Users },
+  { label: 'Catégories', path: '/admin/categories', icon: Tags },
+  { label: 'Statistiques', path: '/admin/statistiques', icon: BarChart3 },
 ];
 
-const SidebarContent = ({ 
-  user, 
-  handleLogout, 
-  setIsMobileOpen 
-}: { 
-  user: User | null, 
-  handleLogout: () => void, 
-  setIsMobileOpen: (val: boolean) => void 
+const SidebarContent = ({
+  user,
+  handleLogout,
+  setIsMobileOpen,
+}: {
+  user: User | null;
+  handleLogout: () => void;
+  setIsMobileOpen: (val: boolean) => void;
 }) => (
   <>
     <div className="p-6 flex flex-col gap-2 border-b border-border">
@@ -29,12 +40,22 @@ const SidebarContent = ({
           EventNest
         </span>
         <span className="text-[7px] font-bold tracking-[0.4em] uppercase text-muted-foreground pl-0.5">
-          Organisateur
+          Administration
         </span>
       </Link>
-      <p className="text-sm font-semibold mt-4 text-foreground truncate">
-        {user?.full_name}
-      </p>
+      <div className="flex items-center gap-3 mt-4">
+        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
+          <ShieldCheck className="w-4 h-4 text-primary" />
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-foreground truncate">
+            {user?.full_name}
+          </p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            Admin
+          </p>
+        </div>
+      </div>
     </div>
 
     <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -43,13 +64,15 @@ const SidebarContent = ({
           key={item.path}
           to={item.path}
           onClick={() => setIsMobileOpen(false)}
-          end={item.path === '/organizer/events'}
-          className={({ isActive }) => cn(
-            "flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all",
-            isActive 
-              ? "bg-foreground text-background shadow-lg" 
-              : "text-muted-foreground hover:bg-muted hover:text-foreground"
-          )}
+          end={item.path === '/admin/dashboard'}
+          className={({ isActive }) =>
+            cn(
+              'flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all',
+              isActive
+                ? 'bg-foreground text-background shadow-lg'
+                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+            )
+          }
         >
           <item.icon className="w-5 h-5" />
           <span>{item.label}</span>
@@ -58,15 +81,14 @@ const SidebarContent = ({
     </nav>
 
     <div className="p-4 border-t border-border space-y-2">
-      <Link 
-        to={`/o/${user?.id}`} 
-        target="_blank"
+      <Link
+        to="/"
         className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
       >
         <ExternalLink className="w-5 h-5" />
-        <span>Profil public</span>
+        <span>Voir le site</span>
       </Link>
-      <button 
+      <button
         onClick={handleLogout}
         className="flex items-center gap-3 w-full px-4 py-3 rounded-2xl text-sm font-semibold text-destructive hover:bg-destructive/10 transition-all text-left"
       >
@@ -77,7 +99,7 @@ const SidebarContent = ({
   </>
 );
 
-export default function OrganizerLayout() {
+export default function AdminLayout() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -95,9 +117,6 @@ export default function OrganizerLayout() {
           EventNest
         </Link>
         <div className="flex items-center gap-4">
-          <Button size="sm" className="rounded-full h-8 px-3 text-xs" onClick={() => navigate('/organizer/events/new')}>
-            <Plus className="w-4 h-4 mr-1" /> Nouvel événement
-          </Button>
           <button onClick={() => setIsMobileOpen(!isMobileOpen)} className="p-2">
             {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -118,18 +137,12 @@ export default function OrganizerLayout() {
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col min-w-0">
-        {/* Desktop Header */}
         <header className="hidden md:flex items-center justify-between px-8 py-4 bg-background/50 backdrop-blur-md border-b border-border sticky top-0 z-20 h-20">
           <div className="flex-1">
-             {/* Breadcrumb could go here */}
+            <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
+              Panneau d'administration
+            </h2>
           </div>
-          <Button 
-            className="rounded-full shadow-lg shadow-primary/20 px-6 gap-2"
-            onClick={() => navigate('/organizer/events/new')}
-          >
-            <Plus className="w-4 h-4" />
-            Créer un événement
-          </Button>
         </header>
 
         <div className="flex-1 p-6 lg:p-10 overflow-y-auto">

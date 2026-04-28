@@ -9,7 +9,7 @@ import {
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
 import Button from "@/components/reusable/Button";
-import { Search, User, LogOut, Package, Store, ChevronDown, PlusCircle } from "lucide-react";
+import { Search, User, LogOut, Package, Store, ChevronDown, PlusCircle, Shield } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
@@ -221,7 +221,7 @@ export default function Navbar() {
                       {user?.full_name?.split(" ")[0]}
                     </span>
                     <span className={cn("text-[8px] font-bold uppercase tracking-[0.2em]", scrolled ? "text-foreground/50" : "text-white/60")}>
-                      {user?.role === "ORGANIZER" ? "Organisateur" : "Membre"}
+                      {user?.role === "ADMIN" ? "Admin" : user?.role === "ORGANIZER" ? "Organisateur" : "Membre"}
                     </span>
                   </div>
                   <ChevronDown size={12} className={cn("transition-transform duration-500", scrolled ? "text-foreground/40" : "text-white/60", isUserMenuOpen && "rotate-180")} />
@@ -246,9 +246,11 @@ export default function Navbar() {
                             <p className="text-base font-serif font-light text-foreground leading-tight">{user?.full_name}</p>
                             <div className={cn(
                               "inline-flex px-2 py-0.5 rounded-sm text-[8px] font-bold uppercase tracking-[0.2em] mt-2 border",
-                              user?.role === "ORGANIZER" ? "bg-foreground text-background border-foreground" : "bg-transparent text-foreground/60 border-border"
+                              user?.role === "ADMIN" ? "bg-primary text-primary-foreground border-primary" :
+                              user?.role === "ORGANIZER" ? "bg-foreground text-background border-foreground" : 
+                              "bg-transparent text-foreground/60 border-border"
                             )}>
-                              {user?.role === "ORGANIZER" ? "Organisateur" : "Membre"}
+                              {user?.role === "ADMIN" ? "Admin" : user?.role === "ORGANIZER" ? "Organisateur" : "Membre"}
                             </div>
                           </div>
                         </div>
@@ -256,6 +258,12 @@ export default function Navbar() {
                       </div>
 
                       <div className="p-4 flex flex-col gap-1">
+                        {user?.role === "ADMIN" && (
+                          <button onClick={() => { setIsUserMenuOpen(false); navigate("/admin/dashboard"); }} className="flex items-center gap-4 px-5 py-4 text-xs hover:bg-foreground/5 rounded-2xl transition-all w-full text-left font-light group cursor-pointer text-foreground">
+                            <Shield size={16} strokeWidth={1.5} className="text-foreground/60 group-hover:text-foreground transition-colors" />
+                            <span className="tracking-wide">Panel d'admin</span>
+                          </button>
+                        )}
                         {user?.role === "ORGANIZER" && (
                           <button onClick={() => { setIsUserMenuOpen(false); navigate("/organizer/dashboard"); }} className="flex items-center gap-4 px-5 py-4 text-xs hover:bg-foreground/5 rounded-2xl transition-all w-full text-left font-light group cursor-pointer text-foreground">
                             <Store size={16} strokeWidth={1.5} className="text-foreground/60 group-hover:text-foreground transition-colors" />

@@ -21,12 +21,15 @@ import SignupPage from './pages/auth/SignupPage';
 
 import AccountLayout from './components/layouts/AccountLayout';
 import MyRegistrationsPage from './pages/account/MyRegistrationsPage';
+import ProfilePage from './pages/account/ProfilePage';
+import ParticipantCalendarPage from './pages/account/ParticipantCalendarPage';
 
 import OrganizerLayout from './components/layouts/OrganizerLayout';
 import OrgDashboardPage from './pages/organizer/OrgDashboardPage';
 import EventWizardPage from './pages/organizer/EventWizardPage';
 import OrgEventListPage from './pages/organizer/OrgEventListPage';
 import OrgEventDetailPage from './pages/organizer/OrgEventDetailPage';
+import OrgCalendarPage from './pages/organizer/OrgCalendarPage';
 
 import AppLayout from './components/layouts/AppLayout';
 import SenderDashboardPage from './pages/sender/SenderDashboardPage';
@@ -41,11 +44,13 @@ import DeliveryMissionDetailPage from './pages/delivery/DeliveryMissionDetailPag
 import DeliveryHistoryPage from './pages/delivery/DeliveryHistoryPage';
 
 // Admin Pages
+import AdminLayout from './components/layouts/AdminLayout';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminAllOrdersPage from './pages/admin/AdminAllOrdersPage';
 import AdminOrderDetailPage from './pages/admin/AdminOrderDetailPage';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
 import AdminStatsPage from './pages/admin/AdminStatsPage';
+import AdminCalendarPage from './pages/admin/AdminCalendarPage';
 
 function App() {
   usePageTitle(); 
@@ -78,6 +83,8 @@ function App() {
           {/* Protected Participant Routes */}
           <Route path='/account' element={<AccountLayout />}>
             <Route path='registrations' element={<MyRegistrationsPage />} />
+            <Route path='profile' element={<ProfilePage />} />
+            <Route path='calendar' element={<ParticipantCalendarPage />} />
           </Route>
 
           {/* Protected Organizer Routes */}
@@ -87,6 +94,8 @@ function App() {
             <Route path='events/new' element={<EventWizardPage />} />
             <Route path='events/:id' element={<OrgEventDetailPage />} />
             <Route path='events/:id/edit' element={<EventWizardPage />} />
+            <Route path='profile' element={<ProfilePage />} />
+            <Route path='calendar' element={<OrgCalendarPage />} />
           </Route>
 
           {/* Protected Sender Routes */}
@@ -106,8 +115,9 @@ function App() {
           </Route>
 
           {/* Protected Admin Routes */}
-          <Route path='/admin' element={<AppLayout><Outlet /></AppLayout>}>
+          <Route path='/admin' element={<AdminLayout />}>
             <Route path='dashboard' element={<AdminDashboardPage />} />
+            <Route path='calendrier' element={<AdminCalendarPage />} />
             <Route path='commandes' element={<AdminAllOrdersPage />} />
             <Route path='commandes/:id' element={<AdminOrderDetailPage />} />
             <Route path='utilisateurs' element={<AdminUsersPage />} />

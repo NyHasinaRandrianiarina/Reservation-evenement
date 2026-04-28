@@ -1,68 +1,48 @@
-import dotenv from "dotenv";
-import bcrypt from "bcryptjs";
-import prisma from "./db/client.js";
-import { ADMIN_EMAIL, ADMIN_PASSWORD } from "./secrets.js";
+import { runSeed, runAllSeeds } from "./seeds/seed-runner.js";
+import { seeders, type SeederKey } from "./seeds/index.js";
 
-// Charger .env (utile en local)
-dotenv.config();
+const args = process.argv.slice(2);
+const seedName = args[0];
+const resetPassword = args.includes("--reset-password");
 
-/**
- * Crée un compte admin s’il n’existe pas déjà.
- * Idempotent : peut être lancé plusieurs fois sans créer de doublon.
- * Lit les identifiants depuis les variables d’environnement :
- * - ADMIN_EMAIL
- * - ADMIN_PASSWORD
- */
-async function seedAdmin() {
-  const adminEmail = ADMIN_EMAIL?.trim();
-  const adminPassword = ADMIN_PASSWORD?.trim();
+function printUsage() {
+  console.log("Usage:");
+  console.log("  npm run seed <seed>          Lance un seed spécifique");
+  console.log("  npm run seed all             Lance tous les seeds");
+  console.log("");
+  console.log("Seeds disponibles:");
+  Object.keys(seeders).forEach((k) => console.log(`  - ${k}`));
+  console.log("");
+  console.log("Options:");
+  console.log("  --reset-password            (admin only) Réinitialise le mot de passe admin");
+}
 
-  if (!adminEmail || !adminPassword) {
-    console.error(
-      "❌ Erreur : variables ADMIN_EMAIL et ADMIN_PASSWORD obligatoires dans .env"
-    );
-    process.exit(1);
+async function main() {
+  if (!seedName || seedName === "--help" || seedName === "-h") {
+    printUsage();
+    process.exit(0);
   }
 
-  console.log(`🔍 Vérification de l’admin ${adminEmail}...`);
-
-  const existing = await prisma.user.findUnique({
-    where: { email: adminEmail },
-  });
-
-  if (existing) {
-    console.log("✅ Admin déjà présent, aucune action.");
+  if (seedName === "all") {
+    await runAllSeeds();
     return;
   }
 
-  const hashedPassword = await bcrypt.hash(adminPassword, 12);
-
-  const admin = await prisma.user.create({
-    data: {
-      full_name: "Admin TrackIt",
-      email: adminEmail,
-      password: hashedPassword,
-      role: "ADMIN",
-      is_active: true,
-      onboarding_completed: true,
-    },
-  });
-
-  console.log(`✅ Admin créé : ${admin.email} (id: ${admin.id})`);
-}
-
-/**
- * Lance le seed et ferme proprement la connexion Prisma.
- */
-async function main() {
-  try {
-    await seedAdmin();
-  } catch (err) {
-    console.error("❌ Erreur durant le seed :", err);
+  if (!(seedName in seeders)) {
+    console.error(`❌ Seed inconnu : ${seedName}`);
+    printUsage();
     process.exit(1);
-  } finally {
-    await prisma.$disconnect();
   }
+
+  const options: any = {};
+  if (seedName === "admin" && resetPassword) {
+    options.resetPassword = true;
+  }
+
+  await runSeed(seedName as SeederKey, options);
 }
 
-main();
+main().catch((err) => {
+  console.error("❌ Erreur inattendue :", err);
+  process.exit(1);
+});

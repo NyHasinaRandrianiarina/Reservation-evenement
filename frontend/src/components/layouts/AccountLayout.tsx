@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
-import { Ticket, User, LogOut } from 'lucide-react';
+import { Ticket, User, LogOut, CalendarDays } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -8,6 +8,7 @@ export default function AccountLayout() {
   const { user, logout } = useAuthStore();
 
   const navItems = [
+    { label: 'Mon calendrier', path: '/account/calendar', icon: CalendarDays },
     { label: 'Mes inscriptions', path: '/account/registrations', icon: Ticket },
     { label: 'Mon profil', path: '/account/profile', icon: User },
   ];
