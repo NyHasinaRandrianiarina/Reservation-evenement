@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useEventWizardStore } from "@/store/useEventWizardStore";
 import type { TicketType } from "@/store/useEventWizardStore";
 import Input from "@/components/reusable/Input";

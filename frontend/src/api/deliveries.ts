@@ -34,23 +34,20 @@ export interface Delivery {
   events?: DeliveryEvent[];
   sender?: {
     id: string;
-    first_name: string;
-    last_name: string;
+    full_name: string;
     phone: string | null;
     email?: string;
   };
   driver?: {
     id: string;
-    first_name: string;
-    last_name: string;
+    full_name: string;
     phone: string | null;
   } | null;
 }
 
 export interface Driver {
   id: string;
-  first_name: string;
-  last_name: string;
+  full_name: string;
   phone: string | null;
   zone: string | null;
 }

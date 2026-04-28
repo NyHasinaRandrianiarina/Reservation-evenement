@@ -17,9 +17,11 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { useAuthStore } from "@/store/useAuthStore";
 import toast from "react-hot-toast";
 
-const getInitials = (firstName?: string, lastName?: string) => {
-  if (!firstName && !lastName) return "U";
-  return `${firstName?.charAt(0) || ""}${lastName?.charAt(0) || ""}`.toUpperCase();
+const getInitials = (name?: string) => {
+  if (!name) return "U";
+  const parts = name.split(" ");
+  if (parts.length >= 2) return `${parts[0].charAt(0)}${parts[1].charAt(0)}`.toUpperCase();
+  return name.charAt(0).toUpperCase();
 };
 
 /* ──────────────────────────────────────────────
@@ -77,8 +79,8 @@ function LandingNavbar() {
 
   const getDashboardRoute = () => {
     if (user?.role === "ADMIN") return "/admin/dashboard";
-    if (user?.role === "DELIVERY") return "/delivery/dashboard";
-    return "/sender/dashboard";
+    if (user?.role === "ORGANIZER") return "/organizer/dashboard";
+    return "/account/registrations";
   };
 
   return (
@@ -161,7 +163,7 @@ function LandingNavbar() {
                 ) : (
                   <div className="w-full h-full rounded-full bg-primary flex items-center justify-center">
                     <span className="text-[11px] font-bold tracking-wide uppercase text-primary-foreground drop-shadow-sm">
-                      {getInitials(user?.first_name, user?.last_name)}
+                      {getInitials(user?.full_name)}
                     </span>
                   </div>
                 )}
@@ -170,7 +172,7 @@ function LandingNavbar() {
               {userMenuOpen && (
                 <div className="absolute right-0 mt-3 w-64 bg-background rounded-3xl border border-border/40 shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 origin-top-right whitespace-nowrap">
                   <div className="px-5 py-4 border-b border-border/40 bg-muted/20">
-                    <p className="text-[15px] font-bold text-foreground truncate">{user?.first_name} {user?.last_name}</p>
+                    <p className="text-[15px] font-bold text-foreground truncate">{user?.full_name}</p>
                     <p className="text-xs text-muted-foreground truncate mt-0.5">{user?.email}</p>
                   </div>
                   <div className="flex flex-col py-2">
@@ -280,12 +282,12 @@ function LandingNavbar() {
                     ) : (
                       <div className="w-10 h-10 rounded-full flex items-center justify-center bg-primary">
                         <span className="text-[12px] font-bold text-primary-foreground">
-                          {getInitials(user?.first_name, user?.last_name)}
+                          {getInitials(user?.full_name)}
                         </span>
                       </div>
                     )}
                     <div className="flex flex-col overflow-hidden">
-                      <span className="text-sm font-bold truncate text-foreground">{user?.first_name} {user?.last_name}</span>
+                      <span className="text-sm font-bold truncate text-foreground">{user?.full_name}</span>
                       <span className="text-[10px] text-muted-foreground uppercase">{user?.role}</span>
                     </div>
                   </div>
@@ -314,7 +316,7 @@ function LandingNavbar() {
             </div>
 
             <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted-foreground/50 mt-8 text-center">
-              TrackIt — Agence de livraison
+              EventNest — Plateforme de réservation
             </p>
           </motion.div>
         )}
@@ -367,7 +369,7 @@ function LandingFooter() {
               </span>
             </div>
             <p className="text-[13px] leading-relaxed text-muted-foreground max-w-[300px] font-medium">
-              La plateforme de gestion et de suivi de livraisons pour votre agence.
+              La plateforme de réservation d'événements pour tous vos besoins.
             </p>
           </div>
 
@@ -423,7 +425,7 @@ function LandingFooter() {
 
         <div className="mt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <span className="text-[10px] font-bold tracking-widest text-muted-foreground/50 uppercase">
-            © {currentYear} TrackIt - Tous droits réservés
+            © {currentYear} EventNest - Tous droits réservés
           </span>
           <div className="flex items-center gap-2">
             <Zap size={12} className="text-primary" />

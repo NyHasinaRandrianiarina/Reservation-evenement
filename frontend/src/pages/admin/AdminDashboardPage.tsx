@@ -16,7 +16,7 @@ export default function AdminDashboardPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
         <h1 className="text-3xl font-black text-foreground tracking-tight">Supervision Globale</h1>
-        <p className="text-muted-foreground mt-1">Vue d'ensemble de l'agence, {user?.first_name}.</p>
+        <p className="text-muted-foreground mt-1">Vue d'ensemble de l'agence, {user?.full_name?.split(" ")[0]}.</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

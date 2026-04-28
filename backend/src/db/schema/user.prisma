@@ -1,7 +1,6 @@
 model User {
   id                   String   @id @default(uuid())
-  first_name           String
-  last_name            String
+  full_name            String
   email                String   @unique
   password             String
   avatar_url           String?

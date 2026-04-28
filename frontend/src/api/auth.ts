@@ -4,8 +4,7 @@ export type Role = "PARTICIPANT" | "ORGANIZER" | "ADMIN";
 
 export type User = {
   id: string;
-  first_name: string;
-  last_name: string;
+  full_name: string;
   email: string;
   phone: string | null;
   address: string | null;

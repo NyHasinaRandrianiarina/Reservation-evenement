@@ -101,8 +101,7 @@ export default function AdminAllOrdersPage() {
     return (
       d.tracking_number.toLowerCase().includes(q) ||
       d.recipient_name.toLowerCase().includes(q) ||
-      d.sender?.first_name?.toLowerCase().includes(q) ||
-      d.sender?.last_name?.toLowerCase().includes(q)
+      d.sender?.full_name?.toLowerCase().includes(q)
     );
   });
 
@@ -195,7 +194,7 @@ export default function AdminAllOrdersPage() {
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-semibold text-foreground">
-                        {delivery.sender?.first_name} {delivery.sender?.last_name}
+                        {delivery.sender?.full_name}
                       </p>
                     </td>
                     <td className="px-6 py-4">
@@ -209,10 +208,10 @@ export default function AdminAllOrdersPage() {
                       {delivery.driver ? (
                         <div className="flex items-center gap-2">
                           <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
-                            {delivery.driver.first_name[0]}
+                            {delivery.driver.full_name[0]}
                           </div>
                           <span className="font-medium text-foreground">
-                            {delivery.driver.first_name} {delivery.driver.last_name}
+                            {delivery.driver.full_name}
                           </span>
                         </div>
                       ) : (
@@ -322,11 +321,11 @@ export default function AdminAllOrdersPage() {
                             ? "bg-primary text-primary-foreground"
                             : "bg-muted text-muted-foreground"
                         }`}>
-                          {driver.first_name[0]}{driver.last_name[0]}
+                          {driver.full_name.split(" ").map(n => n[0]).join("").toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-bold text-foreground">
-                            {driver.first_name} {driver.last_name}
+                            {driver.full_name}
                           </p>
                           <p className="text-xs text-muted-foreground truncate">
                             {driver.phone || "Pas de téléphone"}{driver.zone ? ` · ${driver.zone}` : ""}

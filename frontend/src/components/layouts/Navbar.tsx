@@ -17,9 +17,11 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { cn } from "@/lib/utils";
 
-const getInitials = (firstName?: string, lastName?: string) => {
-  if (!firstName && !lastName) return "U";
-  return `${firstName?.charAt(0) || ""}${lastName?.charAt(0) || ""}`.toUpperCase();
+const getInitials = (name?: string) => {
+  if (!name) return "U";
+  const parts = name.split(" ");
+  if (parts.length >= 2) return `${parts[0].charAt(0)}${parts[1].charAt(0)}`.toUpperCase();
+  return name.charAt(0).toUpperCase();
 };
 
 export default function Navbar() {
@@ -208,14 +210,14 @@ export default function Navbar() {
                           "text-[10px] font-bold",
                           scrolled ? "text-primary-foreground" : "text-black"
                         )}>
-                          {getInitials(user?.first_name, user?.last_name)}
+                          {getInitials(user?.full_name)}
                         </span>
                       </div>
                     )}
                   </div>
                   <div className="flex flex-col items-start leading-none">
                     <span className={cn("text-[10px] font-bold", scrolled ? "text-foreground" : "text-white")}>
-                      {user?.first_name}
+                      {user?.full_name?.split(" ")[0]}
                     </span>
                     <span className={cn("text-[8px] font-bold uppercase tracking-[0.2em]", scrolled ? "text-foreground/50" : "text-white/60")}>
                       {user?.role === "ORGANIZER" ? "Organisateur" : "Membre"}
@@ -237,10 +239,10 @@ export default function Navbar() {
                       <div className="px-8 py-8 border-b border-border">
                         <div className="flex items-center gap-4 mb-4">
                           <div className="w-14 h-14 rounded-full overflow-hidden border border-border">
-                            <img src={user?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${user?.first_name}`} alt="avatar" className="w-full h-full object-cover grayscale opacity-80" />
+                            <img src={user?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${user?.full_name}`} alt="avatar" className="w-full h-full object-cover grayscale opacity-80" />
                           </div>
                           <div className="flex flex-col">
-                            <p className="text-base font-serif font-light text-foreground leading-tight">{user?.first_name} {user?.last_name}</p>
+                            <p className="text-base font-serif font-light text-foreground leading-tight">{user?.full_name}</p>
                             <div className={cn(
                               "inline-flex px-2 py-0.5 rounded-sm text-[8px] font-bold uppercase tracking-[0.2em] mt-2 border",
                               user?.role === "ORGANIZER" ? "bg-foreground text-background border-foreground" : "bg-transparent text-foreground/60 border-border"

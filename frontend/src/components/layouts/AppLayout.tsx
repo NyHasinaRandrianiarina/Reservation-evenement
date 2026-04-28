@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   Menu, Bell, Package, LayoutDashboard, 
-  ShoppingCart, User, LogOut,
+  User, LogOut,
   BarChart3, Settings, ChevronLeft, ChevronRight, type LucideIcon
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -36,21 +36,19 @@ const getNavItems = (role: string = "ADMIN"): NavItem[] => {
         { name: "Statistiques", href: "/admin/statistiques", icon: BarChart3 },
         { name: "Paramètres", href: "/admin/parametres", icon: Settings },
       ];
-    case "DELIVERY":
+    case "ORGANIZER":
       return [
-        { name: "Dashboard", href: "/delivery/dashboard", icon: LayoutDashboard },
-        { name: "Mes Missions", href: "/delivery/missions", icon: Package },
-        { name: "Historique", href: "/delivery/historique", icon: ShoppingCart },
-        { name: "Notifications", href: "/delivery/notifications", icon: Bell, badge: "2" },
-        { name: "Mon Profil", href: "/delivery/profil", icon: User },
+        { name: "Dashboard", href: "/organizer/dashboard", icon: LayoutDashboard },
+        { name: "Mes Événements", href: "/organizer/events", icon: Package },
+        { name: "Statistiques", href: "/organizer/statistiques", icon: BarChart3 },
+        { name: "Paramètres", href: "/organizer/parametres", icon: Settings },
       ];
-    case "SENDER":
+    case "PARTICIPANT":
     default:
       return [
-        { name: "Dashboard", href: "/sender/dashboard", icon: LayoutDashboard },
-        { name: "Mes Demandes", href: "/sender/demandes", icon: Package },
-        { name: "Notifications", href: "/sender/notifications", icon: Bell, badge: "3" },
-        { name: "Mon Profil", href: "/sender/profil", icon: User },
+        { name: "Mes Réservations", href: "/account/registrations", icon: Package },
+        { name: "Découvrir", href: "/", icon: LayoutDashboard },
+        { name: "Mon Profil", href: "/account/profile", icon: User },
       ];
   }
 };
@@ -62,8 +60,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  // We fallback to ADMIN if no role is defined (or for fast testing)
-  const navItems = getNavItems(user?.role || "DELIVERY");
+  // We fallback to PARTICIPANT if no role is defined
+  const navItems = getNavItems(user?.role || "PARTICIPANT");
 
   const handleLogout = async () => {
     try {
@@ -74,8 +72,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const getInitials = (first?: string, last?: string) => {
-    return `${first?.charAt(0) || ""}${last?.charAt(0) || ""}`.toUpperCase() || "U";
+  const getInitials = (name?: string) => {
+    if (!name) return "U";
+    const parts = name.split(" ");
+    if (parts.length >= 2) return `${parts[0].charAt(0)}${parts[1].charAt(0)}`.toUpperCase();
+    return name.charAt(0).toUpperCase();
   };
 
   const renderSidebarContent = (isMobile: boolean) => (
@@ -218,7 +219,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   <Avatar className="h-8 w-8 border border-border/50">
                     <AvatarImage src={user?.avatar_url || ""} />
                     <AvatarFallback className="bg-primary text-primary-foreground text-xs font-bold">
-                      {getInitials(user?.first_name, user?.last_name)}
+                      {getInitials(user?.full_name)}
                     </AvatarFallback>
                   </Avatar>
                 </button>
@@ -226,14 +227,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <DropdownMenuContent align="end" className="w-56 rounded-xl">
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-bold leading-none">{user?.first_name} {user?.last_name}</p>
+                    <p className="text-sm font-bold leading-none">{user?.full_name}</p>
                     <p className="text-xs leading-none text-muted-foreground">
                       {user?.email}
                     </p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate(user?.role === 'ADMIN' ? '/admin/parametres' : user?.role === 'DELIVERY' ? '/delivery/profil' : '/sender/profil')} className="cursor-pointer">
+                <DropdownMenuItem onClick={() => navigate(user?.role === 'ADMIN' ? '/admin/parametres' : user?.role === 'ORGANIZER' ? '/organizer/settings' : '/account/profile')} className="cursor-pointer">
                   <User className="mr-2 h-4 w-4" />
                   <span>Mon Profil</span>
                 </DropdownMenuItem>

@@ -32,7 +32,7 @@ const SidebarContent = ({
         </span>
       </Link>
       <p className="text-sm font-semibold mt-4 text-foreground truncate">
-        {user?.first_name} {user?.last_name}
+        {user?.full_name}
       </p>
     </div>
 

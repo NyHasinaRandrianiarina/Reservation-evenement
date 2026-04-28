@@ -17,7 +17,7 @@ export default function SenderDashboardPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-foreground tracking-tight">Bonjour, {user?.first_name} 👋</h1>
+          <h1 className="text-3xl font-black text-foreground tracking-tight">Bonjour, {user?.full_name?.split(" ")[0]} 👋</h1>
           <p className="text-muted-foreground mt-1">Bienvenue sur votre espace expéditeur TrackIt.</p>
         </div>
         <Link to="/sender/demandes/nouvelle">
