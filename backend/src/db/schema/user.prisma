@@ -18,4 +18,5 @@ model User {
   refresh_tokens RefreshToken[]
   otp_codes      OtpCode[]
   events         Event[]
+  registrations  Registration[] @relation("ParticipantRegistrations")
 }

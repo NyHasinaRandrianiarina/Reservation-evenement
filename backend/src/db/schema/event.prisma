@@ -1,25 +1,26 @@
 model Event {
-  id            String   @id @default(uuid())
-  title         String
-  category      String   // conference, concert, formation, corporate, sport, other
-  description   String   @db.Text
-  start_date    DateTime
-  end_date      DateTime
-  location      Json     // { type: 'in_person'|'online'|'hybrid', address?, onlineUrl? }
-  capacity      Int?     // null = unlimited
-  is_private    Boolean  @default(false)
+  id              String   @id @default(uuid())
+  title           String
+  category        String // conference, concert, formation, corporate, sport, other
+  description     String   @db.Text
+  start_date      DateTime
+  end_date        DateTime
+  location        Json // { type: 'in_person'|'online'|'hybrid', address?, onlineUrl? }
+  capacity        Int? // null = unlimited
+  is_private      Boolean  @default(false)
   cover_image_url String?
-  status        String   @default("draft") // draft, published, sold_out, cancelled, past
-  organizer_id  String
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  status          String   @default("draft") // draft, published, sold_out, cancelled, past
+  organizer_id    String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
 
   // Nested JSON payloads from wizard
-  tickets       Json     // Array of TicketType from frontend
-  custom_fields Json     // Array of CustomField from frontend
+  tickets       Json // Array of TicketType from frontend
+  custom_fields Json // Array of CustomField from frontend
 
   // Relations
-  organizer     User     @relation(fields: [organizer_id], references: [id], onDelete: Cascade)
+  organizer     User           @relation(fields: [organizer_id], references: [id], onDelete: Cascade)
+  registrations Registration[]
 
   @@index([organizer_id])
   @@index([status])

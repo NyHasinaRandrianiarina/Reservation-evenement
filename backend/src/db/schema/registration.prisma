@@ -1,0 +1,22 @@
+model Registration {
+  id                 String   @id @default(uuid())
+  event_id            String
+  participant_id      String?
+  contact_first_name  String
+  contact_last_name   String
+  contact_email       String
+  contact_phone       String?
+  tickets             Json
+  total_quantity      Int
+  status              String   @default("confirmed")
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  // Relations
+  event        Event  @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  participant  User?  @relation("ParticipantRegistrations", fields: [participant_id], references: [id], onDelete: SetNull)
+
+  @@index([event_id])
+  @@index([participant_id])
+  @@index([status])
+}

@@ -3,12 +3,14 @@ import { authenticate } from "../middlewares/authenticate.js";
 import { authorize } from "../middlewares/authorize.js";
 import { eventCoverUpload } from "../middlewares/upload.js";
 import * as eventController from "../controllers/event.controller.js";
+import * as registrationController from "../controllers/registration.controller.js";
 
 const router = Router();
 
 // Routes publiques (catalogue) — pas d’authentification
 router.get("/public", eventController.listPublic);
 router.get("/public/:id", eventController.getPublicById);
+router.post("/public/:id/registrations", registrationController.createPublic);
 
 // Routes protégées organisateur/admin
 router.use(authenticate);
