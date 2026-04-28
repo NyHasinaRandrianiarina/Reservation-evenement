@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/compone
 import { Button } from '@/components/ui/button';
 import { Download, MapPin, CalendarDays, Ticket } from 'lucide-react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import type { RegistrationMock } from './RegistrationCard';
+import type { RegistrationItem } from './RegistrationCard';
 import { useRef } from 'react';
 import { TicketPrintable } from '@/components/tickets/TicketPrintable';
 import { downloadTicketPdf } from '@/utils/download-ticket';
@@ -12,7 +12,7 @@ import QRCode from 'react-qr-code';
 interface TicketModalProps {
   isOpen: boolean;
   onClose: () => void;
-  registration: RegistrationMock;
+  registration: RegistrationItem;
 }
 
 export default function TicketModal({ isOpen, onClose, registration }: TicketModalProps) {

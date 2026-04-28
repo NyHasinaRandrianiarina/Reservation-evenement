@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import TicketModal from './TicketModal';
 
-export interface RegistrationMock {
+export interface RegistrationItem {
   id: string;
   eventTitle: string;
   eventImage: string;
@@ -16,7 +16,7 @@ export interface RegistrationMock {
 }
 
 interface RegistrationCardProps {
-  registration: RegistrationMock;
+  registration: RegistrationItem;
   onCancel?: (id: string) => void;
 }
 

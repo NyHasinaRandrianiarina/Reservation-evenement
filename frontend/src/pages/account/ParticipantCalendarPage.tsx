@@ -1,57 +1,56 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import EventCalendar from '@/components/shared/EventCalendar';
 import type { CalendarEvent } from '@/components/shared/EventCalendar';
+import { getMyRegistrations, type ParticipantRegistration } from '@/api/registrations';
+import toast from 'react-hot-toast';
 
-// Mock data for participant calendar
-const getMockEvents = (baseDate: Date): CalendarEvent[] => {
-  const year = baseDate.getFullYear();
-  const month = baseDate.getMonth();
-  
-  return [
-    {
-      id: 'EVT-938102',
-      title: 'MasterClass Design UX/UI avec Sarah Drasner',
-      date: new Date(year, month, 15, 14, 0),
-      location: 'Paris, Station F',
-      type: 'reserved',
-      status: 'published'
-    },
-    {
-      id: 'EVT-440219',
-      title: 'Tech Summit 2024: Intelligence Artificielle',
-      date: new Date(year, month, 10, 9, 0),
-      location: 'Lyon, Eurexpo',
-      type: 'reserved',
-      status: 'published'
-    },
-    {
-      id: 'EVT-112233',
-      title: 'Atelier de photographie culinaire',
-      date: new Date(year, month, 22, 10, 30),
-      location: 'Studio 54, Bordeaux',
-      type: 'invited',
-      status: 'published'
-    },
-    {
-      id: 'EVT-998877',
-      title: 'Soirée Networking Startup',
-      date: new Date(year, month, 28, 19, 0),
-      location: 'Le Rooftop, Marseille',
-      type: 'invited',
-      status: 'published'
-    }
-  ];
-};
+function getLocationLabel(location: ParticipantRegistration["event"]["location"]): string {
+  if (!location) return 'Lieu à confirmer';
+  if (location.type === 'online') return 'En ligne';
+  return location.venue || location.address || location.city || 'Lieu à confirmer';
+}
 
 export default function ParticipantCalendarPage() {
+  const navigate = useNavigate();
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  
-  // In a real app, this would be a React Query fetching events by month
-  const calendarEvents = getMockEvents(currentMonth);
+  const [registrations, setRegistrations] = useState<ParticipantRegistration[]>([]);
 
-  const handleEventClick = () => {
-    // For participants, they view the public event page or their ticket details
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await getMyRegistrations();
+        setRegistrations(res.data ?? []);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Impossible de charger le calendrier";
+        toast.error(message);
+      }
+    };
+    load();
+  }, []);
+
+  const calendarEvents = useMemo<CalendarEvent[]>(() => {
+    const month = currentMonth.getMonth();
+    const year = currentMonth.getFullYear();
+    return registrations
+      .filter((reg) => reg.status !== 'cancelled')
+      .map((reg) => {
+        const date = new Date(reg.event.start_date);
+        return {
+          id: reg.id,
+          title: reg.event.title,
+          date,
+          location: getLocationLabel(reg.event.location),
+          type: 'reserved' as const,
+          status: reg.event.status,
+        };
+      })
+      .filter((event) => event.date.getMonth() === month && event.date.getFullYear() === year);
+  }, [registrations, currentMonth]);
+
+  const handleEventClick = (event: CalendarEvent) => {
+    navigate(`/events/${event.id}`);
   };
 
   return (

@@ -1,43 +1,86 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import RegistrationCard from './components/RegistrationCard';
-import type { RegistrationMock } from './components/RegistrationCard';
+import type { RegistrationItem } from './components/RegistrationCard';
 import { Ticket, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { cancelMyRegistration, getMyRegistrations, type ParticipantRegistration } from '@/api/registrations';
+import toast from 'react-hot-toast';
 
-const mockRegistrations: RegistrationMock[] = [
-  {
-    id: 'EVT-938102',
-    eventTitle: 'MasterClass Design UX/UI avec Sarah Drasner',
-    eventImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80',
-    date: 'Samedi 15 Mars 2025 · 14h00',
-    location: 'Paris, Station F',
-    ticketType: 'Place VIP',
-    quantity: 1,
-    status: 'upcoming'
-  },
-  {
-    id: 'EVT-440219',
-    eventTitle: 'Tech Summit 2024: Intelligence Artificielle',
-    eventImage: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80',
-    date: 'Vendredi 10 Nov 2024 · 09h00',
-    location: 'Lyon, Eurexpo',
-    ticketType: 'Pass 2 Jours',
-    quantity: 2,
-    status: 'past'
-  }
-];
+function formatDate(dateIso: string) {
+  const d = new Date(dateIso);
+  return d.toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  }) + ' · ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+}
+
+function getLocationLabel(location: ParticipantRegistration["event"]["location"]): string {
+  if (!location) return 'Lieu à confirmer';
+  if (location.type === 'online') return 'En ligne';
+  return location.venue || location.address || location.city || 'Lieu à confirmer';
+}
+
+function toRegistrationItem(reg: ParticipantRegistration): RegistrationItem {
+  const now = Date.now();
+  const eventDate = new Date(reg.event.start_date).getTime();
+  const mappedStatus: RegistrationItem["status"] =
+    reg.status === 'cancelled' ? 'cancelled' : eventDate < now ? 'past' : 'upcoming';
+
+  const firstTicketId = Object.keys(reg.tickets ?? {})[0];
+  const eventTickets = Array.isArray(reg.event.tickets) ? reg.event.tickets : [];
+  const firstTicketName =
+    eventTickets.find((t) => t?.id === firstTicketId)?.name ??
+    firstTicketId ??
+    'Billet';
+
+  return {
+    id: reg.id,
+    eventTitle: reg.event.title,
+    eventImage: reg.event.cover_image_url || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80',
+    date: formatDate(reg.event.start_date),
+    location: getLocationLabel(reg.event.location),
+    ticketType: firstTicketName,
+    quantity: reg.total_quantity,
+    status: mappedStatus,
+  };
+}
 
 export default function MyRegistrationsPage() {
-  const [registrations, setRegistrations] = useState<RegistrationMock[]>(mockRegistrations);
+  const [registrations, setRegistrations] = useState<RegistrationItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleCancel = (id: string) => {
-    setRegistrations(prev => 
-      prev.map(reg => reg.id === id ? { ...reg, status: 'cancelled' } : reg)
-    );
+  useEffect(() => {
+    const load = async () => {
+      setIsLoading(true);
+      try {
+        const res = await getMyRegistrations();
+        setRegistrations((res.data ?? []).map(toRegistrationItem));
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Impossible de charger les inscriptions";
+        toast.error(message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    load();
+  }, []);
+
+  const handleCancel = async (id: string) => {
+    try {
+      await cancelMyRegistration(id);
+      setRegistrations((prev) => prev.map((reg) => (reg.id === id ? { ...reg, status: 'cancelled' } : reg)));
+      toast.success("Inscription annulée");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Impossible d'annuler l'inscription";
+      toast.error(message);
+    }
   };
 
-  const upcoming = registrations.filter(r => r.status === 'upcoming');
-  const past = registrations.filter(r => r.status === 'past' || r.status === 'cancelled');
+  const upcoming = useMemo(() => registrations.filter(r => r.status === 'upcoming'), [registrations]);
+  const past = useMemo(() => registrations.filter(r => r.status === 'past' || r.status === 'cancelled'), [registrations]);
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -67,7 +110,11 @@ export default function MyRegistrationsPage() {
           </span>
         </h2>
         
-        {upcoming.length === 0 ? (
+        {isLoading ? (
+          <div className="p-8 text-center border border-dashed border-border rounded-3xl">
+             <p className="text-muted-foreground">Chargement...</p>
+          </div>
+        ) : upcoming.length === 0 ? (
           <div className="p-8 text-center border border-dashed border-border rounded-3xl">
              <p className="text-muted-foreground">Aucun événement à venir.</p>
           </div>
@@ -84,7 +131,11 @@ export default function MyRegistrationsPage() {
       <section className="space-y-6">
         <h2 className="text-xl font-bold font-serif italic text-foreground/80">Passés & Annulés</h2>
         
-        {past.length === 0 ? (
+        {isLoading ? (
+          <div className="p-8 text-center border border-dashed border-border rounded-3xl">
+             <p className="text-muted-foreground">Chargement...</p>
+          </div>
+        ) : past.length === 0 ? (
           <div className="p-8 text-center border border-dashed border-border rounded-3xl">
              <p className="text-muted-foreground">Historique vide.</p>
           </div>
