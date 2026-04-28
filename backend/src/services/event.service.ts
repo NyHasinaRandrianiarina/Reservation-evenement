@@ -1,4 +1,6 @@
 import prisma from "../db/client.js";
+import { ForbiddenError } from "../errors/app-error.js";
+import { createBroadcastNotification } from "./notification.service.js";
 
 function slugify(input: string): string {
   return String(input)
@@ -84,6 +86,11 @@ export async function createEvent(organizerId: string, data: EventDraft) {
   const tickets = payload.tickets ?? [];
   const customFields = payload.custom_fields ?? payload.customFields ?? [];
 
+  const creator = await prisma.user.findUnique({
+    where: { id: organizerId },
+    select: { role: true, organizer_approved: true },
+  });
+
   const event = await (prisma as any).event.create({
     data: {
       title: payload.title,
@@ -95,10 +102,20 @@ export async function createEvent(organizerId: string, data: EventDraft) {
       capacity: payload.capacity ?? null,
       is_private: isPrivate,
       cover_image_url: coverImageUrl,
-      status: "published", // pour EventNest V1 : on publie directement
+      status: creator?.role === "ORGANIZER" && !creator.organizer_approved ? "draft" : "published",
       organizer_id: organizerId,
       tickets,
       custom_fields: customFields,
+    },
+  });
+
+  await createBroadcastNotification({
+    type: "event_created",
+    title: "Nouvel événement disponible",
+    message: `Un nouvel événement vient d'être publié : ${event.title}`,
+    metadata: {
+      event_id: event.id,
+      organizer_id: organizerId,
     },
   });
 
@@ -128,6 +145,19 @@ export async function getEventByIdAndOrganizer(eventId: string, organizerId: str
  * Met à jour le statut d'un événement si l'utilisateur est bien l'organisateur.
  */
 export async function updateEventStatus(eventId: string, organizerId: string, status: string) {
+  if (status === "published") {
+    const user = await prisma.user.findUnique({
+      where: { id: organizerId },
+      select: { role: true, organizer_approved: true },
+    });
+
+    if (user?.role === "ORGANIZER" && !user.organizer_approved) {
+      throw new ForbiddenError(
+        "Votre compte organisateur est en attente de validation par un administrateur"
+      );
+    }
+  }
+
   const event = await getEventByIdAndOrganizer(eventId, organizerId);
   if (!event) return null;
 

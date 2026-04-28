@@ -10,7 +10,11 @@ import { uploadToCloudinary } from "../utils/cloudinary.js";
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const organizer = req.user!;
   const event = await createEvent(organizer.id, req.body);
-  ApiResponse.created(res, event, "Événement créé avec succès");
+  const message =
+    event.status === "draft"
+      ? "Événement créé en brouillon. Validation admin requise avant publication."
+      : "Événement créé avec succès";
+  ApiResponse.created(res, event, message);
 });
 
 /**

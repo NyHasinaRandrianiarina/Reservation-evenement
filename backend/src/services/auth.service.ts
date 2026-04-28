@@ -16,6 +16,7 @@ const USER_SELECT = {
   avatar_url: true,
   onboarding_completed: true,
   role: true,
+  organizer_approved: true,
   two_fa_enabled: true,
   is_active: true,
   created_at: true,
@@ -49,6 +50,9 @@ export async function registerUser(data: RegisterInput) {
 
   const hashedPassword = await bcrypt.hash(data.password, 12);
 
+  const role = (data.role ?? "PARTICIPANT") as "PARTICIPANT" | "ORGANIZER" | "ADMIN";
+  const organizerApproved = role === "ORGANIZER" ? false : true;
+
   const user = await prisma.user.create({
     data: {
       full_name: data.full_name,
@@ -57,7 +61,8 @@ export async function registerUser(data: RegisterInput) {
       phone: data.phone ?? null,
       address: data.address ?? null,
       zone: data.zone ?? null,
-      role: (data.role ?? "PARTICIPANT") as never,
+      role: role as never,
+      organizer_approved: organizerApproved,
     } as any,
     select: USER_SELECT as any,
   });

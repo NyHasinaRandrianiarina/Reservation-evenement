@@ -1,7 +1,14 @@
 import type { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/async-handler.js";
 import { ApiResponse } from "../utils/api-response.js";
-import { getOrganizerById, getOrganizers } from "../services/user.service.js";
+import { NotFoundError } from "../errors/app-error.js";
+import {
+  approveOrganizerAccount,
+  getOrganizerById,
+  getOrganizers,
+  getPendingOrganizers,
+} from "../services/user.service.js";
+import { createNotificationForUser } from "../services/notification.service.js";
 
 function toPublicOrganizer(u: {
   id: string;
@@ -40,4 +47,29 @@ export const getOrganizer = asyncHandler(async (req: Request, res: Response) => 
   }
 
   ApiResponse.success(res, toPublicOrganizer(organizer), "Organisateur récupéré");
+});
+
+export const listPendingOrganizers = asyncHandler(async (_req: Request, res: Response) => {
+  const pending = await getPendingOrganizers();
+  ApiResponse.success(res, pending, "Organisateurs en attente récupérés");
+});
+
+export const approveOrganizer = asyncHandler(async (req: Request, res: Response) => {
+  const organizerId = String(req.params.id);
+  const result = await approveOrganizerAccount(organizerId);
+
+  if (result.count === 0) {
+    throw new NotFoundError("Organisateur en attente introuvable");
+  }
+
+  await createNotificationForUser(organizerId, {
+    type: "organizer_approved",
+    title: "Compte organisateur validé",
+    message: "Votre compte a été validé par un administrateur. Vous pouvez maintenant publier des événements.",
+    metadata: {
+      organizer_id: organizerId,
+    },
+  });
+
+  ApiResponse.success(res, null, "Compte organisateur validé");
 });

@@ -17,6 +17,7 @@ import {
 } from "../services/token.service.js";
 import { generateOtp, verifyOtp } from "../services/otp.service.js";
 import { sendOtpEmail } from "../services/email.service.js";
+import { notifyAdmins } from "../services/notification.service.js";
 
 /**
  * Inscription d'un nouvel utilisateur.
@@ -40,6 +41,18 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     phone: normalizedPhone,
     role,
   });
+
+  if ((user as any).role === "ORGANIZER") {
+    await notifyAdmins({
+      type: "organizer_signup_pending",
+      title: "Nouvel organisateur en attente",
+      message: `${(user as any).full_name} a créé un compte organisateur et attend une validation.`,
+      metadata: {
+        organizer_id: (user as any).id,
+        organizer_email: (user as any).email,
+      },
+    });
+  }
 
   // Connexion immédiate après inscription
   const accessToken = generateAccessToken((user as any).id, (user as any).role);
@@ -124,6 +137,7 @@ export const verifyLogin2fa = asyncHandler(
         avatar_url: true,
         onboarding_completed: true,
         role: true,
+        organizer_approved: true,
         two_fa_enabled: true,
         is_active: true,
         created_at: true,

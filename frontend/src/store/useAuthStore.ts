@@ -13,6 +13,7 @@ export interface User {
   avatar_url: string | null;
   onboarding_completed: boolean;
   role: authApi.Role;
+  organizer_approved: boolean;
   two_fa_enabled: boolean;
   is_active: boolean;
   created_at: string;
@@ -169,7 +170,10 @@ export const useAuthStore = create<AuthState>((set) => ({
         status: AuthStatus.Authenticated,
         isLoading: false,
       });
-      toast.success(res.message || "Compte organisateur créé avec succès");
+      toast.success(
+        res.message ||
+          "Compte organisateur créé. Un administrateur doit valider votre compte avant publication."
+      );
     } catch (err) {
       set({ isLoading: false });
       const message = err instanceof Error ? err.message : "Erreur lors de l'inscription";

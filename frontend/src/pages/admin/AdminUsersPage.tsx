@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { 
   Search, MoreVertical, ShieldAlert,
   UserCheck, UserX, User
@@ -32,6 +32,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "react-hot-toast";
+import { approveOrganizer, getPendingOrganizers, type PendingOrganizer } from "@/api/organizers";
 
 // Mock Users
 const MOCK_USERS = [
@@ -66,6 +67,9 @@ export default function AdminUsersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("ALL");
   const [users, setUsers] = useState(MOCK_USERS);
+  const [pendingOrganizers, setPendingOrganizers] = useState<PendingOrganizer[]>([]);
+  const [isLoadingPending, setIsLoadingPending] = useState(false);
+  const [approvingId, setApprovingId] = useState<string | null>(null);
 
   // Alert Dialog State
   const [userToSuspend, setUserToSuspend] = useState<typeof MOCK_USERS[0] | null>(null);
@@ -100,6 +104,37 @@ export default function AdminUsersPage() {
     return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
   };
 
+  useEffect(() => {
+    const loadPending = async () => {
+      setIsLoadingPending(true);
+      try {
+        const data = await getPendingOrganizers();
+        setPendingOrganizers(data);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Erreur de chargement des organisateurs";
+        toast.error(message);
+      } finally {
+        setIsLoadingPending(false);
+      }
+    };
+
+    loadPending();
+  }, []);
+
+  const handleApproveOrganizer = async (organizerId: string) => {
+    setApprovingId(organizerId);
+    try {
+      await approveOrganizer(organizerId);
+      setPendingOrganizers((prev) => prev.filter((o) => o.id !== organizerId));
+      toast.success("Organisateur validé avec succès");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Impossible de valider l'organisateur";
+      toast.error(message);
+    } finally {
+      setApprovingId(null);
+    }
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-10">
       
@@ -124,6 +159,37 @@ export default function AdminUsersPage() {
             {users.length}
           </Badge>
         </div>
+      </div>
+
+      <div className="bg-card rounded-2xl border border-border/40 shadow-sm p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold">Organisateurs en attente de validation</h2>
+          <Badge variant="secondary" className="font-bold">{pendingOrganizers.length}</Badge>
+        </div>
+
+        {isLoadingPending ? (
+          <p className="text-sm text-muted-foreground">Chargement...</p>
+        ) : pendingOrganizers.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Aucun organisateur en attente.</p>
+        ) : (
+          <div className="space-y-3">
+            {pendingOrganizers.map((organizer) => (
+              <div key={organizer.id} className="flex items-center justify-between rounded-xl border border-border/40 p-3">
+                <div className="flex flex-col">
+                  <span className="font-semibold">{organizer.full_name}</span>
+                  <span className="text-xs text-muted-foreground">{organizer.email}</span>
+                </div>
+                <Button
+                  size="sm"
+                  onClick={() => handleApproveOrganizer(organizer.id)}
+                  disabled={approvingId === organizer.id}
+                >
+                  {approvingId === organizer.id ? "Validation..." : "Valider"}
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col md:flex-row gap-4 items-center">

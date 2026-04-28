@@ -26,6 +26,7 @@ export interface AuthUser {
   role: Role;
   zone?: string | null;
   onboarding_completed: boolean;
+  organizer_approved: boolean;
   two_fa_enabled: boolean;
   is_active: boolean;
 }

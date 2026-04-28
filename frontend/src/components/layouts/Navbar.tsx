@@ -9,13 +9,19 @@ import {
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
 import Button from "@/components/reusable/Button";
-import { Search, User, LogOut, Package, Store, ChevronDown, PlusCircle, Shield } from "lucide-react";
+import { Search, User, LogOut, Package, Store, ChevronDown, PlusCircle, Shield, Bell } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { useAuthStore } from "@/store/useAuthStore";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { cn } from "@/lib/utils";
+import {
+  getMyNotifications,
+  markAllNotificationsRead,
+  markNotificationRead,
+  type AppNotification,
+} from "@/api/notifications";
 
 const getInitials = (name?: string) => {
   if (!name) return "U";
@@ -30,6 +36,8 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isNotifMenuOpen, setIsNotifMenuOpen] = useState(false);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
 
@@ -37,6 +45,7 @@ export default function Navbar() {
     setScrolled(latest > 100);
   });
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const notifMenuRef = useRef<HTMLDivElement>(null);
 
   const { user, isAuthenticated, logout } = useAuthStore();
 
@@ -47,10 +56,32 @@ export default function Navbar() {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
         setIsUserMenuOpen(false);
       }
+      if (notifMenuRef.current && !notifMenuRef.current.contains(event.target as Node)) {
+        setIsNotifMenuOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    const loadNotifications = async () => {
+      if (!isAuthenticated) {
+        setNotifications([]);
+        return;
+      }
+      try {
+        const res = await getMyNotifications();
+        setNotifications(res.data ?? []);
+      } catch {
+        setNotifications([]);
+      }
+    };
+
+    loadNotifications();
+  }, [isAuthenticated]);
+
+  const unreadCount = notifications.filter((n) => !n.read_at).length;
 
   const navItems = [
     { name: "Événements", link: "/" },
@@ -122,6 +153,75 @@ export default function Navbar() {
               >
                 <Search size={18} strokeWidth={1.5} />
               </button>
+
+              {isAuthenticated && (
+                <div className="relative" ref={notifMenuRef}>
+                  <button
+                    onClick={() => setIsNotifMenuOpen((prev) => !prev)}
+                    className={cn(
+                      "relative w-10 h-10 flex items-center justify-center rounded-full transition-all duration-500 cursor-pointer",
+                      scrolled
+                        ? "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
+                        : "text-white/80 hover:text-white hover:bg-white/10"
+                    )}
+                    aria-label="Notifications"
+                  >
+                    <Bell size={18} strokeWidth={1.5} />
+                    {unreadCount > 0 && (
+                      <span className="absolute top-1.5 right-1.5 min-w-4 h-4 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                      </span>
+                    )}
+                  </button>
+
+                  {isNotifMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-96 bg-background border border-border rounded-2xl shadow-2xl p-3 z-120">
+                      <div className="flex items-center justify-between mb-2 px-1">
+                        <p className="text-sm font-bold">Notifications</p>
+                        <button
+                          onClick={async () => {
+                            await markAllNotificationsRead();
+                            setNotifications((prev) =>
+                              prev.map((n) => ({ ...n, read_at: n.read_at ?? new Date().toISOString() }))
+                            );
+                          }}
+                          className="text-xs text-primary font-semibold"
+                        >
+                          Tout marquer comme lu
+                        </button>
+                      </div>
+                      <div className="max-h-80 overflow-auto space-y-2">
+                        {notifications.length === 0 ? (
+                          <p className="text-xs text-muted-foreground px-1 py-2">Aucune notification.</p>
+                        ) : (
+                          notifications.map((notif) => (
+                            <button
+                              key={notif.id}
+                              onClick={async () => {
+                                if (!notif.read_at) {
+                                  await markNotificationRead(notif.id);
+                                  setNotifications((prev) =>
+                                    prev.map((n) =>
+                                      n.id === notif.id ? { ...n, read_at: new Date().toISOString() } : n
+                                    )
+                                  );
+                                }
+                              }}
+                              className={cn(
+                                "w-full text-left rounded-xl border p-3 transition hover:bg-muted/40",
+                                notif.read_at ? "border-border/40 opacity-80" : "border-primary/40 bg-primary/5"
+                              )}
+                            >
+                              <p className="text-xs font-bold">{notif.title}</p>
+                              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{notif.message}</p>
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
             </div>
 

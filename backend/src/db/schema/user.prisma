@@ -9,6 +9,7 @@ model User {
   zone                 String?
   onboarding_completed Boolean  @default(false)
   role                 Role     @default(PARTICIPANT)
+  organizer_approved   Boolean  @default(false)
   two_fa_enabled       Boolean  @default(false)
   is_active            Boolean  @default(true)
   created_at           DateTime @default(now())
@@ -19,4 +20,5 @@ model User {
   otp_codes      OtpCode[]
   events         Event[]
   registrations  Registration[] @relation("ParticipantRegistrations")
+  notifications  Notification[]
 }

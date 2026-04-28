@@ -11,6 +11,14 @@ export interface OrganizerProfile {
   categories: string[];
 }
 
+export interface PendingOrganizer {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string | null;
+  created_at: string;
+}
+
 interface BackendUser {
   id: string;
   name: string;
@@ -75,4 +83,20 @@ export async function getOrganizerPublicEvents(organizerId: string): Promise<{
     upcoming: all.filter((e) => new Date(e.startDate) >= now),
     past: all.filter((e) => new Date(e.startDate) < now),
   };
+}
+
+export async function getPendingOrganizers(): Promise<PendingOrganizer[]> {
+  const res = await apiRequest<PendingOrganizer[], null>({
+    method: "GET",
+    path: "/users/admin/organizers/pending",
+  });
+
+  return res.data || [];
+}
+
+export async function approveOrganizer(organizerId: string): Promise<void> {
+  await apiRequest<null, null>({
+    method: "PATCH",
+    path: `/users/admin/organizers/${organizerId}/approve`,
+  });
 }

@@ -12,6 +12,7 @@ export type User = {
   avatar_url: string | null;
   onboarding_completed: boolean;
   role: Role;
+  organizer_approved: boolean;
   two_fa_enabled: boolean;
   is_active: boolean;
   created_at: string;
