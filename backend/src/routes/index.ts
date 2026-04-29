@@ -4,6 +4,7 @@ import eventRouter from "./event.routes.js";
 import notificationRouter from "./notification.routes.js";
 import registrationRouter from "./registration.routes.js";
 import userRouter from "./user.routes.js";
+import adminRouter from "./admin.routes.js";
 
 const router: Router = Router()
 
@@ -12,5 +13,6 @@ router.use("/events", eventRouter)
 router.use("/notifications", notificationRouter)
 router.use("/registrations", registrationRouter)
 router.use("/users", userRouter)
+router.use("/admin", adminRouter)
 
 export default router

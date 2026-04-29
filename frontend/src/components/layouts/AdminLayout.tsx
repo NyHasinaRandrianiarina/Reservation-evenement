@@ -4,7 +4,6 @@ import {
   LayoutDashboard,
   CalendarRange,
   Users,
-  Tags,
   BarChart3,
   ShieldCheck,
   LogOut,
@@ -18,9 +17,8 @@ import type { User } from '@/store/useAuthStore';
 
 const navItems = [
   { label: 'Tableau de bord', path: '/admin/dashboard', icon: LayoutDashboard },
-  { label: 'Calendrier', path: '/admin/calendrier', icon: CalendarRange },
+  { label: 'Événements', path: '/admin/evenements', icon: CalendarRange },
   { label: 'Utilisateurs', path: '/admin/utilisateurs', icon: Users },
-  { label: 'Catégories', path: '/admin/categories', icon: Tags },
   { label: 'Statistiques', path: '/admin/statistiques', icon: BarChart3 },
 ];
 

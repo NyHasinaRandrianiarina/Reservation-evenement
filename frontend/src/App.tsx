@@ -1,4 +1,4 @@
-import { Routes, Route, Outlet } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import AuthBootstrap from "@/components/auth/AuthBootstrap";
@@ -32,26 +32,12 @@ import OrgEventListPage from './pages/organizer/OrgEventListPage';
 import OrgEventDetailPage from './pages/organizer/OrgEventDetailPage';
 import OrgCalendarPage from './pages/organizer/OrgCalendarPage';
 
-import AppLayout from './components/layouts/AppLayout';
-import SenderDashboardPage from './pages/sender/SenderDashboardPage';
-import SenderDeliveriesPage from './pages/sender/SenderDeliveriesPage';
-import SenderDeliveryDetailPage from './pages/sender/SenderDeliveryDetailPage';
-import SenderNewDeliveryPage from './pages/sender/SenderNewDeliveryPage';
-
-// Delivery Pages
-import DeliveryDashboardPage from './pages/delivery/DeliveryDashboardPage';
-import DeliveryMissionsPage from './pages/delivery/DeliveryMissionsPage';
-import DeliveryMissionDetailPage from './pages/delivery/DeliveryMissionDetailPage';
-import DeliveryHistoryPage from './pages/delivery/DeliveryHistoryPage';
-
 // Admin Pages
 import AdminLayout from './components/layouts/AdminLayout';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
-import AdminAllOrdersPage from './pages/admin/AdminAllOrdersPage';
-import AdminOrderDetailPage from './pages/admin/AdminOrderDetailPage';
+import AdminEventsPage from './pages/admin/AdminEventsPage';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
 import AdminStatsPage from './pages/admin/AdminStatsPage';
-import AdminCalendarPage from './pages/admin/AdminCalendarPage';
 
 function App() {
   usePageTitle(); 
@@ -100,28 +86,10 @@ function App() {
               <Route path='calendar' element={<OrgCalendarPage />} />
             </Route>
 
-            {/* Protected Sender Routes */}
-            <Route path='/sender' element={<AppLayout><Outlet /></AppLayout>}>
-              <Route path='dashboard' element={<SenderDashboardPage />} />
-              <Route path='demandes' element={<SenderDeliveriesPage />} />
-              <Route path='demandes/nouvelle' element={<SenderNewDeliveryPage />} />
-              <Route path='demandes/:id' element={<SenderDeliveryDetailPage />} />
-            </Route>
-
-            {/* Protected Delivery Routes */}
-            <Route path='/delivery' element={<AppLayout><Outlet /></AppLayout>}>
-              <Route path='dashboard' element={<DeliveryDashboardPage />} />
-              <Route path='missions' element={<DeliveryMissionsPage />} />
-              <Route path='missions/:id' element={<DeliveryMissionDetailPage />} />
-              <Route path='historique' element={<DeliveryHistoryPage />} />
-            </Route>
-
             {/* Protected Admin Routes */}
             <Route path='/admin' element={<AdminLayout />}>
               <Route path='dashboard' element={<AdminDashboardPage />} />
-              <Route path='calendrier' element={<AdminCalendarPage />} />
-              <Route path='commandes' element={<AdminAllOrdersPage />} />
-              <Route path='commandes/:id' element={<AdminOrderDetailPage />} />
+              <Route path='evenements' element={<AdminEventsPage />} />
               <Route path='utilisateurs' element={<AdminUsersPage />} />
               <Route path='statistiques' element={<AdminStatsPage />} />
             </Route>
