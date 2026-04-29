@@ -61,7 +61,6 @@ export const Navbar = ({ children, className, isHomePage }: NavbarProps) => {
   const { scrollY } = useScroll();
   const [visible, setVisible] = useState<boolean>(false);
   // Never hide the navbar - always keep it visible
-  const isHidden = false;
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     // Visibilité pour le mode "Floating Pill"

@@ -243,6 +243,8 @@ export async function seedEvents() {
     const eventData = eventsData[i];
     const organizer = organizers[i % organizers.length]; // Cycle through organizers
 
+    if (!eventData || !organizer) continue;
+
     const eventPayload: EventSeedData = {
       title: eventData.title,
       category: eventData.category,
