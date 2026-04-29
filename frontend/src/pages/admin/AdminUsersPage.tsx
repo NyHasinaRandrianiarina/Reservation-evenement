@@ -28,7 +28,7 @@ import {
 import toast from "react-hot-toast";
 
 const ROLE_CONFIG: Record<string, { label: string; className: string }> = {
-  USER: { label: "Participant", className: "bg-blue-500/10 text-blue-600" },
+  PARTICIPANT: { label: "Participant", className: "bg-blue-500/10 text-blue-600" },
   ORGANIZER: { label: "Organisateur", className: "bg-amber-500/10 text-amber-600" },
   ADMIN: { label: "Admin", className: "bg-rose-500/10 text-rose-600" },
 };
@@ -163,7 +163,7 @@ export default function AdminUsersPage() {
             className="h-10 pl-4 pr-8 rounded-xl border border-border bg-background text-sm appearance-none cursor-pointer focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all"
           >
             <option value="">Tous les rôles</option>
-            <option value="USER">Participants</option>
+            <option value="PARTICIPANT">Participants</option>
             <option value="ORGANIZER">Organisateurs</option>
             <option value="ADMIN">Admins</option>
           </select>
@@ -250,7 +250,7 @@ export default function AdminUsersPage() {
                           {user.role === "ORGANIZER" && (
                             <span className="text-muted-foreground">{user._count.events} événement{user._count.events !== 1 ? "s" : ""}</span>
                           )}
-                          {user.role === "USER" && (
+                          {user.role === "PARTICIPANT" && (
                             <span className="text-muted-foreground">{user._count.registrations} inscription{user._count.registrations !== 1 ? "s" : ""}</span>
                           )}
                           {user.role === "ADMIN" && (

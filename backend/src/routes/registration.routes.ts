@@ -6,7 +6,7 @@ import { cancelMine, listMine } from "../controllers/registration.controller.js"
 
 const registrationRouter: Router = Router();
 
-registrationRouter.use(asyncHandler(authenticate), authorize("PARTICIPANT"));
+registrationRouter.use(asyncHandler(authenticate));
 registrationRouter.get("/me", listMine);
 registrationRouter.patch("/:id/cancel", cancelMine);
 

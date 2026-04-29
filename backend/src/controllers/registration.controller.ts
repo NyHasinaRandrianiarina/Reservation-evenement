@@ -33,7 +33,7 @@ export const createPublic = asyncHandler(async (req: Request, res: Response) => 
     try {
       const decoded = verifyAccessToken(token);
       const user = await getUserById(decoded.userId);
-      if (user?.role === "PARTICIPANT") {
+      if (user) {
         participantId = user.id;
       }
     } catch {

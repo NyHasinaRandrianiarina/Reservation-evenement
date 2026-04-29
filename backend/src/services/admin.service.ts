@@ -20,14 +20,14 @@ export async function getAdminStats() {
     prisma.event.groupBy({ by: ["status"], _count: { _all: true } }),
     prisma.event.groupBy({ by: ["category"], _count: { _all: true } }),
     // Registrations des 6 derniers mois
-    prisma.$queryRaw<{ month: string; count: bigint }[]>`
+    prisma.$queryRaw<{ month: string; count: number }[]>`
       SELECT 
-        TO_CHAR(DATE_TRUNC('month', created_at), 'Mon') as month,
-        COUNT(*)::bigint as count
-      FROM "Registration"
-      WHERE created_at >= NOW() - INTERVAL '6 months'
-      GROUP BY DATE_TRUNC('month', created_at)
-      ORDER BY DATE_TRUNC('month', created_at) ASC
+        DATE_FORMAT(created_at, '%b') as month,
+        COUNT(*) as count
+      FROM Registration
+      WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+      GROUP BY DATE_FORMAT(created_at, '%Y-%m'), DATE_FORMAT(created_at, '%b')
+      ORDER BY MIN(created_at) ASC
     `,
   ]);
 

@@ -29,7 +29,7 @@ export interface AdminUser {
   id: string;
   full_name: string;
   email: string;
-  role: "USER" | "ORGANIZER" | "ADMIN";
+  role: "PARTICIPANT" | "ORGANIZER" | "ADMIN";
   is_active: boolean;
   organizer_approved: boolean;
   avatar_url: string | null;
