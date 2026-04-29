@@ -12,7 +12,7 @@ import Button from "@/components/reusable/Button";
 import { Search, User, LogOut, Package, Store, ChevronDown, PlusCircle, Shield, Bell } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { useAuthStore } from "@/store/useAuthStore";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { cn } from "@/lib/utils";
@@ -40,7 +40,16 @@ export default function Navbar() {
   const [isNotifMenuOpen, setIsNotifMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
-  const scrolled = true; // Always keep navbar in retracted (scrolled) state
+  const [scrolled, setScrolled] = useState(!isHomePage);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    if (isHomePage) {
+      setScrolled(latest > 50);
+    } else {
+      setScrolled(true);
+    }
+  });
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notifMenuRef = useRef<HTMLDivElement>(null);
 
