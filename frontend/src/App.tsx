@@ -2,6 +2,7 @@ import { Routes, Route, Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import AuthBootstrap from "@/components/auth/AuthBootstrap";
+import RequireAuth from "@/components/auth/RequireAuth";
 import { usePageTitle } from './hooks/usePageTitle';  
 
 // EventNest — Public
@@ -80,48 +81,50 @@ function App() {
           <Route path='/login' element={<LoginPage />} />
           <Route path='/register' element={<SignupPage />} />
           
-          {/* Protected Participant Routes */}
-          <Route path='/account' element={<AccountLayout />}>
-            <Route path='registrations' element={<MyRegistrationsPage />} />
-            <Route path='profile' element={<ProfilePage />} />
-            <Route path='calendar' element={<ParticipantCalendarPage />} />
-          </Route>
+          <Route element={<RequireAuth />}>
+            {/* Protected Participant Routes */}
+            <Route path='/account' element={<AccountLayout />}>
+              <Route path='registrations' element={<MyRegistrationsPage />} />
+              <Route path='profile' element={<ProfilePage />} />
+              <Route path='calendar' element={<ParticipantCalendarPage />} />
+            </Route>
 
-          {/* Protected Organizer Routes */}
-          <Route path='/organizer' element={<OrganizerLayout />}>
-            <Route path='dashboard' element={<OrgDashboardPage />} />
-            <Route path='events' element={<OrgEventListPage />} />
-            <Route path='events/new' element={<EventWizardPage />} />
-            <Route path='events/:id' element={<OrgEventDetailPage />} />
-            <Route path='events/:id/edit' element={<EventWizardPage />} />
-            <Route path='profile' element={<ProfilePage />} />
-            <Route path='calendar' element={<OrgCalendarPage />} />
-          </Route>
+            {/* Protected Organizer Routes */}
+            <Route path='/organizer' element={<OrganizerLayout />}>
+              <Route path='dashboard' element={<OrgDashboardPage />} />
+              <Route path='events' element={<OrgEventListPage />} />
+              <Route path='events/new' element={<EventWizardPage />} />
+              <Route path='events/:id' element={<OrgEventDetailPage />} />
+              <Route path='events/:id/edit' element={<EventWizardPage />} />
+              <Route path='profile' element={<ProfilePage />} />
+              <Route path='calendar' element={<OrgCalendarPage />} />
+            </Route>
 
-          {/* Protected Sender Routes */}
-          <Route path='/sender' element={<AppLayout><Outlet /></AppLayout>}>
-            <Route path='dashboard' element={<SenderDashboardPage />} />
-            <Route path='demandes' element={<SenderDeliveriesPage />} />
-            <Route path='demandes/nouvelle' element={<SenderNewDeliveryPage />} />
-            <Route path='demandes/:id' element={<SenderDeliveryDetailPage />} />
-          </Route>
+            {/* Protected Sender Routes */}
+            <Route path='/sender' element={<AppLayout><Outlet /></AppLayout>}>
+              <Route path='dashboard' element={<SenderDashboardPage />} />
+              <Route path='demandes' element={<SenderDeliveriesPage />} />
+              <Route path='demandes/nouvelle' element={<SenderNewDeliveryPage />} />
+              <Route path='demandes/:id' element={<SenderDeliveryDetailPage />} />
+            </Route>
 
-          {/* Protected Delivery Routes */}
-          <Route path='/delivery' element={<AppLayout><Outlet /></AppLayout>}>
-            <Route path='dashboard' element={<DeliveryDashboardPage />} />
-            <Route path='missions' element={<DeliveryMissionsPage />} />
-            <Route path='missions/:id' element={<DeliveryMissionDetailPage />} />
-            <Route path='historique' element={<DeliveryHistoryPage />} />
-          </Route>
+            {/* Protected Delivery Routes */}
+            <Route path='/delivery' element={<AppLayout><Outlet /></AppLayout>}>
+              <Route path='dashboard' element={<DeliveryDashboardPage />} />
+              <Route path='missions' element={<DeliveryMissionsPage />} />
+              <Route path='missions/:id' element={<DeliveryMissionDetailPage />} />
+              <Route path='historique' element={<DeliveryHistoryPage />} />
+            </Route>
 
-          {/* Protected Admin Routes */}
-          <Route path='/admin' element={<AdminLayout />}>
-            <Route path='dashboard' element={<AdminDashboardPage />} />
-            <Route path='calendrier' element={<AdminCalendarPage />} />
-            <Route path='commandes' element={<AdminAllOrdersPage />} />
-            <Route path='commandes/:id' element={<AdminOrderDetailPage />} />
-            <Route path='utilisateurs' element={<AdminUsersPage />} />
-            <Route path='statistiques' element={<AdminStatsPage />} />
+            {/* Protected Admin Routes */}
+            <Route path='/admin' element={<AdminLayout />}>
+              <Route path='dashboard' element={<AdminDashboardPage />} />
+              <Route path='calendrier' element={<AdminCalendarPage />} />
+              <Route path='commandes' element={<AdminAllOrdersPage />} />
+              <Route path='commandes/:id' element={<AdminOrderDetailPage />} />
+              <Route path='utilisateurs' element={<AdminUsersPage />} />
+              <Route path='statistiques' element={<AdminStatsPage />} />
+            </Route>
           </Route>
         </Routes>
       </TooltipProvider>

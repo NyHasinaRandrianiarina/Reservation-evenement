@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   Search,
   CalendarX,
@@ -150,27 +150,12 @@ function FilterBar({
   onReset,
 }: FilterBarProps) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [isSticky, setIsSticky] = useState(false);
-  const { scrollY } = useScroll();
-
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    // On active le mode sticky après le Hero (~450px)
-    setIsSticky(latest > 450);
-  });
 
   return (
-    <div className={cn(
-      "z-40 transition-all duration-700 w-full",
-      isSticky ? "fixed top-6 left-0 px-4" : "relative px-6 -mt-10"
-    )}>
+    <div className="relative px-6 -mt-10 z-40">
       <motion.div
         layout
-        className={cn(
-          "max-w-4xl mx-auto transition-all duration-700 glass rounded-[2rem]",
-          isSticky
-            ? "bg-background/60 shadow-2xl p-2 pl-6 border-border"
-            : "bg-background/40 p-2 pl-6 shadow-xl border-border"
-        )}
+        className="max-w-4xl mx-auto glass rounded-[2rem] bg-background/40 shadow-xl p-2 pl-6 border-border"
       >
         <div className="flex items-center gap-4">
           {/* Search — Minimalist & elegant */}
@@ -186,32 +171,27 @@ function FilterBar({
 
           <div className="flex items-center gap-2 pr-2">
             <div className="hidden md:flex items-center gap-2">
-              {/* Selects seulement si pas sticky ou sur grand écran */}
-              {!isSticky && (
-                <>
-                  <Select value={dateRange} onValueChange={onDateRangeChange}>
-                    <SelectTrigger className="w-36 h-12 rounded-full border-transparent bg-foreground/5 hover:bg-foreground/10 text-foreground font-medium text-sm transition-colors focus:ring-0 shadow-none">
-                      <SelectValue placeholder="Date" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background/90 backdrop-blur-xl border-border text-foreground">
-                      {DATE_FILTER_OPTIONS.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value} className="focus:bg-foreground/10">{opt.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              <Select value={dateRange} onValueChange={onDateRangeChange}>
+                <SelectTrigger className="w-36 h-12 rounded-full border-transparent bg-foreground/5 hover:bg-foreground/10 text-foreground font-medium text-sm transition-colors focus:ring-0 shadow-none">
+                  <SelectValue placeholder="Date" />
+                </SelectTrigger>
+                <SelectContent className="bg-background/90 backdrop-blur-xl border-border text-foreground">
+                  {DATE_FILTER_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value} className="focus:bg-foreground/10">{opt.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-                  <Select value={priceType} onValueChange={onPriceTypeChange}>
-                    <SelectTrigger className="w-32 h-12 rounded-full border-transparent bg-foreground/5 hover:bg-foreground/10 text-foreground font-medium text-sm transition-colors focus:ring-0 shadow-none">
-                      <SelectValue placeholder="Prix" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background/90 backdrop-blur-xl border-border text-foreground">
-                      {PRICE_FILTER_OPTIONS.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value} className="focus:bg-foreground/10">{opt.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </>
-              )}
+              <Select value={priceType} onValueChange={onPriceTypeChange}>
+                <SelectTrigger className="w-32 h-12 rounded-full border-transparent bg-foreground/5 hover:bg-foreground/10 text-foreground font-medium text-sm transition-colors focus:ring-0 shadow-none">
+                  <SelectValue placeholder="Prix" />
+                </SelectTrigger>
+                <SelectContent className="bg-background/90 backdrop-blur-xl border-border text-foreground">
+                  {PRICE_FILTER_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value} className="focus:bg-foreground/10">{opt.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Bouton Filtre Global */}
@@ -229,7 +209,7 @@ function FilterBar({
               )}
             </Button>
 
-            {activeCount > 0 && !isSticky && (
+            {activeCount > 0 && (
               <Button variant="ghost" size="icon" onClick={onReset} className="rounded-full h-12 w-12 text-foreground/60 hover:text-foreground hover:bg-foreground/10">
                 <X size={20} />
               </Button>

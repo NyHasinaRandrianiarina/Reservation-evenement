@@ -59,12 +59,12 @@ const SidebarContent = ({
 
     <div className="p-4 border-t border-border space-y-2">
       <Link 
-        to={`/o/${user?.id}`} 
+        to={`/`} 
         target="_blank"
         className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
       >
         <ExternalLink className="w-5 h-5" />
-        <span>Profil public</span>
+        <span>Retour au site</span>
       </Link>
       <button 
         onClick={handleLogout}

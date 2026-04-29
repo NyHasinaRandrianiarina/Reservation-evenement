@@ -38,12 +38,8 @@ export default function Navbar() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isNotifMenuOpen, setIsNotifMenuOpen] = useState(false);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
-  const [scrolled, setScrolled] = useState(false);
-  const { scrollY } = useScroll();
-
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setScrolled(latest > 100);
-  });
+  const scrolled = true; // Always keep navbar in retracted (scrolled) state
+  const { scrollY } = useScroll(); // Keep for potential future features
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notifMenuRef = useRef<HTMLDivElement>(null);
 
@@ -89,7 +85,7 @@ export default function Navbar() {
   ];
 
   return (
-    <div className="fixed top-0 z-50 w-full flex justify-center px-0 lg:px-8">
+    <div className="fixed top-0 z-50 w-full flex justify-center px-0 lg:px-8 glass border-b border-border/40 backdrop-blur-xl">
       <ResizableNavbar isHomePage={isHomePage}>
         {/* Desktop Navigation */}
         <NavBody className="max-w-[1400px]">
@@ -277,8 +273,8 @@ export default function Navbar() {
                   className={cn(
                     "rounded-full px-6 h-10 border-none font-bold shadow-lg transition-all text-[10px] uppercase tracking-[0.2em]",
                     scrolled || !isHomePage
-                      ? "bg-primary text-primary-foreground hover:opacity-90" 
-                      : "bg-white text-black hover:bg-white/90"
+                      ? "bg-primary text-primary-foreground hover:opacity-90"
+                      : "bg-background text-foreground border border-border hover:bg-muted"
                   )}
                   onClick={() => navigate("/register")}
                 >
@@ -347,8 +343,8 @@ export default function Navbar() {
                             <div className={cn(
                               "inline-flex px-2 py-0.5 rounded-sm text-[8px] font-bold uppercase tracking-[0.2em] mt-2 border",
                               user?.role === "ADMIN" ? "bg-primary text-primary-foreground border-primary" :
-                              user?.role === "ORGANIZER" ? "bg-foreground text-background border-foreground" : 
-                              "bg-transparent text-foreground/60 border-border"
+                                user?.role === "ORGANIZER" ? "bg-foreground text-background border-foreground" :
+                                  "bg-transparent text-foreground/60 border-border"
                             )}>
                               {user?.role === "ADMIN" ? "Admin" : user?.role === "ORGANIZER" ? "Organisateur" : "Membre"}
                             </div>

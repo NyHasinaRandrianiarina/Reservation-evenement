@@ -60,23 +60,15 @@ export const Navbar = ({ children, className, isHomePage }: NavbarProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const [visible, setVisible] = useState<boolean>(false);
-  const [isHidden, setIsHidden] = useState<boolean>(false);
+  // Never hide the navbar - always keep it visible
+  const isHidden = false;
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    const previous = scrollY.getPrevious() ?? 0;
-
     // Visibilité pour le mode "Floating Pill"
     if (latest > 100) {
       setVisible(true);
     } else {
       setVisible(false);
-    }
-
-    // Cache au scroll bas, montre au scroll haut
-    if (latest > 300 && latest > previous) {
-      setIsHidden(true);
-    } else {
-      setIsHidden(false);
     }
   });
 
@@ -85,8 +77,8 @@ export const Navbar = ({ children, className, isHomePage }: NavbarProps) => {
       ref={ref}
       initial={false}
       animate={{
-        y: isHidden ? -100 : 0,
-        opacity: isHidden ? 0 : 1,
+        y: 0,
+        opacity: 1,
       }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
       className={cn("fixed inset-x-0 top-0 z-50 w-full", className)}

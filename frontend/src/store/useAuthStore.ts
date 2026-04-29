@@ -184,14 +184,20 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: async () => {
     set({ isLoading: true });
+  
+    const logoutPromise = authApi.logout();
+  
+    toast.promise(logoutPromise, {
+      loading: "Déconnexion en cours...",
+      success: (res) => res.message || "Déconnexion réussie",
+      error: (err) => err instanceof Error ? err.message : "Erreur lors de la déconnexion",
+    });
+  
     try {
-      const res = await authApi.logout();
+      await logoutPromise;
       set({ user: null, isAuthenticated: false, status: AuthStatus.Guest, isLoading: false, pending2faTempToken: null });
-      toast.success(res.message || "Déconnexion réussie");
     } catch (err) {
       set({ isLoading: false });
-      const message = err instanceof Error ? err.message : "Erreur lors de la déconnexion";
-      toast.error(message);
       throw err;
     }
   },
