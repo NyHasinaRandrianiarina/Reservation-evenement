@@ -12,10 +12,11 @@ import Button from "@/components/reusable/Button";
 import { Search, User, LogOut, Package, Store, ChevronDown, PlusCircle, Shield, Bell } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/store/useAuthStore";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { cn } from "@/lib/utils";
+import GlobalSearchOverlay from "@/components/shared/GlobalSearchOverlay";
 import {
   getMyNotifications,
   markAllNotificationsRead,
@@ -37,9 +38,9 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isNotifMenuOpen, setIsNotifMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const scrolled = true; // Always keep navbar in retracted (scrolled) state
-  const { scrollY } = useScroll(); // Keep for potential future features
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notifMenuRef = useRef<HTMLDivElement>(null);
 
@@ -141,6 +142,7 @@ export default function Navbar() {
               <ThemeToggle variant="homeNav" />
 
               <button
+                onClick={() => setIsSearchOpen(true)}
                 className={cn(
                   "w-10 h-10 flex items-center justify-center rounded-full transition-all duration-500 cursor-pointer",
                   scrolled ? "text-foreground/60 hover:text-foreground hover:bg-foreground/5" : "text-white/80 hover:text-white hover:bg-white/10"
@@ -472,6 +474,11 @@ export default function Navbar() {
           </MobileNavMenu>
         </MobileNav>
       </ResizableNavbar>
+
+      <GlobalSearchOverlay 
+        isOpen={isSearchOpen} 
+        onClose={() => setIsSearchOpen(false)} 
+      />
     </div>
   );
 }
